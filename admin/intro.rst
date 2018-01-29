@@ -66,7 +66,7 @@
 ==========================
 
 .. figure :: img / intro_3layers.png
-   :align: center
+   :align: center
 
 サービスが成長ほど、転送の負担は指数関数的に大きくなる。ショッピングモールのコンテンツ数は多ければ数十億個に達する。
 動画サービスのコンテンツは、TBに達して久しい。サービスの増設には、*コンテンツ配信の拡張性（scalability）*を考慮する必要があります。
@@ -84,13 +84,13 @@
 =========================================
 
 .. figure :: img / intro_cache1.png
-   :align: center
+   :align: center
 
 送信の規模は、顧客の数とコンテンツのサイズに応じ大きくなる。どのように多くの顧客がどのようなコンテンツを要求していることは、エッジで最も早く知ることができる。
 エッジからBottom-upの処理の流れが効率的である。したがってエッジサーバーは、顧客の要求に応じてOn-demandで動作する**キャッシュ（cache）**伝送方式を採用した。管理システムも必要がない。具体的な動作は次の通りである。
 
 .. figure :: img / intro_cache2.png
-   :align: center
+   :align: center
 
 エッジサーバーは、最初のコンテンツ転送要求を受けたとき、
 ソース階層からコンテンツを取得し、顧客に送信する。
@@ -135,7 +135,7 @@ Game
 特にスマートフォンゲームの爆発的な成長と伝播速度は、サービス形態をより多様にした。
 
 .. figure :: img / icons_game.png
-   :align: center
+   :align: center
 
 - **高帯域幅出力**
 
@@ -187,7 +187,7 @@ Game
 ファイルを管理していなければ、サービスは苦境に処する。
 
 .. figure :: img / icons_shopping.png
-   :align: center
+   :align: center
 
 - **無限の小さなファイル**
   「億！単位を超え〜」、「無数の〜」、「いつも増え欺瞞する〜」ファイルを
@@ -241,7 +241,7 @@ HTTP、MP4のシンプルだが強力な組み合わせは、徐々に勢力を�
 モバイルの可変の接続状態を考慮すれば、HTTPベースのStreaming方式が送信標準になるだろう。
 
 .. figure :: img / icons_media.png
-   :align: center
+   :align: center
 
 - **メディア認識**
 
@@ -287,7 +287,7 @@ HTTP、MP4のシンプルだが強力な組み合わせは、徐々に勢力を�
 サービスパターンがバラバラだとサービスするかなり難しい。
 
 .. figure :: img / icons_news.png
-   :align: center
+   :align: center
 
 - ** 304 Not Modified **
 
@@ -333,7 +333,7 @@ Storage一元化と同期の問題を除去することができる。
 だけでなく、開発時間の短縮とサービスの信頼性の向上の二匹のウサギをすべてキャッチすることができる。
 
 .. figure :: img / icons_file.png
-   :align: center
+   :align: center
 
 - ** File I / Oをサポート**
 
