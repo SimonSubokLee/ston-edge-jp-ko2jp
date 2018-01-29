@@ -28,7 +28,7 @@
    <ServiceAccess Default="Allow">
       <Deny>192.168.7.9-255</ Deny>
       <Deny>192.168.8.10/255.255.255.0</ Deny>
-   </ ServiceAccess>
+   </ServiceAccess>
 
 - ``<ServiceAccess>``
    IPベースのACLを設定する。
@@ -112,8 +112,7 @@ GeoIPが設定されている場合は、そのディレクトリに保存され
 
    - ``OFF (기본)`` ACLが有効になっていない。すべてのクライアントの要求を許可する。
 
-   - ``ON`` ACLが有効になる。
-     ブロックされた要求には、`` DenialCode``属性に設定された応答コードで応答する。
+   - ``ON`` ACLが有効になる。ブロックされた要求には、`` DenialCode``属性に設定された応答コードで応答する。
      ``Default （基本：Allow）``属性が`` Allow``ならACLは拒否リストになる。
      逆に`` Deny``ならACLは許可リストになる。
 
