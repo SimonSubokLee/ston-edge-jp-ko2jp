@@ -1,16 +1,13 @@
 ﻿.. _handling_http_requests:
 
-6장. HTTP 요청/응답
+第6章 HTTPリクエスト/レスポンス
 ******************
 
 .. note::
 
-   - `[동영상 강좌] 해보자! STON Edge Server - Chapter 6. 압축 <https://youtu.be/GZ_NaK2yqk0?list=PLqvIfHb2IlKeZ-Eym_UPsp6hbpeF-a2gE>`_
+   - `[動画講座]みよう！ STON Edge Server - Chapter 6圧縮 <https://youtu.be/GZ_NaK2yqk0?list=PLqvIfHb2IlKeZ-Eym_UPsp6hbpeF-a2gE>`_
 
-이 장에서는 HTTP 클라이언트 세션과 요청을 처리하는 방식에 대해 설명한다.
-서비스의 핵심기능으로 보기엔 어려운 내용들이 많으니 머리아파하지 않아도 된다.
-일부 HTTP에 대한 이해가 없다면 어려울 수 있는 부분이 있는데 이럴 때는 기본설정을 사용하길 바란다.
-전체적으로 기본 설정을 그대로 사용해도 서비스에는 전혀 지장이 없는 내용들이다.
+この章では、HTTPクライアントセッションと要求を処理する方法について説明する。 サービスの主な機能として見るには難しい内容が多いので、頭が痛い必要はない。 一部のHTTPの理解がなければ、難しいことができる部分があるが、このような場合は、デフォルトの設定を使用してほしい。 全体的にデフォルトの設定をそのまま使用してもサービスには全く支障がない内容だ。
 
 
 .. toctree::
@@ -19,13 +16,10 @@
 
 .. _handling_http_requests_session_man:
 
-세션관리
+セッション管理
 ====================================
 
-HTTP 클라이언트가 서버(STON)에 접속하면 HTTP 세션이 생성된다.
-클라이언트는 HTTP 세션을 통해 서버에 저장된 여러 콘텐츠를 서비스 받는다.
-요청부터 응답까지를 하나의 **HTTP 트랜잭션** 이라고 부른다.
-HTTP 세션은 여러 HTTP 트랜잭션을 순차적으로 처리한다. ::
+HTTPクライアントがサーバー（STON）に接続すると、HTTPセッションが生成される。 クライアントは、HTTPセッションを介してサーバーに格納された複数のコンテンツをサービス受ける。 リクエストからレスポンスまでを一つの **HTTPトランザクション** と呼ぶ。 HTTPセッションは、複数のHTTPトランザクションを順次処理する。 ::
 
    # server.xml - <Server><VHostDefault><Options>
    # vhosts.xml - <Vhosts><Vhost><Options>
@@ -34,69 +28,63 @@ HTTP 세션은 여러 HTTP 트랜잭션을 순차적으로 처리한다. ::
    <ClientKeepAliveSec>10</ClientKeepAliveSec>
    <KeepAliveHeader Max="0">ON</KeepAliveHeader>
 
--  ``<ConnectionHeader> (기본: keep-alive)``
-   클라이언트에게 보내는 HTTP응답의 Connection헤더( ``keep-alive`` 또는 ``close`` )를 설정한다.
+-  ``<ConnectionHeader> (基本: keep-alive)``
+   クライアントに送信するHTTPレスポンスのConnectionヘッダ( ``keep-alive`` または ``close`` )を設定する。
 
 
--  ``<ClientKeepAliveSec> (기본: 10초)``
-   클라이언트 세션과 아무런 통신이 없는 상태로 설정된 시간이 경과하면 세션을 종료한다.
-   시간을 너무 길게 설정하면 통신을 하지 않는 세션이 지나치게 많아진다.
-   너무 많은 세션을 유지하는 것만으로도 시스템엔 부하가 된다.
+-  ``<ClientKeepAliveSec> (基本: 10秒)``
+   クライアントセッションとは何の通信がない状態で設定された時間が経過すると、セッションを終了する。 時間を長すぎる設定すると、通信をしていないセッションが過度に多くなる。 あまりにも多くのセッションを維持するだけでも、システムは負荷となる。
 
 -  ``<KeepAliveHeader>``
 
-   - ``ON (기본)`` HTTP응답에 Keep-Alive헤더를 명시한다.
-     ``Max (기본: 0)`` 를 0보다 크게 설정하면 Keep-Alive헤더의 값으로 ``Max`` 값이 명시된다.
-     이후 HTTP 트랜잭션이 발생할때마다 1씩 차감된다.
+   - ``ON (基本)`` HTTP応答にKeep-Aliveヘッダを明示する。
+     ``Max (基本: 0)`` を0より大きく設定すると、Keep-Aliveヘッダの値に ``Max`` 値が明示される。 以後HTTPトランザクションが発生するたびに1ずつ減算される。
 
-   - ``OFF`` HTTP응답에 Keep-Alive헤더를 생략한다.
+   - ``OFF`` HTTP応答にKeep-Aliveヘッダを省略する。
 
 
-HTTP 세션 유지정책
+HTTPセッションを維持ポリシー
 ---------------------
 
-STON은 가급적 Apache의 정책을 따른다.
-특히 세션유지 정책은 HTTP헤더 값에 따른 변수가 많다.
-HTTP 세션 유지정책에 영향을 주는 요소는 다음과 같다.
+STONはなるべくApacheのポリシーに従う。 特にセッション維持ポリシーは、HTTPヘッダーの値に応じた変数が多い。 HTTPセッションを維持政策に影響を与える要素は次のとおりである。
 
-- 클라이언트 HTTP요청에 명시된 Connection헤더 ("Keep-Alive" 또는 "Close")
-- 가상호스트 ``<Connection>`` 설정
-- 가상호스트 세션 Keep-Alive시간 설정
-- 가상호스트 ``<Keep-Alive>`` 설정
+- クライアントのHTTP要求に指定されたConnectionヘッダ（ "Keep-Alive"または "Close"）
+- 仮想ホスト ``<Connection>`` 設定
+- 仮想ホストセッションKeep-Alive時間設定
+- 仮想ホスト ``<Keep-Alive>`` 設定
 
 
-1. 클라이언트 HTTP요청에 "Connection: Close"로 명시되어 있는 경우 ::
+1. クライアントのHTTP要求に "Connection: Close"に明示されている場合、 ::
 
       GET / HTTP/1.1
-      ...(생략)...
+      ...(省略)...
       Connection: Close
 
-   이같은 HTTP요청에 대해서는 가상호스트 설정여부와 상관없이
-   "Connection: Close"로 응답한다. Keep-Alive헤더는 명시되지 않습니다. ::
+   このようなHTTPリクエストには、仮想ホストの設定の有無にかかわらず、
+   "Connection: Close"で応答する。 Keep-Aliveヘッダは明示されない。 ::
 
       HTTP/1.1 200 OK
-      ...(생략)...
+      ...(省略)...
       Connection: Close
 
-   이 HTTP 트랜잭션이 완료되면 HTTP 연결을 종료한다.
+   このHTTPトランザクションが完了すると、HTTP接続を終了する。
 
 
-2. ``<ConnectionHeader>`` 가 ``Close`` 로 설정된 경우 ::
+2. ``<ConnectionHeader>`` が ``Close`` に設定された場合 ::
 
       # server.xml - <Server><VHostDefault><Options>
       # vhosts.xml - <Vhosts><Vhost><Options>
 
       <ConnectionHeader>Close</ConnectionHeader>
 
-   클라이언트 HTTP요청과 상관없이 "Connection: Close"로 응답한다.
-   Keep-Alive헤더는 명시되지 않는다. ::
+   クライアントのHTTP要求とは関係なく、 "Connection: Close"で応答する。 Keep-Aliveヘッダは明示されない。 ::
 
       HTTP/1.1 200 OK
-      ...(생략)...
+      ...(省略)...
       Connection: Close
 
 
-3. ``<KeepAliveHeader>`` 가 ``OFF`` 로 설정된 경우 ::
+3. ``<KeepAliveHeader>`` が ``OFF`` に設定された場合 ::
 
       # server.xml - <Server><VHostDefault><Options>
       # vhosts.xml - <Vhosts><Vhost><Options>
@@ -104,14 +92,14 @@ HTTP 세션 유지정책에 영향을 주는 요소는 다음과 같다.
       <ConnectionHeader>Keep-Alive</ConnectionHeader>
       <KeepAliveHeader>OFF</KeepAliveHeader>
 
-   Keep-Alive헤더가 명시되지 않는다. HTTP 세션은 지속적으로 재사용가능하다. ::
+   Keep-Aliveヘッダが明示されない。 HTTPセッションは、継続的に再利用可能である。 ::
 
       HTTP/1.1 200 OK
-      ...(생략)...
+      ...(省略)...
       Connection: Keep-Alive
 
 
-4. ``<KeepAliveHeader>`` 가 ``ON`` 으로 설정된 경우 ::
+4. ``<KeepAliveHeader>`` が ``ON`` に設定された場合 ::
 
       # server.xml - <Server><VHostDefault><Options>
       # vhosts.xml - <Vhosts><Vhost><Options>
@@ -120,25 +108,21 @@ HTTP 세션 유지정책에 영향을 주는 요소는 다음과 같다.
       <ClientKeepAliveSec>10</ClientKeepAliveSec>
       <KeepAliveHeader>ON</KeepAliveHeader>
 
-   Keep-Alive헤더가 명시된다.
-   timeout값은 세션 Keep-Alive시간 설정을 사용한다. ::
+   Keep-Aliveヘッダが明示される。 timeout値は、セッションKeep-Alive時間設定を使用する。 ::
 
       HTTP/1.1 200 OK
-      ...(생략)...
+      ...(省略)...
       Connection: Keep-Alive
       Keep-Alive: timeout=10
 
    .. note::
 
-      < ``<Keep-Alive>`` 와 ``<ClientKeepAliveSec>`` 의 관계 >
+      < ``<Keep-Alive>`` と ``<ClientKeepAliveSec>`` の関係 >
 
-      ``<Keep-Alive>`` 설정시 ``<ClientKeepAliveSec>`` 를 참고하지만 ``<ClientKeepAliveSec>`` 는 보다 근본적인 문제와 관련이 있다.
-      성능이나 자원적으로 가장 중요한 이슈는 Idle세션(=HTTP 트랜잭션이 발생되지 않는 세션)의 정리시점을 잡는 것이다.
-      HTTP 헤더 설정은 동적으로 변경되거나 때로 생략될 수 있지만 Idle세션 정리는 훨씬 민감한 문제이다.
-      이런 이유 때문에 ``<ClientKeepAliveSec>`` 는 ``<KeepAliveHeader>`` 에 통합되지 않고 별도로 존재한다.
+      ``<Keep-Alive>`` 設定時 ``<ClientKeepAliveSec>`` を参照してますが、 ``<ClientKeepAliveSec>`` は、より根本的な問題と関連がある。 性能や資源的に最も重要な問題は、Idleセッション（= HTTPトランザクションが発生していないセッション）のまとめ視点をとるものである。 HTTPヘッダの設定は動的に変更されたり、時には省略されることがありますがIdleセッションクリーンアップは、はるかに敏感な問題である。 このような理由のために ``<ClientKeepAliveSec>`` は ``<KeepAliveHeader>`` に統合されず、別途存在する。
 
 
-5. ``<KeepAliveHeader>`` 의 ``Max`` 속성이 설정된 경우 ::
+5. ``<KeepAliveHeader>`` の ``Max`` 属性が設定されている場合우 ::
 
       # server.xml - <Server><VHostDefault><Options>
       # vhosts.xml - <Vhosts><Vhost><Options>
@@ -147,43 +131,41 @@ HTTP 세션 유지정책에 영향을 주는 요소는 다음과 같다.
       <ClientKeepAliveSec>10</ClientKeepAliveSec>
       <KeepAliveHeader Max="50">ON</KeepAliveHeader>
 
-   Keep-Alive헤더에 max값을 명시한다.
-   이 세션은 max회만큼 사용이 가능하며 HTTP 트랜잭션이 진행될때마다 1씩 감소된다. ::
+   Keep-Aliveヘッダにmax値を指定する。 このセッションでは、max回だけ使用が可能であり、HTTPトランザクションが進むたびに1ずつ減少される。 ::
 
       HTTP/1.1 200 OK
-      ...(생략)...
+      ...(省略)...
       Connection: Keep-Alive
       Keep-Alive: timeout=10, max=50
 
 
-6. Keep-Alive의 max가 만료된 경우 ::
+6. Keep-Aliveのmaxが満了した場合、 ::
 
-   위의 설정대로 max가 설정되었다면 max는 점차 줄어 다음처럼 1까지 도달하게 된다. ::
+   上記の設定どおりmaxが設定された場合maxは徐々に減少次のように1まで到達することになる。 ::
 
       HTTP/1.1 200 OK
-      ...(생략)...
+      ...(省略)...
       Connection: Keep-Alive
       Keep-Alive: timeout=10, max=1
 
-   이 응답은 현재 세션으로 앞으로 1번 HTTP 트랜잭션진행이 가능하다는 의미이다.
-   이 세션으로 HTTP 요청이 한번 더 진행될 경우 다음과 같이 "Connection: Close"로 응답한다. ::
+   この応答は、現在のセッションで、今後1回HTTPトランザクションの進行が可能である意味である。 このセッションでHTTP要求がもう一度行われる場合は、次のように "Connection: Close"で応答する。 ::
 
       HTTP/1.1 200 OK
-      ...(생략)...
+      ...(省略)...
       Connection: Close
 
 
 
-클라이언트 Cache-Control
+クライアントCache-Control
 ====================================
 
-클라이언트 Cache-Control과 관련된 설정을 다룬다.
+クライアントCache-Controlに関連する設定を大事にする。
 
-Age 헤더
+Ageヘッダ
 ---------------------
 
-Age헤더는 캐싱된 순간부터 경과시간(초)을 의미하며
-`RFC2616 - 13.2.3 Age Calculations <http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.2.3>`_ 에 의하여 계산된다. ::
+Ageヘッダは、キャッシュされた瞬間からの経過時間（秒）を意味し、
+`RFC2616 - 13.2.3 Age Calculations <http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.2.3>`_ によって計算される。 ::
 
    # server.xml - <Server><VHostDefault><Options>
    # vhosts.xml - <Vhosts><Vhost><Options>
@@ -192,15 +174,15 @@ Age헤더는 캐싱된 순간부터 경과시간(초)을 의미하며
 
 -  ``<AgeHeader>``
 
-   -  ``OFF (기본)`` Age헤더를 생략한다.
+   -  ``OFF (基本)`` Ageヘッダを省略する。
 
-   -  ``ON`` Age헤더를 명시한다.
+   -  ``ON`` Ageヘッダを明示する。
 
 
-Expires 헤더
+Expiresヘッダ
 ---------------------
 
-Expires헤더를 재설정한다. ::
+Expiresヘッダをリセットする。 ::
 
    # server.xml - <Server><VHostDefault><Options>
    # vhosts.xml - <Vhosts><Vhost><Options>
@@ -209,20 +191,16 @@ Expires헤더를 재설정한다. ::
 
 -  ``<RefreshExpiresHeader>``
 
-   -  ``OFF (기본)`` 원본서버에서 응답한 Expires헤더를 클라이언트에게 명시한다.
-      원본서버에서 Expires헤더가 생략되었다면 클라이언트 응답에도 Expires헤더가 생략된다.
+   -  ``OFF (基本)`` 元のサーバーからの応答したExpiresヘッダをクライアントに指定する。 元のサーバーでExpiresヘッダが省略された場合、クライアントの応答もExpiresヘッダが省略される。
 
-   -  ``ON``  Expires조건을 반영하여 Expires헤더를 명시한다.
-      조건에 해당하지 않는 콘텐츠는 ``OFF`` 설정과 동일하게 동작한다.
+   -  ``ON``  Expires条件を反映してExpiresヘッダを明示する。 条件に該当しないコンテンツは、 ``OFF`` の設定と同じように動作する。
 
-Expires조건은 Apache의 `mod_expires <http://httpd.apache.org/docs/2.2/mod/mod_expires.html>`_ 와 동일하게 동작한다.
-특정 조건(URL이나 MIME Type)에 해당하는 콘텐츠의 Expires헤더와 Cache-Control 값을 설정할 수 있다.
-Cache-Control의 max-age값은 설정된 Expires시간에서 요청한 시간을 뺀 값이 된다.
+Expires条件は、Apacheの `mod_expires <http://httpd.apache.org/docs/2.2/mod/mod_expires.html>`_ と同じように動作する。 特定の条件（URLやMIME Type）に対応するコンテンツのExpiresヘッダとCache-Controlの値を設定することができる。 Cache-Controlのmax-ageの値は設定されたExpires時間で要求された時間を引いた値になる。
 
-Expires조건은 /svc/{가상호스트 이름}/expires.txt에 설정한다. ::
+Expires条件は/ svc / {仮想ホスト名} /expires.txtに設定する。 ::
 
    # /svc/www.exmaple.com/expires.txt
-   # 구분자는 콤마(,)이며 {조건},{시간},{기준} 순서로 표기한다.
+   # 区切り文字はカンマ（、）であり、{条件}、{時間}、{基準}順に表記する。
 
    $URL[/test.jpg], 86400
    /test.jpg, 86400
@@ -233,43 +211,33 @@ Expires조건은 /svc/{가상호스트 이름}/expires.txt에 설정한다. ::
    $MIME[application/octet-stream], 7 weeks, modification
    $MIME[image/gif], 3600, modification
 
--  **조건**
+-  **条件**
 
-   URL과 MIME Type 2가지로 설정이 가능하다.
-   URL일 경우 $URL[...]로, MIME Type일 경우 $MIME[...]로 표기한다.
-   패턴표현이 가능하며 $표현이 생략된 경우 URL로 인식한다.
+   URLとMIME Typeの2つに設定が可能である。 URLの場合、$ URL [...]で、MIME Typeの場合$ MIME [...]と表記する。 パターン表現が可能であり、$表現が省略された場合は、URLとして認識する。
 
 
--  **시간**
+-  **時間**
 
-   Expires만료시간을 설정한다.
-   시간단위 표현을 지원하며 단위를 명시하지 않을 경우 초로 계산된다.
+   Expires有効期限を設定する。 時間単位の表現をサポートし、単位を明示していない場合、秒計算される。
 
 
--  **기준**
+-  **基準**
 
-   Expires만료시간의 기준시점을 설정한다.
-   별도로 기준시점을 명시하지 않으면 Access가 기준시점으로 명시된다.
-   Access는 현재 시간을 기준으로 한다.
-   다음은 MIME Type이 image/gif인 파일에 대하여 접근시간으로부터
-   1일 12시간 후로 Expires헤더 값을 설정하는 예제이다. ::
+   Expiresの有効期限の基準時点を設定する。 別途基準時点を指定しなければAccessが基準時点として明示される。 Accessは、現在の時刻を基準とする。 次は、MIME Typeがimage / gifのファイルへのアクセス時間から1日12時間後にExpiresヘッダの値を設定する例です。 ::
 
       $MIME[image/gif], 1 day 12 hours, access
 
-   Modification은 원본서버에서 보낸 Last-Modified를 기준으로 한다.
-   다음은 모든 jpg파일에 대하여 Last-Modified로부터 30분 뒤를
-   Expires값으로 설정하는 예제이다. ::
+   Modificationは、元のサーバーから送信され、Last-Modifiedを基準とする。 以下は、すべてのjpgファイルに対してLast-Modifiedから30分後にExpires値に設定する例である。 ::
 
       *.jpg, 30min, modification
 
-   Modification의 경우 계산된 Expires값이 현재시간보다 과거의 시간일 경우 현재시간을 명시한다.
-   만약 원본서버에서 Last-Modified헤더를 제공하지 않는다면 Expires헤더를 보내지 않는다.
+   Modificationの場合は、計算されたExpires値が現在の時間よりも過去の時間である場合、現在の時刻を指定する。 もし元のサーバーで、Last-Modifiedヘッダを提供しない場合Expiresヘッダを送信しない。
 
 
-ETag 헤더
+ETagヘッダ
 ---------------------
 
-클라이언트에게 보내는 HTTP응답에 ETag 헤더 명시여부를 설정한다. ::
+クライアントに送信するHTTPレスポンスにETagヘッダ明示するかどうかを設定する。 ::
 
    # server.xml - <Server><VHostDefault><Options>
    # vhosts.xml - <Vhosts><Vhost><Options>
@@ -278,20 +246,20 @@ ETag 헤더
 
 -  ``<ETagHeader>``
 
-   -  ``ON (기본)`` ETag헤더를 명시한다.
+   -  ``ON (基本)`` ETagヘッダを明示する。
 
-   -  ``OFF``  ETag헤더를 생략한다.
-
-
+   -  ``OFF``  ETagヘッダを省略する。
 
 
-기본응답 헤더
+
+
+デフォルトの応答ヘッダ
 ====================================
 
-원본 비표준 헤더
+ソース非標準ヘッダ
 ---------------------
 
-성능과 보안상의 이유로 원본서버가 보내는 헤더 중 표준헤더만을 선택적으로 인식한다. ::
+パフォーマンスとセキュリティ上の理由から、元のサーバーが送信し、ヘッダーの標準ヘッダのみを選択的に認識している。 ::
 
    # server.xml - <Server><VHostDefault><Options>
    # vhosts.xml - <Vhosts><Vhost><Options>
@@ -300,16 +268,15 @@ ETag 헤더
 
 -  ``<OriginalHeader>``
 
-   -  ``OFF (기본)`` 표준헤더가 아니라면 무시한다.
+   -  ``OFF (基本)`` 標準ヘッダがない場合は無視する。
 
-   -  ``ON`` cookie, set-cookie, set-cookie2를 제외한 모든 헤더를 저장하여 클라이언트에게 전달한다.
-      단, 메모리와 저장비용을 좀 더 소비한다.
+   -  ``ON`` cookie, set-cookie, set-cookie2を除くすべてのヘッダーを保存して、クライアントに送信する。 ただし、メモリとストレージのコストをより消費する。
 
 
-Via 헤더
+Viaヘッダ
 ---------------------
 
-클라이언트에게 보내는 HTTP응답에 Via 헤더 명시여부를 설정한다. ::
+クライアントに送信するHTTPレスポンスにViaヘッダ明示するかどうかを設定する。 ::
 
    # server.xml - <Server><VHostDefault><Options>
    # vhosts.xml - <Vhosts><Vhost><Options>
@@ -318,18 +285,18 @@ Via 헤더
 
 -  ``<ViaHeader>``
 
-   - ``ON (기본)`` Via헤더를 다음과 같이 명시한다.
+   - ``ON (基本)`` Viaヘッダを次のように指定する。
      ::
 
         Via: STON/2.0.0
 
-   - ``OFF``  Via헤더를 생략한다.
+   - ``OFF``  Viaヘッダを省略する。
 
 
-Server 헤더
+Serverヘッダ
 ---------------------
 
-클라이언트에게 보내는 HTTP응답에 Server 헤더 명시여부를 설정한다. ::
+クライアントに送信するHTTPレスポンスにServerヘッダ明示するかどうかを設定する。 ::
 
    # server.xml - <Server><VHostDefault><Options>
    # vhosts.xml - <Vhosts><Vhost><Options>
@@ -338,17 +305,17 @@ Server 헤더
 
 -  ``<ServerHeader>``
 
-   -  ``ON (기본)`` 원본서버의 Server헤더를 명시한다. ::
+   -  ``ON (基本)`` ソースサーバーのServerヘッダを明示する。 ::
 
-   -  ``OFF``  Server헤더를 생략한다.
+   -  ``OFF``  Serverヘッダを省略する。
 
 
 .. _handling_http_requests_modify_client:
 
-클라이언트 요청/응답 헤더 변경
+クライアントの要求/応答ヘッダの変更
 ====================================
 
-클라이언트 HTTP요청과 응답을 특정 조건에 따라 변경한다. ::
+クライアントHTTPリクエストとレスポンスを特定の条件に応じて変更する。 ::
 
    # server.xml - <Server><VHostDefault><Options>
    # vhosts.xml - <Vhosts><Vhost><Options>
@@ -357,35 +324,30 @@ Server 헤더
 
 -  ``<ModifyHeader>``
 
-   -  ``OFF (기본)`` 변경하지 않는다.
+   -  ``OFF (基本)`` 変更しない。
 
-   -  ``ON`` 헤더 변경조건에 따라 헤더를 변경한다.
+   -  ``ON`` ヘッダ変更条件に応じて、ヘッダーを変更する。
 
-헤더 변경시점을 정확히 이해하자.
+ヘッダ変更時点を正確に理解しましょう。
 
--  **HTTP 요청헤더 변경시점**
+-  **HTTPリクエストヘッダの変更時点**
 
-   클라이언트 HTTP 요청을 최초로 인식하는 시점에 헤더를 변경한다.
-   헤더가 변경되었다면 변경된 상태로 Cache 모듈에서 처리된다.
-   단, Host헤더와 URI는 변경할 수 없다.
+   クライアントのHTTP要求を最初に認識した時点でヘッダを変更する。 ヘッダが変更された場合変更された状態でCacheモジュールで処理される。 ただし、HostヘッダとURIは変更できない。
 
--  **HTTP 응답헤더 변경시점**
+-  **HTTP応答ヘッダーの変更時点**
 
-   클라이언트 응답 직전에 헤더를 변경한다.
-   단, Content-Length는 변경할 수 없다.
+   クライアントの応答の直前にヘッダを変更する。 ただし、Content-Lengthは変更できない。
 
 
-헤더 변경조건은 /svc/{가상호스트 이름}/headers.txt에 설정한다.
-헤더는 멀티로 설정이 가능하므로 조건과 일치한다면 모든 변경설정이 순차적으로 모두 적용된다.
+ヘッダ変更条件は/ svc / {仮想ホスト名} /headers.txtに設定する。 ヘッダは、マルチに設定が可能なので、条件に一致する場合、すべての変更の設定が順次適用される。
 
-최초 조건에만 변경을 원할 경우 ``FirstOnly`` 속성을 ``ON`` 으로 설정한다.
-서로 다른 조건이 같은 헤더를 변경하는 경우 ``set`` 에 의해 Last-Win이 되거나 명시적으로 ``put`` ``append`` 할 수 있다. ::
+最初の条件のみを変更したい場合 ``FirstOnly`` 属性を ``ON`` に設定する。 別の条件が同じヘッダを変更する場合 ``set`` によってLast-Winになったり、明示的に ``put`` ``append`` することができる。 ::
 
    # /svc/www.example.com/headers.txt
-   # 구분자는 콤마(,)이다.
+   # 区切り文字はカンマ（、）である。
 
-   # 요청변경
-   # {Match}, {$REQ}, {Action(set|put|append|unset)} 순서로 표기한다.
+   # リクエスト変更
+   # {Match}, {$REQ}, {Action(set|put|append|unset)} 順に表記する。
    $IP[192.168.1.1], $REQ[SOAPAction], unset
    $IP[192.168.2.1-255], $REQ[accept-encoding: gzip], set
    $IP[192.168.3.0/24], $REQ[cache-control: no-cache], append
@@ -396,9 +358,9 @@ Server 헤더
    $URL[/source/*.zip], $REQ[accept-encoding: deflate], set
    $METHOD[POST], $REQ[host: sub.example.com], set
 
-   # 응답변경
-   # {Match}, {$RES}, {Action(set|put|append|unset)}, {condition} 순서로 표기한다.
-   # {condition}은 특정 응답코드에 한하여 헤더를 변경할 수 있지만 필수는 아니다.
+   # 応答変更
+   # {Match}, {$RES}, {Action(set|put|append|unset)}, {condition} 順に表記する。
+   # {condition}は、特定の応答コードに限ってヘッダーを変更することができますが、必須ではない。
    $IP[192.168.1.1], $RES[via: STON for CDN], set
    $IP[192.168.2.1-255], $RES[X-Cache], unset, 200
    $IP[192.168.3.0/24], $RES[cache-control: no-cache, private], append, 3xx
@@ -410,59 +372,52 @@ Server 헤더
    /*.mp4, $RES[Access-Control-Allow-Origin: example1.com], set
    /*.mp4, $RES[Access-Control-Allow-Origin: example2.com], put
 
-{Match}는 IP, GeoIP, Header, URL 4가지로 설정이 가능하다.
+{Match}はIPアドレス、GeoIP、Header、URL、4つに設定が可能である。
 
 -  **IP**
 
-   $IP[...]로 표기하며 IP, IP Range, Bitmask, Subnet 네 가지 형식을 지원한다.
+   $IP[...]で表記しIP、IP Range、Bitmask、Subnet 4種類をサポートします。
 
 
 -  **GeoIP**
 
-   $IP[...]로 표기하며 반드시 :ref:`access-control-geoip` 가 설정되어 있어야 한다.
-   국가코드는 `ISO 3166-1 alpha-2 <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ 와 `ISO 3166-1 alpha-3 <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3>`_ 를 지원한다.
+   $IP[...]で表記し、必ず :ref:`access-control-geoip` が設定されなければならない。 国コードは、 `ISO 3166-1 alpha-2 <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ と `ISO 3166-1 alpha-3 <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3>`_ をサポートする。
 
 
 -  **Header**
 
-   $HEADER[Key : Value]로 표기한다.
-   Value는 명확한 표현과 패턴을 지원한다.
-   Value가 생략된 경우에는 Key에 해당하는 헤더의 존재유무를 조건으로 판단한다.
+   $HEADER[Key : Value]と表記する。 Valueは明確な表現とパターンをサポートする。 Valueが省略された場合には、Keyに対応するヘッダの存在の有無を条件に判断する。
 
 
 -  **URL**
 
-   $URL[...]로 표기하며 생략이 가능하다. 명확한 표현과 패턴을 인식한다.
+   $URL[...]で表記し省略が可能である。 明確な表現とパターンを認識する。
 
 
 -  **METHOD**
 
-   $METHOD[...]로 표기하며 GET, POST, HEAD, OPTIONS 중 하나만 명시적으로 지정한다.
+   $METHOD[...]で表記し、GET、POST、HEAD、OPTIONSのどちらかを明示的に指定する。
 
-{$REQ}와 {$RES}는 헤더변경 방법을 설정한다.
-``set`` ``put`` ``append`` 의 경우 {Key: Value}로 설정하며,
-Value가 입력되지 않은 경우 빈 값("")이 입력된다.
-``unset`` 의 경우 {Key}만 입력한다.
+{$REQ}と {$RES}は、ヘッダを変更する方法を設定する。
+``set`` ``put`` ``append`` の場合、{Key：Value}に設定し、Valueが入力されていない場合は、空の値（ ""）が入力される。
+``unset`` の場合、{Key}を入力する。
 
-{Action}은 ``set`` , ``put`` , ``append`` , ``unset``  4가지로 설정이 가능하다.
+{Action}は ``set`` , ``put`` , ``append`` , ``unset``  4つに設定が可能である。
 
--  ``set``  요청/응답 헤더에 설정되어 있는 Key와 Value를 헤더에 추가한다.
-   이미 같은 Key가 존재한다면 이전 값을 덮어쓴다.
+-  ``set``  要求/応答ヘッダに設定されているKeyとValueをヘッダに追加します。 すでに同じKeyが存在する場合、以前の値を上書きします。
 
--  ``put``  ( ``set`` 과 유사하나) 같은 Key가 존재하면, 덮어쓰지 않고 새로운 라인으로 붙여 넣는다.
+-  ``put``  ( ``set`` と似ているが) のようなKeyが存在すれば、上書きせずに新しい行に貼り付けます。
 
--  ``append`` ( ``set`` 과 유사하나) 같은 Key가 존재하면, 기존의 Value와 설정된 Value사이에 Comma(,)로 구분하여 값을 결합한다.
+-  ``append`` ( ``set`` と似ているが）のようなKeyが存在する場合は、既存のValueと設定されたValueの間にComma（、）で区切って値を結合する。
 
--  ``unset`` 요청/응답 헤더에 설정되어 있는 Key에 해당하는 헤더를 삭제한다.
+-  ``unset`` 要求/応答ヘッダに設定されているKeyに対応するヘッダを削除する。
 
-{Condition}은 200이나 304같은 구체적인 응답 코드외에 2xx, 3xx, 4xx, 5xx처럼 응답코드 계열조건으로 설정한다.
-{Match}와 일치하더라도 {Condition}과 일치하지 않는다면 변경이 반영되지 않는다.
-{Condition}이 생략된 경우 응답코드를 검사하지 않는다.
+{Condition}は200や304のような具体的な応答コードのほか2xx、3xx、4xx、5xxのように応答コード系列の条件に設定する。 {Match}と一致する場合でも、{Condition}と一致しない場合、変更が反映されない。 {Condition}が省略された場合は、応答コードを調べていない。
 
 
 .. note::
 
-   ``#PROTOCOL`` 키워드를 통해 클라이언트가 요청한 프로토콜(http 또는 https)을 클라이언트 헤더에 추가할 수 있다. ::
+   ``#PROTOCOL`` キーワードを介してクライアントが要求したプロトコル（httpまたはhttps）をクライアントヘッダに追加することができる。 ::
 
       $URL[*], $REQ[X-Forwarded-Proto: #PROTOCOL], set
 
@@ -471,17 +426,17 @@ Value가 입력되지 않은 경우 빈 값("")이 입력된다.
 
 .. _handling_http_requests_compression:
 
-압축
+圧縮
 ====================================
-원본을 대신하여 콘텐츠를 압축하여 전송한다.
-:ref:`caching-policy-accept-encoding` 에 따라 콘텐츠를 구분하도록 설정되어 있어야 한다. ::
+元に代わってコンテンツを圧縮して伝送する。
+:ref:`caching-policy-accept-encoding` に基づいてコンテンツを区別するように設定されてなければならない。 ::
 
    Accept-Encoding: gzip, deflate
 
 .. figure:: img/compression_1.png
    :align: center
 
-   비압축 파일을 실시간으로 압축하여 전송한다.
+   非圧縮ファイルをリアルタイムに圧縮して伝送する。
 
 ::
 
@@ -492,31 +447,27 @@ Value가 입력되지 않은 경우 빈 값("")이 입력된다.
 
 -  ``<Compression>``
 
-   -  ``OFF (기본)`` 압축 기능을 사용하지 않는다.
+   -  ``OFF (基本)`` の圧縮機能を使用していない。
 
-   -  ``ON`` 압축 기능을 사용한다. 다음 속성을 지원한다.
+   -  ``ON`` 圧縮機能を使用する。 次のプロパティをサポートします。
 
-      -  ``Method (기본: gzip)`` 압축 방식을 지정한다. gzip만 지원된다.
-      -  ``Level (기본: 6)`` 압축 단계를 지정한다. 이 값은 ``Method`` 에 따라 달라진다. gzip은 1~9까지 지정이 가능하다. 숫자가 작을수록 빠르지만 압축률이 나쁘고, 클수록 느리지만 압축률이 좋다.
-      -  ``SourceSize (기본: 2-2048, 단위: KB)`` 원본 크기를 범위로 지정한다.
-         너무 작은 파일은 압축률이 떨어진다.
-         반대로 너무 큰 파일은 과도하게 CPU를 점유할 수 있다.
+      -  ``Method (基本: gzip)`` 圧縮方式を指定する。 gzipのみサポートされる。
+      -  ``Level (基本: 6)`` 圧縮レベルを指定します。 この値は、 ``Method`` によって異なる。 gzipは、1〜9までの指定が可能である。 数字が小さいほど高速ですが、圧縮率が悪く、大きいほど遅いが、圧縮率が良い。
+      -  ``SourceSize (基本: 2-2048, 単位: KB)`` 元のサイズを範囲で指定する。 あまりにも小さなファイルは圧縮率が低下する。 逆に大きすぎるファイルは過度にCPUを占有することができる。
 
-압축된 콘텐츠는 원본과 다른 콘텐츠로 인식/캐싱되며, 동일한 요청에 대해 다시 압축되지 않는다.
-압축 대상은 /svc/{vhost}/compression.txt 에 지정한다. 정의된 순서대로 적용된다. ::
+圧縮されたコンテンツは、オリジナルと異なるコンテンツとして認識/キャッシュされ、同じ要求の再圧縮されない。 圧縮対象は/svc/{vhost}/compression.txtに指定する。 定義された順序で適用される。 ::
 
    # /svc/www.example.com/compression.txt
-   # 구분자는 콤마( , ) 이다.
-   # {URL 조건}, {Method}, {Level} 순서로 표기한다.
+   # 区切り文字はカンマ（、）である。
+   # {URL条件}, {Method}, {Level} 順に表記する。
 
-   /sample.css, no       // 압축하지 않는다.
-   *.css                 // *.css 조건에 대해 기본 Method와 Level로 압축한다.
-   *.htm, gzip           // *.htm 조건에 대해 gzip으로 압축한다. (기본 Level)
-   *.xml, , 9            // *.xml 조건에 대해 Level 9로 압축한다.*. (기본 Method)
-   *.js, gzip, 5         // *.js 조건에 대해 gzip (Level=5)으로 압축한다.
+   /sample.css, no       // 圧縮し ない 。
+   *.css                 // *.css 条件について 基本 Methodと Levelで 圧縮する 。
+   *.htm, gzip           // *.htm 条件について gzipで 圧縮する 。 (基本 Level)
+   *.xml, , 9            // *.xml 条件について Level 9 に 圧縮する 。*。 (基本 Method)
+   *.js, gzip, 5         // *.js 条件について gzip（Level = 5） に 圧縮する 。
 
-압축은 CPU자원을 많이 소모하는 기능이다.
-다음은 파일 크기별 GZIP(Level: 9) 성능 테스트 결과이다.
+圧縮は、CPUリソースを大量に消費する機能である。 以下は、ファイルサイズ別GZIP（Level：9）の性能テストの結果である
 
 -  ``OS`` CentOS 6.3 (Linux version 2.6.32-279.el6.x86_64 (mockbuild@c6b9.bsys.dev.centos.org) (gcc version 4.4.6 20120305(Red Hat 4.4.6-4) (GCC) ) #1 SMP Fri Jun 22 12:19:21 UTC 2012)
 -  ``CPU`` `Intel(R) Xeon(R) CPU E5-2603 0 @ 1.80GHz (8 processors) <http://www.cpubenchmark.net/cpu.php?cpu=Intel%20Xeon%20E5-2603%20@%201.80GHz>`_
@@ -524,7 +475,7 @@ Value가 입력되지 않은 경우 빈 값("")이 입력된다.
 -  ``HDD`` SAS 275GB X 5EA
 
 ======================= ========== ======== ============== ========================= ==================
-크기                    압축률(%)  처리량   응답속도(ms)   클라이언트 트래픽(Mbps)   원본 트래픽(Mbps)
+サイズ                    圧縮(%)    スループット  応答速度(ms)    クライアントのトラフィック(Mbps)  元トラフィック(Mbps)
 ======================= ========== ======== ============== ========================= ==================
 1KB                     26.25      5288     6.72           40.58                     55.02
 2KB                     57.45      5238     7.20           41.52                     97.58
@@ -537,10 +488,7 @@ bootstrap.css(20KB)     86.87      3944     9.67           83.79                
 bootstrap.min.js(36KB)  73.00      1791     51.50          139.00                    514.86
 ======================= ========== ======== ============== ========================= ==================
 
-``<Compression>`` 이 활성화되어 있다면 원본 서버로 비압축 콘텐츠만을 요청한다.
-비압축 콘텐츠란 원본 서버에 Accept-Encoding헤더를 명시하지 않고 보냈을 때의 응답을 의미한다.
-만약 원본 서버가 비압축 콘텐츠 요청에 대해 Content-Encoding 헤더를 명시했다면 이미 압축된 것으로 간주하여 다시 압축하지 않는다.
-
+``<Compression>`` が有効になっている場合は、元のサーバーに非圧縮コンテンツだけを要求する。 非圧縮コンテンツとソースサーバーにAccept-Encodingヘッダを明示せずに送った時の応答を意味する。 もしソースサーバが非圧縮コンテンツ要求に対してContent-Encodingヘッダを明示した場合、既に圧縮されたものとみなして、再び圧縮しない。
 
 
 .. _handling_http_requests_drm:
@@ -548,7 +496,7 @@ bootstrap.min.js(36KB)  73.00      1791     51.50          139.00               
 DRM
 ====================================
 
-On-the-fly로 콘텐츠를 암호화하여 전송한다. 
+On-the-flyでコンテンツを暗号化して送信する。 
 
 .. figure:: img/drm1.png
    :align: center
@@ -565,21 +513,19 @@ On-the-fly로 콘텐츠를 암호화하여 전송한다.
       <Key Hash="none">$Token</Token>
    </Drm>
 
--  ``<Drm>`` DRM 방식을 설정한다. ``Status="Active"`` 로 설정되면 활성화된다. 
-   서비스 주소 뒤에 ``Keyword`` 를 suffix로 붙여 DRM을 구동한다. ::
+-  ``<Drm>`` DRM方式を設定する。 ``Status="Active"`` に設定されると、活性化される。 サービスアドレスの後ろ ``Keyword`` をsuffixに付けDRMを駆動する。 ::
 
       // URL
       www.example.com/music.mp3
 
-      // DRM 처리된 URL
+      // DRM 処理された URL
       www.example.com/music.mp3/drm
 
-   ``MaxSourceSize (기본: 500 MB)`` 를 초과하는 콘텐츠에 대해서는 500 Internal Error로 처리한다.
+   ``MaxSourceSize (基本: 500 MB)`` を超えるコンテンツについては、500 Internal Errorで処理する。
 
 
--  ``<Algorithm> (기본: RC4)`` 
-   암호화 알고리즘을 선택한다.
-   사용가능한 알고리즘은 다음과 같다.
+-  ``<Algorithm> (基本: RC4)`` 
+   暗号化アルゴリズムを選択する。 使用可能なアルゴリズムは次の通りである。
 
    ================== ============
    <Algorithm>        Bits
@@ -587,27 +533,27 @@ On-the-fly로 콘텐츠를 암호화하여 전송한다.
    RC4                40 ~ 2048
    ================== ============
 
--  ``<IV>`` Initial Vector.
+-  ``<IV>`` Initial Vector。
 
--  ``<Token>`` 키 생성에 사용될 토큰
+-  ``<Token>`` キーの生成に使用されるトークン
 
--  ``<Key> (기본: $Token)`` 변수를 조합하여 암/복호화에 사용될 키를 생성할 수 있다.
+-  ``<Key> (基本: $Token)`` 変数を組み合わせて、がん化/復号化に使用されるキーを生成することができる。
    
    ================== ==================================
-   변수                설명
+   変数                説明
    ================== ==================================
-   $Token             <Token> 의 값
-   $url               클라이언트가 요청한 URL
-   $filename1         확장자를 포함한 파일이름
-   $filename2         확장자를 제외한 파일이름
+   $Token             <Token>の値
+   $url               クライアントが要求されたURL
+   $filename1         拡張子を含むファイル名
+   $filename2         拡張子を除いたファイル名
    ================== ==================================
 
-   콤마(,)를 구분자로 사용하여 키를 생성한다. 
+   コンマ（、）を区切り文字として使用してキーを生成する。 
    
-   URL이 /music/iu.mp3 이고 ``<Token>`` 을 ABC로 가정한다면 ``<Key>`` 표현에 따른 암/복호화 키는 다음과 같다.
+   URLが/music/iu.mp3で ``<Token>`` をABCに仮定すると ``<Key>`` 表現によるがん化/復号化キーは、次のとおりである。
    
    ========================= ==================================
-   <Key Hash="none">         암/복호화 키
+   <Key Hash="none">         がん化/復号化キー
    ========================= ==================================
    $Token                    ABC
    $url,$Token               /music/iu.mp3ABC
@@ -615,28 +561,25 @@ On-the-fly로 콘텐츠를 암호화하여 전송한다.
    $filename2,$Token,$url    iuABC/music/iu.mp3
    ========================= ==================================
 
-   ``Hash (기본: none)`` 속성이 ``none`` 이라면 위에 조합된 문자열을 암/복호화 키로 사용한다.
+   ``Hash (基本: none)`` 属性が ``none`` の場合に組み合わせた文字列を、がん化/復号化キーを使用する。
 
-   ``Hash`` 속성을 지정하면 아래와 같이 조합된 문자열을 해쉬한 값을 키로 사용한다. ::
+   ``Hash`` 属性を指定すると、以下のように組み合わせた文字列をハッシュした値をキーとして使用する。 ::
 
       Hash( iuABC/music/iu.mp3 )
 
-   ``Hash`` 속성은 ``none`` , ``MD5`` , ``SHA-1`` , ``SHA-256`` 를 지원한다.
+   ``Hash`` 属性は ``none`` 、 ``MD5`` 、 ``SHA-1`` 、 ``SHA-256`` をサポートする。
    
 
 .. note::
 
-   DRM 관련 변수들( ``<Algorithm>`` , ``<IV>`` , ``<Token>`` , ``<Key>`` ) 은 동적으로 변경이 불가능하므로 신중히 설정해야 한다.
-   왜냐하면 이전 키로 암호화된 파일들을 새로운 키로 풀 수 없기 때문이다.
-   따라서 키를 변경해야 하는 상황이라면 해당 가상호스트의 캐싱을 초기화한 뒤 서비스하는 것이 안전하다.
+   DRM関連の変数( ``<Algorithm>`` , ``<IV>`` , ``<Token>`` , ``<Key>`` ) は、動的に変更できませんので、慎重に設定する必要がある。 なぜなら、以前キーで暗号化されたファイルを新しいキーで解くことができないからである。 したがって、キーを変更する必要がない状況であれば、その仮想ホストのキャッシュを初期化した後、サービスすることが安全である。
 
     
-``<IV>`` 와 ``<Token>`` 를 평문(Plain Text)으로 제공하면 보안적으로 취약하다.
-이를 아래 API를 이용해 암호화한 뒤 설정할 것을 권장한다. ::
+``<IV>`` と ``<Token>`` を平文（Plain Text）で提供するセキュリティ的に脆弱である。 これ以下のAPIを利用して暗号化した後、設定することを推奨する。 ::
 
    /command/encryptpassword?plain=abcdefghijklmnop
 
-암호화된 ``<IV>`` , ``<Token>`` 설정을 위해 ``Type="enc"`` 속성을 추가한다. ::
+暗号化された ``<IV>`` 、 ``<Token>`` 設定のために ``Type="enc"`` 属性を追加する。 ::
 
    $ server.xml - <Server><VHostDefault><Options>
    $ vhosts.xml - <Vhosts><Vhost><Options>
@@ -651,7 +594,5 @@ On-the-fly로 콘텐츠를 암호화하여 전송한다.
 
 .. note::
 
-   암호화 API는 인증서에 기반하여 동작한다. 
-   따라서 인증서가 다르면 암/복호화 결과가 다르다.
-
+   暗号化APIは、証明書に基づいて動作する。 したがって、証明書が異なる癌/復号化の結果が異なっている
 
