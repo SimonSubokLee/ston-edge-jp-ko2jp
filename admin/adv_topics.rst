@@ -257,7 +257,7 @@ Keep-Alive時間を長く与えるほどソケットの再利用性良くなり�
 TCP Segmentation Offload
 ====================================
 
-..  important::
+.. important::
 
    10G NICを使用する場合はTSO（TCP Segmentation Offload）をOFFに設定したいお勧めします。
 
