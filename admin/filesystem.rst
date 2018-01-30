@@ -190,7 +190,7 @@ HTTPの場合は、次のようにURLを利用して、元のファイルを動�
 
 このようなQueryString方式は、HTTPとFile Systemの両方の呼び出し仕様を同じように使用することができる。 ::
 
-    # "/video.mp4の0〜60秒の区間をTrimmingした「ローカルファイルにアクセスする。
+    # "/video.mp4の0〜60秒の区間をTrimmingした" ローカルファイルにアクセスする。
     /cachefs/www.example.com/video.mp4?start=0&end=60
 
 しかし、MP4HLSやDIMSよう元のURLの後ろに加工オプションをディレクトリ形式で指定する方法は、File I / Oに問題がある。 ::
