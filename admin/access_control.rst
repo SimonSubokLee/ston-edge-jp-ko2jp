@@ -58,8 +58,8 @@ Binary Databasesを`GEOIP_MEMORY_CACHE and GEOIP_CHECK_CACHE<http://dev.maxmind.
    </ ServiceAccess>
 
 ``<ServiceAccess>``の`` GeoIP``属性にGeoIP Databasesパスを設定する。
-国コードは、`ISO3166-1 alpha-2<http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_と
-`ISO3166-1 alpha-3<http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3>`_をサポートする。
+国コードは、`ISO3166-1 alpha-2 <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ と
+`ISO3166-1 alpha-3 <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3>`_ をサポートする。
 
 .. note::
 
