@@ -1,6 +1,6 @@
 ﻿.. _intro:
 
-1枚。 STONエッジサーバー（Edge Server）
+第1章。 STONエッジサーバー（Edge Server）
 **********************************
 
 .. toctree::
