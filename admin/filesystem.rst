@@ -1,30 +1,26 @@
 ﻿.. _filesystem:
 
-18장. File System
+第18章 File System
 ******************
 
-이 장에서는 STON을 로컬 디스크처럼 사용하는 방법에 대해 설명한다.
-STON은 `FUSE <http://fuse.sourceforge.net/>`_ 를 기반으로 Linux VFS(Virtual File System)에 Mount된다.
-Mount된 경로의 모든 파일은 접근되는 순간 Caching되지만 다른 프로세스는 이 사실을 알지 못한다.
-**Caching기능이 탑재된 ReadOnly 디스크** 로 이해해도 좋다.
+この章では、STONをローカルディスクのように使用する方法について説明する。 STONは `FUSE <http://fuse.sourceforge.net/>`_ をベースにLinux VFS（Virtual File System）でMountされる。 Mountされたパスのすべてのファイルは、アクセスされた瞬間Cachingますが、他のプロセスは、この事実を知らない。
+**Caching機能が搭載されたReadOnlyディスク** に理解してよい。
 
 .. figure:: img/conf_fs1.png
    :align: center
 
    `Fuse <http://upload.wikimedia.org/wikipedia/commons/0/08/FUSE_structure.svg>`_ 구조
 
-구조상 File I/O 함수 호출을 Linux Kernel이 STON에게 직접 전달하는 과정에 어떠한 요소(물리적 파일 I/O 또는 Socket통신 등)도 개입하지 않는다.
-이런 구조는 아주 높은 성능을 가능케 한다.
-STON의 메모리 Caching을 통해 물리적 디스크 접근보다 뛰어난 성능을 기대할 수 있다.
+構造File I / O関数の呼び出しをLinux KernelがSTONに直接伝達する過程でどのような要素（物理ファイルI / OまたはSocket通信など）も介入しない。 このような構造は、非常に高い性能を可能にする。 STONのメモリCachingを介して物理ディスクにアクセスよりも優れた性能を期待することができる。
 
 
 .. toctree::
    :maxdepth: 2
 
-Mount하기
+Mountする
 ====================================
 
-전역설정(server.xml)에 설정한다. ::
+グローバル設定（server.xml）に設定する。 ::
 
    # server.xml - <Server><Cache>
 
@@ -32,28 +28,25 @@ Mount하기
 
 -  ``<FileSystem>``
 
-   -  ``OFF (기본)`` 아무 것도 하지 않는다.
+   -  ``OFF (基本)`` 何もしない。
 
-   -  ``ON`` STON을 ``Mount`` 속성의 경로에 Mount한다.
+   -  ``ON``  STONを ``Mount`` 属性のパスでMountする。
 
-기존 HTTP 구조를 그대로 유지한 채 Cache 모듈에 접근하는 방식(File System)이 추가된 구조로 개발되었다.
-그러므로 어느 쪽으로부터의 접근이든 Caching은 처음 한번만 이루어지며 HTTP 또는 File I/O로 서비스된다.
-FileSystem은 Cache모듈에 접근하는 새로운 다리를 하나 더 놓은 것과 같다.
+既存のHTTP構造をそのまま維持したままCacheモジュールにアクセスする方法（File System）が追加された構造で開発された。 したがって、どちらからのアクセスでもCachingは、最初一度だけ行われ、HTTPまたはFile I / Oにサービスされる。 FileSystemはCacheモジュールにアクセスする新しい橋をもう一つおいたものである。
 
 .. figure:: img/conf_fs2.png
    :align: center
 
-   HTTP와 File I/O가 Cache모듈을 공유한다.
+   HTTPとFile I / OがCacheモジュールを共有する。
 
-원본서버의 콘텐츠를 HTTP 뿐만 아니라 File I/O로 양쪽에서 접근할 수 있다.
-이를 활용하면 로컬파일에 기반한 솔루션들의 가용성을 더 높일 수 있다.
+ソースサーバーのコンテンツをHTTPだけでなく、File I / Oの両方からアクセスすることができる。 これを活用すれば、ローカルファイルに基づいたソリューションの可用性をさらに高めることができる。
 
 .. figure:: img/conf_fs3.png
    :align: center
 
-   어떤 서버라도 OK
+   どのサーバーでもOK
 
-현재 STON File System이 지원하는 함수 목록은 다음과 같다.
+現在STON File Systemがサポートしている関数の一覧は、以下の通りである。
 
 ========= =============== ===========
 FUSE	  C	              LINUX
@@ -65,41 +58,35 @@ getattr	  fstat	          stat
 unlink	  remove	      unlink
 ========= =============== ===========
 
-File I/O는 내부적으로 여러 단계를 거친다.
-각 단계에 대한 이해가 바탕이 되어야 최고의 성능을 얻을 수 있다.
+File I / Oは、内部的にいくつかの段階を経る。 各ステップの理解が土台にならなければ、最高のパフォーマンスを得ることができる。
 
 
 
-가상호스트 찾기
+仮想ホストを探す
 ====================================
 
-첫 번째 과정은 접근하려는 가상호스트를 찾는 것이다.
-HTTP 요청에는 다음과 같이 Host헤더가 명시되어 있어 가상호스트를 쉽게 찾을 수 있다. ::
+最初のコースは、アクセスしようとする仮想ホストを見つけることです。 HTTPリクエストには、次のようにHostヘッダが明示されており、仮想ホストを簡単に見つけることができる。 ::
 
     GET /ston.jpg HTTP/1.1
     host: example.com
 
-File System에서는 첫 번째 경로로 이 문제를 해결한다.
-예를 들어 STON이 /cachefs 라는 경로에 Mount되어 있다면 로컬파일에 접근하기 위해서는
-다음 경로를 사용해야 한다. ::
+File Systemは、最初のパスで、この問題を解決する。 例えば、STONが/ cachefsというパスでMountされている場合は、ローカルファイルにアクセスするには、次のパスを使用する必要がある。 ::
 
     /cachefs/example.com/ston.jpg
 
-:ref:`env-vhost-find` 도 동일하게 동작한다.
-example.com의 ``<Alias>`` 로 *.example.com이 지정되어 있다면 다음 접근은 모두 같은 파일을 가리킨다. ::
+:ref:`env-vhost-find` も同じように動作する。 example.comの ``<Alias>`` に *.example.comが指定されている場合は、以下のアプローチは、すべて同じファイルを指す。 ::
 
     /cachefs/example.com/ston.jpg
     /cachefs/img.example.com/ston.jpg
     /cachefs/example.example.com/ston.jpg
 
-예를들어 Apache에서 example.com을 연동하기 위해서는 DocumentRoot를 /cachefs/example.com/로 설정해야 한다.
+たとえばApacheでexample.comを連動するためにはDocumentRootを/cachefs/example.com/に設定する必要がある。
 
 
-파일/디렉토리
+ファイル/ディレクトリ
 ====================================
 
-가상호스트 별로 File System을 설정한다.
-또는 기본 가상호스트를 통해 모든 가상호스트에 일괄설정 할 수 있다. ::
+仮想ホストごとにFile Systemを設定する。 またはデフォルトの仮想ホストを使用して、すべての仮想ホストに一括設定することができる。 ::
 
    # server.xml - <Server><VHostDefault><Options>
    # vhosts.xml - <Vhosts><Vhost><Options>
@@ -111,141 +98,109 @@ example.com의 ``<Alias>`` 로 *.example.com이 지정되어 있다면 다음 �
       <Unlink>Purge</Unlink>
    </FileSystem>
 
--  ``<FileTime> (기본: Origin)``
-   파일시간을 제공할 때 ``Origin`` 인 경우 원본에서 응답한 Last-Modified시간, ``Local`` 인 경우 로컬에 캐싱된 시간을 서비스한다.
-   ( ``Origin`` 인 경우) 원본서버에서 Last-Modified시간을 주지 않은 경우 다음과 같이 Unix 초기시간으로 제공된다.
+-  ``<FileTime> (基本: Origin)``
+   ファイルの時間を提供する際に ``Origin`` である場合、元ので答えたLast-Modified時刻、 ``Local`` の場合、ローカルにキャッシュされた時間を整備する。
+   ( ``Origin`` の場合) 元のサーバーで、Last-Modified時間を与えていない場合は、次のようにUnixの初期時間に提供される。
 
    .. figure:: img/fs_filetime.png
       :align: center
 
 -  ``<FileSystem>``
-   ``Status`` 속성이 ``Inactive`` 라면 File System에서 접근할 수 없다.
-   `Active` 로 설정해야 한다.
+   ``Status`` 属性が ``Inactive`` であれば、File Systemからアクセスすることができない。 Activeに設定する必要がある。
 
--  ``<FileStatus> (기본: 200)``
-   파일로 인식할 원본서버 HTTP 응답코드를 설정한다.
-   일반적으로는 200만을 설정하지만 특별한 제약은 없다.
+-  ``<FileStatus> (基本: 200)``
+   ファイルとして認識することが、元のサーバーHTTP応答コードを設定する。 一般的には200万を設定しますが、特別な制約はない。
 
--  ``<DirStatus> (기본: 301, 302, 400, 401, 403)``
-    디렉토리로 인식할 원본서버 HTTP 응답코드를 설정한다.
-    기본 값으로 302, 400, 401, 403등이 설정된다.
+-  ``<DirStatus> (基本: 301, 302, 400, 401, 403)``
+    ディレクトリとして認識することが、元のサーバーHTTP応答コードを設定する。 デフォルトで302、400、401、403などが設定される。
 
--  ``<Unlink> (기본: Purge)``
-   파일삭제 요청이 들어온 경우 동작방식 ``Purge`` , ``Expire`` , ``HardPurge`` 을 설정한다.
+-  ``<Unlink> (基本: Purge)``
+   ファイル削除要求が入ってきた場合、動作 ``Purge`` , ``Expire`` , ``HardPurge`` を設定する。
 
 
 
-원본서버마다 HTTP 응답코드가 다양하게 해석될 수 있다.
-그러므로 각각의 HTTP 응답코드 해석방식을 설정해야 한다.
+元のサーバーにHTTP応答コードが多様に解釈されることができる。 したがって、それぞれのHTTP応答コードの解釈方法を設定する必要がある。
 
-대부분의 경우 원본서버에 존재하는 파일의 경우 **200 OK** 로 응답한다.
-디렉토리 접근인 경우 **403 Forbidden** 응답이나 **302 Found** 로 다른 페이지로 Redirect시키기도 한다.
-응답코드명을 comma(,)로 구분하여 설정하면 해당 HTTP 응답코드의 Body를 파일 또는 디렉토리로 인식한다.
-설정되지 않은 응답코드에 대해서는 존재하지 않는 것으로 판단, File I/O가 실패한다.
+ほとんどの場合、元のサーバーに存在するファイルの場合、 **200 OK** で応答する。 ディレクトリアクセスの場合 **403 Forbidden** 応答や **302 Found** に別のページにRedirectさせたりする。 応答コード名をcomma（、）で区切って設定すると、HTTP応答コードのBodyをファイルまたはディレクトリとして認識する。 設定されていない応答コードには存在しないものと判断、File I / Oが失敗する。
 
 
-파일속성
+ファイルのプロパティ
 ====================================
 
-대부분 File I/O의 첫 번째 단계는 파일속성을 얻는 것이다.
-파일을 open하기 전에 파일정보를 얻는 것은 당연한 순서다.
-Kernel이 파일속성을 서비스하는 과정을 STON관점에서 보면 다음과 같다.
-(/cachefs는 Mount경로이므로 Kernel이 생략한다.)
+ほとんどFile I / Oの最初のステップは、ファイルの属性を取得するものである。 ファイルをopenする前に、ファイルの情報を得ることは当然の順だ。 Kernelこのファイルの属性をサービスする過程をSTONの観点から見ると、以下の通りである。 （/ cachefsはMountパスなので、Kernelが省略する。）
 
 .. figure:: img/conf_fs4.png
    :align: center
 
-   파일속성을 얻는 과정
+   ファイルの属性を取得するプロセス
 
-Linux의 경우 파일과 디렉토리를 별도로 구분하지 않는다.
-그러므로 특정 파일속성을 얻는 과정이 생각보다 복잡하다.
-위 그림에서도 알 수 있듯이 디렉토리가 깊으면 깊을수록 중간 과정의(=필요 없는) 가상호스트 검색과 파일 접근이 발생하여 성능이 저하된다.
-특히 /one 또는 /one/two처럼 웹 서비스라면 접근되지도 않을 경로의 요청이 발생하여 원본서버 부하를 발생시킨다.
-물론 Caching되면 TTL(Time To Live) 시간 동안 접근은 발생하지 않지만 아름답지 않은 것만은 분명하다.
+Linuxの場合、ファイルやディレクトリを別に区別しない。 したがって、特定のファイルの属性を取得するプロセスが思ったより複雑である。 上の図からもわかるように、ディレクトリが深ければ深いほど、中間過程の（=必要ない）仮想ホストを検索およびファイルアクセスが発生し、性能が低下する。 特に/ oneまたは/ one / twoよう、Webサービスであれば、アクセスされてもいないパスの要求が発生して、元のサーバーの負荷を発生させる。 もちろんCachingされると、TTL（Time To Live）時間のアクセスは発生しません美しくないことだけは明らかだ。
 
-이런 구조적 부하를 휴리스틱(Heuristic)하게 해결하기 위해 ``DotDir`` 속성을 추가하였다.
-``DotDir`` 은 dot(.)이 요청된 경로에 없으면 디렉토리(Dir)로 인식하는 기능이다.
-앞서 설명한 그림은 ``DotDir`` 이 ``OFF`` 인 상태이다.
-``DotDir`` 이 ``ON`` 인 경우는 다음과 같이 동작한다.
+このような構造の負荷をヒューリスティック（Heuristic）に解決するために ``DotDir`` 属性を追加した。
+``DotDir`` はdot（。）が要求されたパスに存在しない場合、ディレクトリ（Dir）として認識される機能である。 前述の図は、 ``DotDir`` が ``OFF`` の状態である。
+``DotDir`` が ``ON`` である場合は、次のように動作する。
 
 .. figure:: img/conf_fs5.png
    :align: center
 
-   전역 ``DotDir`` 활성화( ``ON`` )
+   全域 ``DotDir`` 有効( ``ON`` )
 
-Kernel에서 호출되는 과정이나 횟수에는 변함이 없다.
-하지만 요청된 경로에 dot(.)이 없으면 가상호스트까지 가지 않고 즉시 디렉토리로 응답하기 때문에 꼭 필요한 부분에서만 가상호스트와 파일이 참조된다.
-이 기능은 대부분의 프로그래머들이 파일에만 확장자를 부여하고 디렉토리에는 그렇지 않다는 것에 착안한 기능이다.
-그러므로 사용하기 전에 디렉토리 구조에 대해 반드시 확인이 필요하다.
+Kernelから呼び出される過程や回数は変わらない。 しかし、要求されたパスにdot（。）がない場合、仮想ホストまで行かずに、すぐにディレクトリに応答するため、必要な部分のみの仮想ホストとファイルが参照される。 この機能は、ほとんどのプログラマは、ファイルのみの拡張子を付与して、ディレクトリには、そうではないことに着目した機能である。 したがって、使用する前に、ディレクトリ構造については必ず確認が必要である。
 
-``<FileSystem>`` 의 ``DotDir`` 속성은 전역이다.
-쉽게 말해 모든 가상호스트가 디렉토리에 dot(.)을 사용하지 않는다면 전역 ``DotDir`` 을 ``ON`` 으로 설정하는 것이 아주 효과적이다.
-물론 전역 ``DotDir`` 을 ``OFF`` 로 설정하고 가상호스트마다 별도로 설정할 수도 있다.
-이 경우 다음 그림처럼 약간의 성능부하가 발생한다.
+``<FileSystem>`` の ``DotDir`` 属性は、グローバルである。 簡単に言うと、すべての仮想ホストがディレクトリにdot（。）を使用しない場合、グローバル ``DotDir`` を ``ON`` に設定することは非常に有効である。 もちろん全域 ``DotDir`` を ``OFF`` に設定して、仮想ホストごとに個別に設定することもできる。 この場合、次の図のように、少しのパフォーマンス負荷が発生する。
 
 .. figure:: img/conf_fs6.png
    :align: center
 
-   가상호스트 ``DotDir`` 활성화( ``ON`` )
+   仮想ホスト ``DotDir`` 有効( ``ON`` )
 
-가상호스트 검색은 발생하지만 파일참조는 dot(.)이 있는 상태에서만 발생한다.
-매우 빈번하게 호출되는 만큼 성능과 관련하여 반드시 이해할 것을 권장한다.
+仮想ホストの検出は発生するが、ファイルの参照は、dot（。）がある状態でのみ発生する。 非常に頻繁に呼び出されるように、パフォーマンスと関連して、必ず理解するのをお勧めします。
 
 
-파일읽기
+ファイルの読み取り
 ====================================
 
-파일속성을 얻는 과정은 복잡하지만 정작 파일 읽기는 간단하다.
-먼저 파일을 Open한다.
-모든 파일은 당연히 ReadOnly이다.
-Write권한의 파일 접근은 실패한다.
-최초 파일이 접근되는 경우 HTTP와 마찬가지로 원본서버에서 파일을 Caching한다.
-파일을 요청한 프로세스가 기다리지 않도록 다운로드를 진행하면서 동시에 File I/O 서비스가 이루어진다.
+ファイルの属性を取得するプロセスは複雑ですが、肝心のファイルの読み取りは簡単である。 まず、ファイルをOpenする。 すべてのファイルは、当然ReadOnlyある。 Write権限のファイルへのアクセスは失敗する。 最初のファイルがアクセスされる場合、HTTPと同様に、元のサーバーからファイルをCachingする。 ファイルを要求されたプロセスが待機しないようダウンロードを進めながら、同時にFile I / Oサービスが行われます。
 
 .. figure:: img/conf_fs7.png
    :align: center
 
-   파일 Open
+   ファイルOpen
 
-이후 동작은 HTTP 서비스와 동일하다.
-다만 HTTP의 경우 처음 결정된 Range에서 순차적(Sequential)인 파일접근이 발생하기 때문에 파일 전송에 유리한 면이 있다.
-반면 File I/O의 경우 파일 크기와 상관없이 아주 작은 1KB단위의 read접근이 매우 많이 발생할 수 있다.
-성능의 극대화를 위해 STON은 Cache모듈에 `Readahead <http://en.wikipedia.org/wiki/Readahead>`_ 를 구현했으며, 이를 통해 File I/O 성능을 극대화시켰다.
+以降の動作は、HTTPサービスと同じである。 ただしHTTPの場合、最初決定されたRangeで順次（Sequential）のファイルへのアクセスが発生するため、ファイル転送に有利な面がある。 一方、File I / Oの場合は、ファイルサイズに関係なく、非常に小さな1KB単位のreadアクセスが非常に多く発生することができる。 性能の最大化のためにSTONはCacheモジュールに `Readahead <http://en.wikipedia.org/wiki/Readahead>`_ を実装しており、これにより、File I / Oパフォーマンスを最大化させた。
 
-파일닫기(fclose등) 함수가 호출되거나 프로세스가 종료되는 경우 파일 handle은 Kernel에 의해 반납된다.
-이는 HTTP 트랜잭션이 종료되는 것과 같다.
+ファイルを閉じる（fcloseなど）関数が呼び出されるか、プロセスが終了した場合、ファイルhandleはKernelによって返却される。 これはHTTPトランザクションが終了するのと同じだ。
 
 
-파일삭제
+
+
+ファイルの削除
 ====================================
-Caching된 파일은 STON에 의해 관리되지만 프로세스가 삭제요청을 보낼 수 있다.
-STON은 다양한 :ref:`api-cmd-purge` 방법을 제공하고 있으므로 이런 요청에 쉽게 대응할 수 있다.
+Cachingされたファイルは、STONによって管理されますが、プロセスが削除要求を送信することができる。 STONは、様々な :ref:`api-cmd-purge` 方法を提供していますので、このような要求に容易に対応することができる。
 
-예를 들어 ``<Unlink>`` 가 ``expire`` 로 설정되어 있는 경우 파일삭제 요청에 대해 해당 파일을 expire하도록 동작한다.
-Kernel에서 다시 해당 파일에 접근한다면 expire된 상태이므로 원본서버에서 변경여부를 확인한 뒤 변경되지 않았다면 해당 파일을 다시 서비스한다.
+例えば、 ``<Unlink>`` が ``expire`` に設定されている場合は、ファイルの削除要求に対して、そのファイルをexpireするように動作する。 Kernelで再びそのファイルにアクセスする場合expireされた状態なので、元のサーバーから変更するかどうかを確認した後に変更されていない場合、そのファイルを再度整備する。
 
 
-파일확장
+ファイルの拡張
 ====================================
-HTTP의 경우 다음과 같이 URL을 이용하여 원본 파일을 동적으로 가공할 수 있다. ::
+HTTPの場合は、次のようにURLを利用して、元のファイルを動的に処理することができる。 ::
 
-    # HTTP를 통해 /video.mp4의 0~60초 구간을 Trimming한다.
+    # HTTP経由 /video.mp4の0〜60秒の区間をTrimmingする。
     http://www.example.com/video.mp4?start=0&end=60
 
-이와 같은 QueryString방식은 HTTP와 File System 모두 호출규격을 동일하게 사용할 수 있다. ::
+このようなQueryString方式は、HTTPとFile Systemの両方の呼び出し仕様を同じように使用することができる。 ::
 
-    # "/video.mp4의 0~60초 구간을 Trimming한" 로컬파일에 접근한다.
+    # "/video.mp4の0〜60秒の区間をTrimmingした「ローカルファイルにアクセスする。
     /cachefs/www.example.com/video.mp4?start=0&end=60
 
-하지만 MP4HLS나 DIMS처럼 원본 URL뒤에 가공옵션을 디렉토리 형식으로 명시하는 방식은 File I/O에 문제가 있다. ::
+しかし、MP4HLSやDIMSよう元のURLの後ろに加工オプションをディレクトリ形式で指定する方法は、File I / Oに問題がある。 ::
 
     /cachefs/image.winesoft.com/img.jpg/12AB/resize/500x500/
     /cachefs/www.winesoft.com/video.mp4/mp4hls/index.m3u8
 
-"파일속성 얻기" 에서 설명한 바와 같이 LINUX는 경로 각 부분의 속성을 매번 물어본다.
-STON관점에서는 현재 물어보는 경로 뒤에 추가 경로가 있는지 알 수 없기 때문에 가공되지 않은 파일을 서비스하게 된다.
+"ファイルのプロパティを取得" で説明したように、LINUXは、パスの各部分の属性を毎回尋ねる。 STON観点では、現在求めてパスの後に追加のパスがあることを知ることができないため、加工されていないファイルをサービスすることになる。
 
-이 문제를 극복하기 위해서 STON은 별도의 구분자로 ``<FileSystem>`` 의 ``Separator (기본: ^)`` 속성을 사용한다. ::
+この問題を克服するために、STONは、別の区切り文字として ``<FileSystem>`` の ``Separator (基本: ^)`` 属性を使用する。 ::
 
     /cachefs/image.winesoft.com/img.jpg^12AB^resize^500x500^
     /cachefs/www.winesoft.com/video.mp4^mp4hls^index.m3u8
@@ -253,46 +208,40 @@ STON관점에서는 현재 물어보는 경로 뒤에 추가 경로가 있는지
 .. figure:: img/conf_fs9.png
    :align: center
 
-   MP4HLS 접근
+   MP4HLS アクセス
 
-STON 내부에서는 ``Separator`` 를 slash(/)로 변경하여 HTTP와 동일한 호출규격을 사용한다.
-이를 적극적으로 활용할 경우 다음과 같이 불필요 File I/O접근을 완전히 제거할 수 있다.
+STON内部では、 ``Separator`` をslash（/）に変更して、HTTPと同じ呼び出し仕様を使用する。 これを積極的に活用する場合は、次のように不要File I / Oアクセスを完全に除去することができる。
 
 .. figure:: img/conf_fs7.png
    :align: center
 
-   극도로 최적화된 접근
+   極度に最適化されたアプローチ
 
 
 
-Wowza 연동
+Wowza連動
 ====================================
 
-File System을 이용해 손쉽게 Wowza를 연동할 수 있다.
-STON이 Mount된 경로를 Wowza의 파일경로로 설정하는 것으로 모든 설정이 완료된다.
+File Systemを利用して簡単にWowzaを連動することができる。 STONがMountされたパスをWowzaのファイルパスに設定すること、すべての設定が完了している。
 
-**1. [STON - 전역설정] 파일시스템 설정 ON**
+**1. [STON - グローバル設定] ファイルシステムの設定ON**
 
-  전역설정(server.xml)에 다음과 같이 ``<FileSystem>`` 을 ``ON`` 으로 설정한다.
-  (예제에서는 Mount경로를 "/cachefs"로 설정한다.) ::
+  グローバル設定（server.xml）には、次のように ``<FileSystem>`` を ``ON`` に設定する。 （例では、Mountパスを「/ cachefs」に設定する。） ::
 
      # server.xml - <Server><Cache>
 
      <FileSystem Mount="/cachefs" DotDir="OFF" Separator="^">ON</FileSystem>
 
-  또는 WM의 전역설정 - 파일시스템에서 다음과 같이 파일 시스템을 "사용한다"로 설정한다.
+  またはWMのグローバル設定 - ファイルシステムでは、次のようにファイルシステムを "使用する"に設定する。
 
   .. figure:: img/faq_wowza1.png
      :align: center
 
-     설정 후 반드시 STON을 재시작해야 Mount된다.
+     設定後は、必ずSTONを再起動する必要がMountされる。
 
-**2. [STON - 가상호스트] 파일시스템 접근허가 & 응답코드 설정**
+**2. [STON - 仮想ホスト] ファイルシステムへのアクセスの許可及び応答コードの設定**
 
-  가상호스트의 파일시스템 접근을 Active시킨다.
-  원본서버 응답코드에 따른 파일/디렉토리 판단정책도 설정한다.
-  여기서는 가상호스트 기본 설정(server.xml)을 예로 설명하지만
-  각각의 가상호스트(vhosts.xml)에서 개별적으로 설정할 수 있다. ::
+  仮想ホストのファイルシステムへのアクセスをActiveせる。 ソースサーバーの応答コードによるファイル/ディレクトリの判断政策も設定する。 ここ仮想ホストの設定（server.xml）を例に説明するが、それぞれの仮想ホスト（vhosts.xml）で個別に設定することができる。 ::
 
      # server.xml - <Server><VHostDefault><Options>
      # vhosts.xml - <Vhosts><Vhost><Options>
@@ -302,27 +251,17 @@ STON이 Mount된 경로를 Wowza의 파일경로로 설정하는 것으로 모�
         <DirStatus>301, 302, 400, 401, 403</DirStatus>
      </FileSystem>
 
-  또는 WM의 가상호스트 - 파일시스템에서 다음과 같이 접근을 "허가한다"로 설정한다.
+  またはWMの仮想ホスト - ファイルシステムでは、次のようにアクセスを「許可する」に設定する。
 
   .. figure:: img/faq_wowza2.png
      :align: center
 
-     응답코드를 설정한다.
+     応答コードを設定する。
 
 
-**3. [Wowza] Storage 경로 설정**
+**3. [Wowza] Storageパスの設定**
 
-  Wowza설치경로 /Conf/Application.xml 파일을 다음과 같이 STON이 Mount된 경로를 바라보도록 편집한다. ::
-
-     <Streams>
-       <StreamType>default</StreamType>
-       <StorageDir>/cachefs/example.com</StorageDir>
-       <KeyDir>${com.wowza.wms.context.VHostConfigHome}/keys</KeyDir>
-     </Streams>
-
-**4. [Wowza] VOD 경로설정**
-
-  Wowza설치경로 /Conf/vod/Application.xml 파일을 다음과 같이 STON이 Mount된 경로를 바라보도록 편집한다. ::
+  Wowzaインストールパス/Conf/Application.xmlファイルを次のようにSTONがMountされたパスを眺めるよう編集する。 ::
 
      <Streams>
        <StreamType>default</StreamType>
@@ -330,11 +269,21 @@ STON이 Mount된 경로를 Wowza의 파일경로로 설정하는 것으로 모�
        <KeyDir>${com.wowza.wms.context.VHostConfigHome}/keys</KeyDir>
      </Streams>
 
-**5. 플레이어 테스트**
+**4. [Wowza] VODパスの設定**
 
-  Wowza 테스트 플레이어로 로컬에 존재하지 않는(=STON이 캐싱해야 하는) 영상을 RTMP로 재생한다.
+  Wowzaインストールパス/Conf/vod/Application.xmlファイルを次のようにSTONがMountされたパスを眺めるよう編集する。 ::
+
+     <Streams>
+       <StreamType>default</StreamType>
+       <StorageDir>/cachefs/example.com</StorageDir>
+       <KeyDir>${com.wowza.wms.context.VHostConfigHome}/keys</KeyDir>
+     </Streams>
+
+**5. プレーヤーテスト**
+
+  Wowzaテストプレイヤーにローカルに存在しない（= STONがキャッシュしなければなら）映像をRTMPで再生する。
 
   .. figure:: img/faq_wowza3.png
      :align: center
 
-     테스트엔 적절한 영상이 필요합니다.
+     テストは、適切な映像が必要です。
