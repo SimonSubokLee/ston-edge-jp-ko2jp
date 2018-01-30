@@ -21,7 +21,7 @@
 
 クライアントがサーバーに接続した瞬間IP情報を使用してブロックするかどうかを決定する。
 接続の段階で処理されるため、最も確実で速い。
-グローバル設定（server.xml）に設定し、最も高い優先順位を持つ。::
+グローバル設定（server.xml）に設定し、最も高い優先順位を持つ。 ::
 
    ＃server.xml - <Server><Host>
 
@@ -37,7 +37,7 @@
    `` Default（デフォルトAllow）``属性は一致する条件がない場合の処理方法である。
    この属性を`` Deny``に設定すると、サブに``<Allow>``で許可する条件を指定ヘジュオヤする。
 
-ブロックされたIPは:ref:`admin-log-deny` に記録される。
+ブロックされたIPは :ref:`admin-log-deny` に記録される。
 
 
 .. _access-control-geoip:
@@ -46,9 +46,9 @@ GeoIP
 ====================================
 
 GeoIPを使用して国別のアクセスを遮断することができる。
-`GeoIP Databases<http://dev.maxmind.com/geoip/legacy/downloadable/>`_中
-Binary Databasesを`GEOIP_MEMORY_CACHE and GEOIP_CHECK_CACHE<http://dev.maxmind.com/geoip/legacy/benchmarks/>`_で
-リンクしてリアルタイムで変更を反映する。::
+`GeoIP Databases <http://dev.maxmind.com/geoip/legacy/downloadable/>`_ 中
+Binary Databasesを`GEOIP_MEMORY_CACHE and GEOIP_CHECK_CACHE <http://dev.maxmind.com/geoip/legacy/benchmarks/>`_ で
+リンクしてリアルタイムで変更を反映する。 ::
 
    ＃server.xml - <Server><Host>
 
@@ -110,11 +110,11 @@ GeoIPが設定されている場合は、そのディレクトリに保存され
 
 -  ``<AccessControl>``
 
-   - ``OFF (기본)`` ACLが有効になっていない。すべてのクライアントの要求を許可する。
+   - ``OFF (基本)`` ACLが有効になっていない。すべてのクライアントの要求を許可する。
 
-   - ``ON`` ACLが有効になる。ブロックされた要求には、`` DenialCode``属性に設定された応答コードで応答する。
-     ``Default （基本：Allow）``属性が`` Allow``ならACLは拒否リストになる。
-     逆に`` Deny``ならACLは許可リストになる。
+   - ``ON`` ACLが有効になる。ブロックされた要求には、`` DenialCode`` 属性に設定された応答コードで応答する。
+     ``Default （基本：Allow）``属性が`` Allow`` ならACLは拒否リストになる。
+     逆に`` Deny`` ならACLは許可リストになる。
 
 具体的なアクセス制御リストは、/ svc/{仮想ホスト名}/acl.txtに設定する.
 
