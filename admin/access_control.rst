@@ -1,14 +1,11 @@
 ﻿.. _access-control:
 
-15장. 접근제어
+第15章 アクセス制御
 ******************
 
-이 장에서는 원치않는 클라이언트 접근을 차단하는 방법에 대해 설명한다.
-접근차단은 보통 ACL(Access Control List)에 차단목록(Black-list)을 작성하지만 설정편의상 허용목록(White-list)을 작성하기도 한다.
+この章では、不要なクライアントへのアクセスをブロックする方法について説明する。 アクセスブロックは、通常、ACL（Access Control List）にブロックリスト（Black-list）を作成しますが設定便宜上許可リスト（White-list）を作成することもある。
 
-접근제어는 접속단계에서 수행하는 서버 접근제어와 가상호스트마다 설정하는 가상호스트 접근제어로 나뉜다.
-수준별로 시점과 판단기준이 다르므로 효과적인 차단시점을 결정해야 한다.
-접근제어의 동작은 모두 로그에 기록된다.
+アクセス制御は、アクセスの段階で実行するサーバーへのアクセス制御と仮想ホストごとに設定する仮想ホストのアクセス制御に分けられる。 レベルごとに視点と判断基準が異なりますので、効果的なブロック時点を決定しなければならない。 アクセス制御の動作は、すべてログに記録される。
 
 .. toctree::
    :maxdepth: 2
@@ -16,12 +13,10 @@
 
 .. _access-control-serviceaccess:
 
-서버 접근제어
+サーバーアクセス制御
 ====================================
 
-클라이언트가 서버에 접속하는 순간 IP정보를 통해 차단여부를 결정한다.
-접속단계에서 처리되기 때문에 가장 확실하며 빠르다.
-전역설정(server.xml)에 설정하며 가장 높은 우선순위를 가진다. ::
+クライアントがサーバーに接続した瞬間IP情報を使用してブロックするかどうかを決定する。 接続の段階で処理されるため、最も確実で速い。 グローバル設定（server.xml）に設定し、最も高い優先順位を持つ。 ::
 
    # server.xml - <Server><Host>
 
@@ -31,13 +26,10 @@
    </ServiceAccess>
 
 -  ``<ServiceAccess>``
-   IP기반의 ACL을 설정한다.
-   IP, IP Range, Bitmask, Subnet 이상 네 가지 형식을 지원한다.
-   순서를 인식하며 상위에 설정된 표현이 우선한다.
-   ``Default (기본: Allow)`` 속성은 일치하는 조건이 없을 때 처리방법이다.
-   이 속성을 ``Deny`` 로 설정하면 하위에 ``<Allow>`` 로 허가할 조건들을 명시해주어야 한다.
+   IPベースのACLを設定する。 IP、IP Range、Bitmask、Subnet以上四つの形式をサポートします。 順序を認識し、親に設定された表現が優先する。
+   ``Default (基本: Allow)`` 属性は、一致する条件がない場合の処理方法である。 この属性を ``Deny`` に設定すると、下位に ``<Allow>`` で許可する条件を指定ヘジュオヤする。
 
-차단된 IP는 :ref:`admin-log-deny` 에 기록된다.
+ブロックされたIPは :ref:`admin-log-deny` に記録される。
 
 
 .. _access-control-geoip:
@@ -45,10 +37,8 @@
 GeoIP
 ====================================
 
-GeoIP를 사용하여 국가별로 접근을 차단할 수 있다.
-`GeoIP Databases <http://dev.maxmind.com/geoip/legacy/downloadable/>`_ 중
-Binary Databases를 `GEOIP_MEMORY_CACHE and GEOIP_CHECK_CACHE <http://dev.maxmind.com/geoip/legacy/benchmarks/>`_ 로
-링크하여 실시간으로 변경내용을 반영한다. ::
+GeoIPを使用して国別のアクセスを遮断することができる。
+`GeoIP Databases <http://dev.maxmind.com/geoip/legacy/downloadable/>`_ 中Binary Databasesを `GEOIP_MEMORY_CACHE and GEOIP_CHECK_CACHE <http://dev.maxmind.com/geoip/legacy/benchmarks/>`_ へのリンクしてリアルタイムで変更を反映する。 ::
 
    # server.xml - <Server><Host>
 
@@ -57,22 +47,19 @@ Binary Databases를 `GEOIP_MEMORY_CACHE and GEOIP_CHECK_CACHE <http://dev.maxmin
       <Deny>GIN</Deny>
    </ServiceAccess>
 
-``<ServiceAccess>`` 의 ``GeoIP`` 속성에 GeoIP Databases 경로를 설정한다.
-국가코드는 `ISO 3166-1 alpha-2 <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ 와
-`ISO 3166-1 alpha-3 <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3>`_ 를 지원한다.
+``<ServiceAccess>`` の ``GeoIP`` 属性にGeoIP Databasesパスを設定する。 国コードは、 `ISO 3166-1 alpha-2 <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ と
+`ISO 3166-1 alpha-3 <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3>`_ をサポートする。
 
 .. note::
 
-   GeoIP는 파일명이 예약되어 있으므로 반드시 저장된 로컬경로를 입력하도록 설정한다.
-   또한 자동으로 변경이 반영되기 때문에 별도로 설정을 Reload하지 않아도 된다.
+   GeoIPはファイル名が予約されているので、必ず保存されたローカルパスを入力するように設定する。 また、自動的に変更が反映されるため、別途設定をReloadしていてもよい。
 
 
-GeoIP가 설정되어 있다면 해당 디렉토리에 저장된 파일목록을 조회한다.
-설정되어 있지 않다면 404 NOT FOUND로 응답한다. ::
+GeoIPが設定されている場合は、そのディレクトリに保存されたファイルの一覧を表示する。 設定されていない場合、404 NOT FOUNDに応答する。 ::
 
    http://127.0.0.1:10040/monitoring/geoiplist
 
-결과는 JSON형식으로 제공된다. ::
+結果は、JSON形式で提供される。 ::
 
    {
        "version": "2.0.0",
@@ -98,10 +85,10 @@ GeoIP가 설정되어 있다면 해당 디렉토리에 저장된 파일목록을
 
 .. _access-control-vhost:
 
-가상호스트 접근제어
+仮想ホストのアクセス制御
 ====================================
 
-가상호스트별로 서비스 허용/차단/redirect를 설정한다. ::
+仮想ホストごとにサービスを許可/ブロック/ redirectを設定する。 ::
 
    # server.xml - <Server><VHostDefault><Options>
    # vhosts.xml - <Vhosts><Vhost><Options>
@@ -110,31 +97,28 @@ GeoIP가 설정되어 있다면 해당 디렉토리에 저장된 파일목록을
 
 -  ``<AccessControl>``
 
-   - ``OFF (기본)`` ACL이 활성화되지 않는다. 모든 클라이언트 요청을 허가한다.
+   - ``OFF (基本)`` ACLが有効になっていない。 すべてのクライアントの要求を許可する。
 
-   - ``ON`` ACL이 활성화된다.
-     차단된 요청에 대해서는 ``DenialCode`` 속성에 설정된 응답코드로 응답한다.
-     ``Default (기본: Allow)`` 속성이 ``Allow`` 라면 ACL은 거부목록이 된다.
-     반대로 ``Deny`` 라면 ACL은 허가목록이 된다.
+   - ``ON`` ACLが有効になる。 ブロックされた要求には、 ``DenialCode`` 属性に設定された応答コードで応答する。
+     ``Default (基本: Allow)`` 属性が ``Allow`` であれば、ACLは拒否リストになる。 逆に ``Deny`` ならACLは許可リストになる。
 
-구체적인 접근제어 목록은 /svc/{가상호스트 이름}/acl.txt에 설정한다.
+具体的なアクセス制御リストは、/ svc / {仮想ホスト名} /acl.txtに設定する。
 
 
 .. _access-control-vhost_allow_deny:
 
-허용/거부
+許可/拒否
 ---------------------
 
-모든 클라이언트 HTTP요청에 대하여 허용/거부 여부를 설정한다.
-Deny된 요청은 :ref:`admin-log-access` 에 TCP_DENY로 기록된다.
+すべてのクライアントのHTTP要求に対して許可/拒否するかどうかを設定する。 Denyされたリクエストは、 :ref:`admin-log-access` にTCP_DENYに記録される。
 
-각 조건마다 별도로 응답코드를 설정할 수도 있다. ::
+各条件ごとに個別に応答コードを設定することもできる。 ::
 
    # /svc/www.example.com/acl.txt
-   # 구분자는 콤마(,)이며 {조건},{allow 또는 deny} 순서로 표기한다.
-   # deny일 경우 키워드 뒤에 응답코드를 명시할 수 있다.
-   # 명시하지 않으면 ``<AccessControl>`` 의 ``DenialCode`` 를 사용한다.
-   # n 개의 조건을 결합(AND)하기 위해서는 &를 사용한다.
+   # 区切り文字はカンマ（、）であり、{条件}、{allowまたはdeny}順に表記する。
+   # denyの場合、キーワードの後に応答コードを指定することができる。
+   # 指定しなければ ``<AccessControl>`` の ``DenialCode`` を使用する。
+   # n個の条件を組み合わせて（AND）するためには及びを使用する。
 
    $IP[192.168.1.1], allow
    $IP[192.168.2.1-255]
@@ -150,37 +134,34 @@ Deny된 요청은 :ref:`admin-log-access` 에 TCP_DENY로 기록된다.
    /profile.zip, deny, 500
    /secure/*.dat
 
-허용/차단 조건은 IP, GeoIP, Header, URL 4가지로 설정이 가능하다.
+許可/遮断条件は、IP、GeoIP、Header、URL、4つに設定が可能である。
 
 -  **IP**
 
-   $IP[...]로 표기하며 IP, IP Range, Bitmask, Subnet 네 가지 형식을 지원한다.
+   $IP[...]で表記し IP, IP Range, Bitmask, Subnet 4種類をサポートします。
 
 -  **GEOIP**
 
-   $IP[...]로 표기하며 반드시 GeoIP설정이 되어 있어야 동작한다.
+   $IP[...]で表記し、必ずGeoIP設定がされている動作する。
 
 -  **HEADER**
 
-   $HEADER[Key : Value]로 표기한다.
-   Value는 명확한 표현과 패턴을 인식한다.
-   $HEADER[Key:]처럼 구분자는 있지만 Value가 빈 문자열이라면 요청 헤더의 값이 비어 있는 경우를 의미한다.
-   $HEADER[Key]처럼 구분자 없이 Key만 명시되어 있다면 Key에 해당하는 헤더의 존재유무를 조건으로 판단한다.
+   $HEADER[Key : Value]と表記する。 Valueは明確な表現とパターンを認識する。 $ HEADER [Key：]のように区切り文字が、Valueが空の文字列であれば、リクエストヘッダの値が空の場合を意味する。 $ HEADER [Key]のように区切り文字なしにKeyのみ明示されている場合はKeyに対応するヘッダの存在の有無を条件に判断する。
 
 -  **URL**
 
-   $URL[...]로 표기하며 생략이 가능하다. 명확한 표현과 패턴을 인식한다.
+   $URL[...]で表記し省略が可能である。 明確な表現とパターンを認識する。
 
-$는 "조건에 맞다면 ~ 한다"를 의미하지만 !는 "조건에 맞지 않는다면 ~ 한다"를 의미한다.
-다음과 같이 부정조건으로 지원한다. ::
+$は "条件に合うなら〜する"を意味するが、！は "条件に合わない場合は〜する"を意味する。
+次のように否定条件で支援する。 ::
 
-   # 국가가 KOR이 아니라면 deny한다.
-   !IP[KOR], deny
+   # 国がJPNがない場合はdenyする。
+   !IP[JPN], deny
 
-   # referer헤더가 존재하지 않는다면 deny한다.
+   # refererヘッダが存在しない場合denyする。
    !HEADER[referer], deny
 
-   # /secure/ 경로 하위가 아니라면 allow한다.
+   # /secure/ パスサブがない場合はallowする。
    !URL[/secure/*], allow
 
 
@@ -190,21 +171,19 @@ $는 "조건에 맞다면 ~ 한다"를 의미하지만 !는 "조건에 맞지 �
 Redirect
 ---------------------
 
-모든 클라이언트 HTTP요청에 대하여 Redirect 여부를 설정한다. 
-Redirect된 요청에 대해서는 **302 Moved temporarily** 로 응답한다. ::
+すべてのクライアントのHTTP要求に対してRedirectかどうかを設定する。 Redirectされた要求には、 **302 Moved temporarily** で応答する。 ::
 
    # /svc/www.example.com/acl.txt
-   # 구분자는 콤마(,)이며 {조건},{redirect} 순서로 표기한다.
-   # redirect일 경우 키워드 뒤에 이동시킬 URL을 명시한다. (Location헤더의 값으로 명시)
+   # 区切り文字はカンマ（、）であり、{条件}、{redirect}順に表記する。
+   # redirectの場合、キーワードの後に​​移動させるURLを指定する。 (Locationヘッダの値に明示)
 
    $IP[GIN], redirect, /page/illegal_access.html
    $HEADER[referer:], redirect, http://another-site.com
    !HEADER[referer], redirect, http://example.com#URL
 
-Redirect 할 때 클라이언트가 요청한 URL이 필요할 수 있다.
-이런 경우 ``#URL`` 키워드를 사용한다.
+Redirectするときに、クライアントが要求されたURLが必要になることができる。 このような場合 ``#URL`` キーワードを使用する。
 
-HTTPS만을 지원하는 서비스의 경우 HTTP 요청에 대해 다음과 같이 ``$PROTOCOL[HTTP]`` 조건으로 HTTPS로 강제하도록 redirect시킬 수 있다. ::
+HTTPSのみをサポートするサービスの場合、HTTPリクエストには、次のように ``$PROTOCOL[HTTP]`` の条件でHTTPSを強制するようにredirectさせることができる。 ::
 
    $PROTOCOL[HTTP], redirect, https://example.com#URL
 
