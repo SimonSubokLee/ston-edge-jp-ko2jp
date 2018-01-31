@@ -19,9 +19,15 @@
 서버 접근제어
 ====================================
 
+<<<<<<< HEAD
 클라이언트가 서버에 접속하는 순간 IP정보를 통해 차단여부를 결정한다.
 접속단계에서 처리되기 때문에 가장 확실하며 빠르다.
 전역설정(server.xml)에 설정하며 가장 높은 우선순위를 가진다. ::
+=======
+クライアントがサーバーに接続した瞬間IP情報を使用してブロックするかどうかを決定する。
+接続の段階で処理されるため、最も確実で速い。
+グローバル設定（server.xml）に設定し、最も高い優先順位を持つ。 ::
+>>>>>>> origin/master
 
    # server.xml - <Server><Host>
 
@@ -37,7 +43,11 @@
    ``Default (기본: Allow)`` 속성은 일치하는 조건이 없을 때 처리방법이다.
    이 속성을 ``Deny`` 로 설정하면 하위에 ``<Allow>`` 로 허가할 조건들을 명시해주어야 한다.
 
+<<<<<<< HEAD
 차단된 IP는 :ref:`admin-log-deny` 에 기록된다.
+=======
+ブロックされたIPは :ref:`admin-log-deny` に記録される。
+>>>>>>> origin/master
 
 
 .. _access-control-geoip:
@@ -45,10 +55,17 @@
 GeoIP
 ====================================
 
+<<<<<<< HEAD
 GeoIP를 사용하여 국가별로 접근을 차단할 수 있다.
 `GeoIP Databases <http://dev.maxmind.com/geoip/legacy/downloadable/>`_ 중
 Binary Databases를 `GEOIP_MEMORY_CACHE and GEOIP_CHECK_CACHE <http://dev.maxmind.com/geoip/legacy/benchmarks/>`_ 로
 링크하여 실시간으로 변경내용을 반영한다. ::
+=======
+GeoIPを使用して国別のアクセスを遮断することができる。
+`GeoIP Databases <http://dev.maxmind.com/geoip/legacy/downloadable/>`_ 中
+Binary Databasesを`GEOIP_MEMORY_CACHE and GEOIP_CHECK_CACHE <http://dev.maxmind.com/geoip/legacy/benchmarks/>`_ で
+リンクしてリアルタイムで変更を反映する。 ::
+>>>>>>> origin/master
 
    # server.xml - <Server><Host>
 
@@ -57,9 +74,15 @@ Binary Databases를 `GEOIP_MEMORY_CACHE and GEOIP_CHECK_CACHE <http://dev.maxmin
       <Deny>GIN</Deny>
    </ServiceAccess>
 
+<<<<<<< HEAD
 ``<ServiceAccess>`` 의 ``GeoIP`` 속성에 GeoIP Databases 경로를 설정한다.
 국가코드는 `ISO 3166-1 alpha-2 <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ 와
 `ISO 3166-1 alpha-3 <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3>`_ 를 지원한다.
+=======
+``<ServiceAccess>``の`` GeoIP``属性にGeoIP Databasesパスを設定する。
+国コードは、`ISO3166-1 alpha-2 <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ と
+`ISO3166-1 alpha-3 <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3>`_ をサポートする。
+>>>>>>> origin/master
 
 .. note::
 
@@ -110,12 +133,20 @@ GeoIP가 설정되어 있다면 해당 디렉토리에 저장된 파일목록을
 
 -  ``<AccessControl>``
 
+<<<<<<< HEAD
    - ``OFF (기본)`` ACL이 활성화되지 않는다. 모든 클라이언트 요청을 허가한다.
 
    - ``ON`` ACL이 활성화된다.
      차단된 요청에 대해서는 ``DenialCode`` 속성에 설정된 응답코드로 응답한다.
      ``Default (기본: Allow)`` 속성이 ``Allow`` 라면 ACL은 거부목록이 된다.
      반대로 ``Deny`` 라면 ACL은 허가목록이 된다.
+=======
+   - ``OFF (基本)`` ACLが有効になっていない。すべてのクライアントの要求を許可する。
+
+   - ``ON`` ACLが有効になる。ブロックされた要求には、`` DenialCode`` 属性に設定された応答コードで応答する。
+     ``Default （基本：Allow）``属性が`` Allow`` ならACLは拒否リストになる。
+     逆に`` Deny`` ならACLは許可リストになる。
+>>>>>>> origin/master
 
 구체적인 접근제어 목록은 /svc/{가상호스트 이름}/acl.txt에 설정한다.
 

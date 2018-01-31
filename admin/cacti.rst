@@ -1,13 +1,12 @@
 ﻿.. _cacti:
 
-Appendix B: Cacti 모니터링
+Appendix B：Cacti監視
 *************************
 
-이 장에서는 `Cacti <http://www.cacti.net/>`_ 의 Graph Tree를 사용하여 다수의 STON을 통합 모니터링 하는 방법에 대해 설명한다.
-다음 2가지 사항이 전제된다.
+この章では、 `Cacti <http://www.cacti.net/>`_ のGraph Treeを使用して、多数のSTONを統合監視する方法について説明する。 次の2つの条件が前提となる。
 
--  Cacti가 설치된 서버
--  SNMP 활성화 ( :ref:`snmp` 참고)
+-  Cactiをインストールするサーバー
+-  SNMPの有効化 ( :ref:`snmp` 参照)
 
 
 .. toctree::
@@ -16,142 +15,142 @@ Appendix B: Cacti 모니터링
 
 .. _cacti_template:
 
-Template 추가
+Template追加
 ====================================
 
-STON에서 제공하는 Host Template을 사용하면 모니터링 환경을 쉽게 구축할 수 있다.
-( `다운로드 <http://webhard.winesoft.co.kr/ston/monitoring/cacti/ston_host_template.xml>`_ )
+STONで提供されるHost Templateを使用すると、監視環境を容易に構築することができる。
+( `ダウンロード  <http://webhard.winesoft.co.kr/ston/monitoring/cacti/ston_host_template.xml>`_ )
 
 .. figure:: img/cacti01.png
    :align: center
 
-   Import Templates 메뉴를 선택한다.
+   Import Templatesメニューを選択する。
 
 .. figure:: img/cacti02.png
    :align: center
 
-   cacti_host_template_ston.xml을 Import한다.
+   cacti_host_template_ston.xmlをImportする。
 
 
 .. _cacti_device_add:
 
-Device 등록
+Device登録
 ====================================
 
-STON을 Cacti의 Device로 등록한다.
+STONをCactiのDeviceに登録する。
 
 .. figure:: img/cacti03.png
    :align: center
 
-   [Devices] 메뉴를 선택한다.
+   [Devices]メニューを選択する。
 
 .. figure:: img/cacti04.png
    :align: center
 
-   [Devices] 메뉴의 [Add] 버튼을 클릭한다.
+   [Devices]メニューの[Add]ボタンをクリックします。
 
 .. figure:: img/cacti05.png
    :align: center
 
-   Devices 항목을 작성한다.
+   Devices項目を作成する。
 
 
--  ① 대상 STON의 이름을 작성한다.
--  ② 대상 STON의 IP를 입력한다.
--  ③ ”STON”을 선택한다.
--  ④ “Public”을 선택한다.
--  ⑤ 기본 포트 161을 입력한다.
+-  ① 対象STONの名前を作成する。
+-  ② 対象STONのIPアドレスを入力する。
+-  ③ ”STON” を選択する。
+-  ④ “Public” を選択する。
+-  ⑤ デフォルトのポート161を入力する。
 
 
-Create 버튼을 클릭하여 Device를 연동한다.
+Createボタンをクリックして、Deviceを連動する。
 
 .. figure:: img/cacti06.png
    :align: center
 
-   정상적으로 연동되었다.
+   正常連動された。
 
 .. figure:: img/cacti07.png
    :align: center
 
-   연동에 실패하였다.
+   連動に失敗しました。
 
 .. note::
 
-   SNMP 연동 실패시
+   SNMP連動失敗時
 
-   -  STON의 SNMP가 활성화되었는지 확인한다.
-   -  SNMP Port 번호가 STON의 SNMP Port번호와 일치하는지 확인한다.
+   -  STONのSNMPが有効になっていることを確認する。
+   -  SNMP Port番号がSTONのSNMP Port番号と一致することを確認する。
 
 
-Device 연동에 성공하면 STON Template 에서 제공하는 18가지 항목의 그래프를 사용할 수 있다.
+Device連動に成功するとSTON Templateで提供される18種類の項目のグラフを使用することができる。
 
 .. figure:: img/cacti08.png
    :align: center
 
-   "Create Graphs for this Host" 링크를 클릭한다.
+   "Create Graphs for this Host" リンクをクリックします。
 
 .. figure:: img/cacti09.png
    :align: center
 
-   18가지 그래프가 제공된다.
+   18種類のグラフが提供される。
 
-[Create] 버튼을 클릭하여 생성된 그래프를 확인한다.
+[Create] ボタンをクリックして、生成されたグラフを確認する。
 
 .. figure:: img/cacti10.png
    :align: center
 
-   그래프가 생성되었다.
+   グラフが作成された。
 
 
 .. _cacti_graph_tree:
 
-Graph Tree 생성
+Graph Tree生成
 ====================================
 
-Graph Tree를 생성한다.
+Graph Treeを生成する。
 
 .. figure:: img/cacti11.png
    :align: center
 
-   [Graph Trees] 클릭한다.
+   [Graph Trees] をクリックします。
 
 .. figure:: img/cacti12.png
    :align: center
 
-   우측 상단의 [Add]를 클릭한다.
+   右上の [Add]をクリックします。
 
 .. figure:: img/cacti13.png
    :align: center
 
-   Graph Tree 생성한다.
+   Graph Tree生成する。
 
 
-STON을 Graph Tree에 추가한다.
+STONをGraph Treeに追加する。
 
 .. figure:: img/cacti14.png
    :align: center
 
-   [Tree Items] 메뉴에서 [Add]를 클릭한다.
+   [Tree Items] メニューから[Add]をクリックします。
 
 .. figure:: img/cacti15.png
    :align: center
 
-   [Tree Items]항목을 작성 한다.
+   [Tree Items]項目を作成する。
 
 
--  ①	“Host”를 선택한다.
--  ②	추가할 “Devices”로 선택한다.
--  ③	“Graph Template”로 선택 한다.
+-  ①	“Host”を選択する。
+-  ②	追加する “Devices” を選択する。
+-  ③	“Graph Template” を選択する。
 
 
 .. _cacti_graph_confirm:
 
-Graphs 확인
+Graphs確認
 ====================================
 
-좌측 상단의 [graphs] 메뉴를 클릭하여 그래프가 정상적으로 나오는지 확인한다.
+左上の [graphs] メニューをクリックして、グラフが正常に出るかを確認する。
 
 .. figure:: img/cacti16.png
    :align: center
 
-   주기적으로 정상동작 여부를 확인한다.
+   定期的に、通常の動作するかどうかを確認する。
