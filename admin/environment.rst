@@ -104,16 +104,16 @@ server.xmlグローバル設定
     ``<Allow>`` の条件に ``Role`` 属性を明示的に宣言していない場合は ``<Manager>`` の ``Role`` 属性が適用される。
 
     - ``Admin`` すべてのAPI呼び出しが可能である。
-    - ``User`` :ref:`api_monitoring` , :ref:`api-graph` APIのみを呼び出すことができる。
+    - ``User`` api_monitoring、 :ref:`api-graph` APIのみを呼び出すことができる。
     - ``Looker`` :ref:`api-graph` APIのみを呼び出すことができる。
 
     その他、次のような細かい管理の目的の属性を持つ。
 
     - ``HttpMethod``
 
-      - ``ON (基本)`` :ref:`api-etc-httpmethod` 呼び出し時ACLを点検する。
+      - ``ON (基本)`` api-etc-httpmethod呼び出し時ACLを点検する。
 
-      - ``OFF`` :ref:`api-etc-httpmethod` 呼び出し時ACLを検査していない。
+      - ``OFF`` api-etc-httpmethod呼び出し時ACLを検査していない。
 
     - ``UploadMultipartName`` :ref:`api-conf-upload` の変数名を設定する。
 
