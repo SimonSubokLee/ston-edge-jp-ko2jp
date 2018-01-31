@@ -1,38 +1,31 @@
 ﻿.. admin-log:
 
-12장. 로그
+第12章 ログ
 ******************
 
-이 장에서는 로그를 다룬다.
-서비스는 로그로 시작해서 로그로 끝난다.
-로그는 금이며, 법이며, 분쟁지역의 평화유지군이다.
+この章では、ログを大事にする。 サービスは、ログに始まり、ログに終わる。 ログは、金であり、法であり、紛争地域の平和維持軍である。
 
-로그는 전역과 가상호스트로 구분된다.
-모든 로그는 기록여부를 설정할 수 있으며, 공통속성을 가진다. ::
+ログは、グローバルと仮想ホストに区分される。 すべてのログは記録するかどうかを設定することができ、共通の属性を持つ。 ::
 
    <XXX Type="time" Unit="1440" Retention="10" Compression="OFF">ON</XXX>
 
--  ``Type (기본: time)`` , ``Unit (기본: 1440분)`` 로그 롤링조건을 설정한다.
+-  ``Type (基本: time)`` , ``Unit (基本: 1440분)`` ログローリング条件を設定する。
 
-   - ``time`` 설정된 ``unit`` 시간(단위: 분)마다 로그 파일을 롤링한다.
-   - ``size`` 설정된 ``unit`` 크기(단위: MB)마다 로그 파일을 롤링한다.
-   - ``both`` 콤마(,)로 구분하여 시간과 크기를 동시에 설정한다.
-     예를 들어 Unit="1440, 100"인 경우 시간이 24시간(1440분) 또는 100MB 인 경우 로그 파일을 롤링한다.
+   - ``time`` 設定された ``unit`` 時間（単位：分）ごとにログファイルをローリングする。
+   - ``size`` 設定された ``unit`` サイズ（単位：MB）ごとにログファイルをローリングする。
+   - ``both`` コンマ（、）で区切って、時間とサイズを同時に設定する。 たとえばUnit = "1440、100"である場合、時間が24時間（1440分）または100MBの場合、ログファイルをローリングする。
 
--  ``Retention (기본: 10개)`` 단위 로그파일을 최대 n개 유지한다.
+-  ``Retention (基本: 10個)`` 単位のログファイルを最大n個の維持である。
 
--  ``Compression (기본: OFF)`` 로그가 롤링될 때 압축을 진행한다.
-   예를 들어 access_20140715_0000.log파일이 롤링되면 access_20140715_0000.log.gz로 압축되어 저장된다.
+-  ``Compression (基本: OFF)`` ログがローリングされる圧縮を行う。 たとえばaccess_20140715_0000.logファイルがローリングされると、access_20140715_0000.log.gzに圧縮されて保存される。
 
-``Type`` 이 "time" , ``Unit`` 이 10이면 로그는 매 10분에 롤링된다.
-예를 들어 서비스를 2:18분에 시작해도 로그는 매 10분인 2:20, 2:30, 2:40에 롤링된다.
-마찬가지로 하루에 한번 매일 0시 0분에 롤링하려면 1440(60분 X 24시)으로 ``Unit`` 값으로 설정한다.
-``time`` 설정에서 로그는 하루에 한번 무조건 롤링되므로 ``Unit`` 의 최대값은 1440을 넘을 수 없다.
+``Type`` が "time" , ``Unit`` が10の場合、ログは10分毎にローリングされる。 たとえば、サービスを2:18分に開始しても、ログは、10分の2:20、2:30、2:40にローリングされる。 同様に、一日に一回、毎日0時0分にローリングする1440（60分X 24時間）で ``Unit`` 値に設定する。
+``time`` の設定でログは一日に一度、無条件ローリングされるので、 ``Unit`` の最大値は、1440を超えることができない。
 
 .. figure:: img/log_rolling1.jpg
    :align: center
 
-최대 값인 24시간(Unit=1440)시간마다 로그가 롤링되도록 설정했다면 다음 그림과 같이 로그가 기록된다.
+最大値は24時間（Unit = 1440）時間ごとにログがローリングするように設定した場合は、次の図のようにログが記録される。
 
 .. figure:: img/log_rolling2.jpg
    :align: center
@@ -45,11 +38,10 @@
 
 .. admin-log-install:
 
-Install 로그
+Installログ
 ====================================
 
-설치/업데이트 시 모든 내용이 install.log에 기록된다.
-이 로그는 별도의 설정이 없다. ::
+インストール/アップデート時にすべての内容がinstall.logに記録される。 このログは、別の設定がない。 ::
 
     #DownloadURL: http://foobar.com/ston/ston.2.0.0.rhel.2.6.32.x64.tar.gz
     #DownloadTime: 13 sec
@@ -109,62 +101,61 @@ Install 로그
 
 .. _admin-log-info:
 
-Info 로그
+Infoログ
 ====================================
 
-Info로그는 전역설정(server.xml)에 설정한다. ::
+Infoログは、グローバル設定（server.xml）に設定する。 ::
 
    # server.xml - <Server><Cache>
 
    <InfoLog Type="size" Unit="1" Retention="5">ON</InfoLog>
 
--  ``<InfoLog> (기본: ON, Type: size, Unit: 1)``
-   STON의 동작과 설정변경에 대해 기록한다.
+-  ``<InfoLog> (基本: ON, Type: size, Unit: 1)``
+   STONの動作と設定の変更について記録する。
 
 
 .. _admin-log-deny:
 
-Deny 로그
+Denyログ
 ====================================
 
-Deny로그는 전역설정(server.xml)에 설정한다. ::
+Denyログは、グローバル設定（server.xml）に設定する。 ::
 
    # server.xml - <Server><Cache>
 
    <DenyLog Type="size" Unit="1" Retention="5">ON</DenyLog>
 
--  ``<DenyLog> (기본: ON, Type: size, Unit: 1)``
+-  ``<DenyLog> (基本: ON, Type: size, Unit: 1)``
 
-   :ref:`access-control-serviceaccess` 에 의해 접근차단된 IP를 기록한다. ::
+   :ref:`access-control-serviceaccess` によってアクセスブロックされたIPアドレスを記録する。 ::
 
       #Fields: date time c-ip deny
       2012.11.15 07:06:10 1.1.1.1 AP
       2012.11.15 07:06:26 2.2.2.2 GIN
       2012.11.15 07:06:30 3.3.3.3 3.3.3.1-255
 
-   모든 필드는 공백으로 구분되며 각 필드의 의미는 다음과 같다.
+   すべてのフィールドは、スペースで区切られ、各フィールドの意味は次のとおりである。
 
-   - ``date`` 날짜
-   - ``time`` 시간
-   - ``c-ip`` 클라이언트 IP
-   - ``deny`` 차단조건
+   - ``date`` 日
+   - ``time`` 時間
+   - ``c-ip`` クライアントのIPアドレス
+   - ``deny`` ブロック条件
 
 
 .. _admin-log-originerror:
 
-OriginError 로그
+OriginErrorログ
 ====================================
 
-OriginError로그는 전역설정(server.xml)에 설정한다. ::
+OriginErrorログは、グローバル設定（server.xml）に設定する。 ::
 
    # server.xml - <Server><Cache>
 
    <OriginErrorLog Type="size" Unit="5" Retention="5" Warning="OFF">ON</OriginErrorLog>
 
--  ``<OriginErrorLog> (기본: OFF, Type: size, Unit: 5, Warning: OFF)``
+-  ``<OriginErrorLog> (基本: OFF, Type: size, Unit: 5, Warning: OFF)``
 
-   모든 가상호스트의 원본서버에서 발생한 장애만을 기록한다.
-   장애는 접속장애와 전송장애를 의미하며 원본서버 배제/복구 결과가 기록된다. ::
+   すべての仮想ホストのソースサーバーで発生した障害だけ記録する。 障害は、接続障害と伝送障害を意味し、元のサーバー排除/回復の結果が記録される。 ::
 
       #Fields: date time vhostname level s-domain s-ip cs-method cs-uri time-taken sc-error sc-resinfo
       2012.11.15 07:06:10 [example.com] [ERROR] 192.168.0.13 192.168.0.13 GET /Upload/ProductImage/stock/1716439_SM.jpg 20110 Connect-Timeout -
@@ -175,42 +166,41 @@ OriginError로그는 전역설정(server.xml)에 설정한다. ::
       #2012.11.15 07:11:11 [example.com] 192.168.0.13 recovered back in service
       #2012.11.15 07:11:12 [example.com] Origin server list: 192.168.0.13
 
-   모든 필드는 공백으로 구분되며 각 필드의 의미는 다음과 같다.
+   すべてのフィールドは、スペースで区切られ、各フィールドの意味は次のとおりである。
 
-   - ``date`` 장애발생 날짜
-   - ``time`` 장애발생 시간
-   - ``vhostname`` [가상호스트]
-   - ``level`` [장애레벨(Error 또는 Warning)]
-   - ``s-domain`` 원본서버 도메인
-   - ``s-ip`` 원본서버 IP
-   - ``cs-method`` STON이 원본서버에게 보낸 HTTP Method
-   - ``cs-uri`` STON이 원본서버에게 보낸 URI
-   - ``time-taken`` 장애가 발생 할때 까지 소요된 시간
-   - ``sc-error`` 장애의 종류
-   - ``sc-resinfo`` 장애발생시 서버 응답 정보(","문자로 구분)
+   - ``date`` 障害が発生した日付
+   - ``time`` 障害発生時間
+   - ``vhostname`` [仮想ホスト]
+   - ``level`` [障害レベル（ErrorまたはWarning)]
+   - ``s-domain`` ソースサーバーのドメイン
+   - ``s-ip`` ソースサーバーのIP
+   - ``cs-method`` STONが元のサーバーに送信HTTP Method
+   - ``cs-uri`` STONが元のサーバーに送信URI
+   - ``time-taken`` 障害が発生するまでにかかった時間
+   - ``sc-error`` 障害の種類
+   - ``sc-resinfo`` 障害発生時サーバーの応答情報（ "、"文字で区切ら）
 
-   ``Warning`` 속성이 ``ON`` 이라면 다음 예제처럼 잘못된 HTTP통신이 발생한 경우에 기록한다. ::
+   ``Warning`` 属性が ``ON`` であれば、次の例のように不正なHTTP通信が発生した場合に記録する。 ::
 
       2012.11.15 07:09:03 [example.com] [WARNING] 10.10.10.10 121.189.63.219 GET /716439_SM.jpg 20110 PartialResponseOnNormalRequest Res=206,Len=2635
       2012.11.15 07:09:03 [example.com] [WARNING] 10.10.10.10 121.189.63.219 GET /716439_SM.jpg 20110 ClosedWithoutResponse -
 
-   잘못된 HTTP통신의 경우는 다음과 같다.
+   不正なHTTP通信の場合は、以下の通りである。
 
-   - ``ClosedWithoutResponse`` 원본서버에 의한 연결종료. HTTP 응답을 받지 못했다.
-   - ``ClosedWhenDownloading`` 원본서버에 의한 연결종료. Content-Length 만큼 다운로드하지 못했다.
-   - ``NotPartialResponseOnRangeRequest`` Range요청을 했으나 응답코드가 206이 아니다.
-   - ``DifferentContentLengthOnRangeRequest`` 요청한 Range와 Content-Length가 다르다.
-   - ``PartialResponseOnNormalRequest`` Range요청이 아닌데 응답코드가 206이다.
+   - ``ClosedWithoutResponse`` 元サーバーによる接続終了。 HTTP応答を受けなかった。
+   - ``ClosedWhenDownloading`` 元サーバーによる接続終了。 Content-Lengthだけダウンロードしていなかった。
+   - ``NotPartialResponseOnRangeRequest`` Range要求をしたが、応答コードが206ではない。
+   - ``DifferentContentLengthOnRangeRequest`` 要求されたRangeとContent-Lengthが異なる。
+   - ``PartialResponseOnNormalRequest`` Rangeリクエストがないのに応答コードが206である。
 
 
 
 .. admin-log-syslog:
 
-SysLog 전송
+SysLog送信
 ====================================
 
-`syslog <http://en.wikipedia.org/wiki/Syslog>`_ 프로토콜을 사용하여 로그를 UDP로 실시간 포워딩한다.
-모든 로그에 대하여 syslog로 전송되도록 설정할 수 있다. ::
+`syslog <http://en.wikipedia.org/wiki/Syslog>`_ プロトコルを使用してログをUDPでリアルタイム転送する。 すべてのログに対してsyslogに送信されるように設定することができる。 ::
 
    # server.xml - <Server><Cache>
 
@@ -220,11 +210,11 @@ SysLog 전송
 
 -  ``SysLog``
 
-   - ``OFF (기본)`` syslog를 사용하지 않는다.
+   - ``OFF (基本)`` syslogを使用していない。
 
-   - ``ON`` 이 태그 하위에 설정된 ``<SysLog>`` 로 로그를 전송한다.
+   - ``ON`` このタグの下位に設定された ``<SysLog>`` にログを送信する。
 
-다음은 ``<OriginErrorLog>`` 가 기록될 때 syslog를 설정하는 예제이다. ::
+以下は、  ``<OriginErrorLog>`` が記録されるときにsyslogを設定する例である。 ::
 
    # server.xml - <Server><Cache>
 
@@ -234,15 +224,13 @@ SysLog 전송
       <SysLog Priority="mail.debug" Dest="log.example.com" />
    </OriginErrorLog>
 
-1. ``<OriginErrorLog>`` 의 ``SysLog`` 속성을 ``ON`` 으로 설정한다.
-#. ``<OriginErrorLog>`` 의 하위에 ``<SysLog>`` 태그를 생성한다. n대의 서버로 동시에 전송가능하다.
-#. ``<SysLog>`` 의 ``Priority`` 속성을 설정한다.
-   이 표현은 syslog의 `Facility Levels <http://en.wikipedia.org/wiki/Syslog#Facility_levels>`_ 과
-   `Severity levels <http://en.wikipedia.org/wiki/Syslog#Severity_levels>`_ 의 조합으로 구성한다.
-#. ``<SysLog>`` 의 ``Dest`` 속성을 설정한다. syslog수신서버를 의미하며 수신포트가 514인 경우 생략가능하다.
+1. ``<OriginErrorLog>`` の ``SysLog`` 属性を ``ON`` に設定する。
+#. ``<OriginErrorLog>`` の下位に ``<SysLog>`` タグを生成する。 n台のサーバーに同時に送信可能である。
+#. ``<SysLog>`` の ``Priority`` 属性を設定する。 この表現は、 syslogの `Facility Levels <http://en.wikipedia.org/wiki/Syslog#Facility_levels>`_ と
+   `Severity levels <http://en.wikipedia.org/wiki/Syslog#Severity_levels>`_ の組み合わせで構成する。
+#. ``<SysLog>`` の ``Dest`` 属性を設定する。 syslog受信サーバーを意味し、受信ポートが514である場合、省略可能である。
 
-위 설정으로 기록된 sys로그 예제는 다음과 같다.
-syslog의 tag는 STON/{로그명}으로 기록된다. ::
+上記の設定で記録されたsysログの例は、以下の通りである。 syslogのtagはSTON / {ログ名}に記録される。 ::
 
     Mar 12 11:24:24 192.168.0.1 STON/ORIGINERROR: 2013-03-12 14:09:20 [ERROR] [example.com] - 192.168.0.14 GET /1.gifd 1996 Connect-Timeout -
     Mar 12 11:24:24 192.168.0.1 STON/ORIGINERROR: 2013-03-12 14:09:22 [ERROR] [example.com] - 192.168.0.14 GET /favicon.ico 1995 Connect-Timeout -
@@ -252,31 +240,29 @@ syslog의 tag는 STON/{로그명}으로 기록된다. ::
 
 
 
-가상호스트별 로그저장
+仮想ホスト固有のログ保存
 ====================================
 
-가상호스트별로 로그는 별도로 기록된다.
-로그가 ``OFF`` 로 설정되어 있어도 로컬파일에만 써지지 않을 뿐이므로
-:ref:`api-monitoring-logtrace` 는 정상동작한다. ::
+仮想ホストごとにログは別々に記録される。 ログが ``OFF`` に設定されていても、ローカルファイルにのみ書かれていないだけなので
+:ref:`api-monitoring-logtrace` は正常に動作する。 ::
 
    # server.xml - <Server><VHostDefault>
    # vhosts.xml - <Vhosts><Vhost>
 
    <Log Dir="/cache_log">
-      ... (생략) ...
+      ... (省略) ...
    </Log>
 
--  ``<Log>`` ``Dir`` 속성으로 로그가 기록될 디렉토리를 설정한다.
-   로그는 설정한 디렉토리 하위의 가상호스트 디렉토리에 생성된다.
+-  ``<Log>`` ``Dir`` 属性にログが記録されるディレクトリを設定します。 ログは、設定したディレクトリの下位の仮想ホストのディレクトリに生成される。
 
 
 
 .. _admin-log-dns:
 
-DNS 로그
+DNSログ
 ====================================
 
-원본서버 주소가 Domain으로 설정되었다면 Resolving결과를 기록한다. ::
+元サーバーのアドレスがDomainに設定された場合Resolving結果を記録する。 ::
 
    # server.xml - <Server><VHostDefault><Log>
    # vhosts.xml - <Vhosts><Vhost><Log>
@@ -296,25 +282,24 @@ DNS 로그
    2014-07-30 12:24:38 example.com 152 173.194.127.23,173.194.127.24,173.194.127.31,173.194.127.15 4 9 success
    2014-07-30 12:25:03 example.com 127 173.194.127.31,173.194.127.15,173.194.127.23,173.194.127.24 4 15007 success
 
-모든 필드는 공백으로 구분되며 각 필드의 의미는 다음과 같다.
+すべてのフィールドは、スペースで区切られ、各フィールドの意味は次のとおりである。
 
--  ``date`` 날짜
--  ``time`` 시간
--  ``domain`` 대상 Domain
--  ``ttl`` 레코드 유효시간(Time To Live)
--  ``ip-list`` IP 리스트
--  ``ip-count`` IP 개수
--  ``time-taken`` 수행시간
--  ``result`` success 또는 fail
+-  ``date`` 日
+-  ``time`` 時間
+-  ``domain`` 対象Domain
+-  ``ttl`` レコードの有効時間(Time To Live)
+-  ``ip-list`` IPリスト
+-  ``ip-count`` IP数
+-  ``time-taken`` 実行時間
+-  ``result`` successまたはfail
 
 
 .. _admin-log-access:
 
-Access 로그
+Accessログ
 ====================================
 
-모든 클라이언트의 HTTP 트랜잭션을 기록한다.
-로그 기록 시점은 HTTP 트랜잭션이 완료되는 시점이며 전송완료 또는 전송중단 시점을 의미한다. ::
+すべてのクライアントからのHTTPトランザクションを記録する。 ログ記録の時点では、HTTPトランザクションが完了した時点で、転送完了または送信停止時点を意味する。 ::
 
    # server.xml - <Server><VHostDefault><Log>
    # vhosts.xml - <Vhosts><Vhost><Log>
@@ -323,21 +308,21 @@ Access 로그
 
 -  ``XFF``
 
-   - ``ON (기본)`` 클라이언트가 보낸 XFF(X-Forwarded-For)헤더 값과 클라이언트 IP를 같이 기록한다. 없다면 ``OFF`` 와 같다.
-   - ``OFF`` 클라이언트 IP를 기록한다.
-   - ``TrimCIP`` XFF헤더가 없을 경우 클라이언트 IP를, 있는 경우 (클라이언트 IP를 제외한) XFF헤더만을 기록한다.
+   - ``ON (基本)`` クライアントが送信したXFF（X-Forwarded-For）ヘッダの値とクライアントのIPアドレスをのように記録する。 ない場合は ``OFF`` と同じである。
+   - ``OFF`` クライアントのIPアドレスを記録する。
+   - ``TrimCIP``  XFFヘッダがない場合は、クライアントのIPアドレスを、ある場合（クライアントのIPアドレスを除く）XFFヘッダだけを記録する。
 
 -  ``Form``
 
-   - ``ston (기본)`` W3C표준 + 확장필드
-   - ``apache`` Apache 형식
-   - ``iis`` IIS 형식
+   - ``ston (基本)`` W3C標準+拡張フィールド
+   - ``apache`` Apache形式
+   - ``iis`` IIS形式
    - ``custom`` `admin-log-access-custom`
 
 -  ``Local``
 
-   - ``OFF (기본)`` 로컬통신(Loopback)은 기록하지 않는다.
-   - ``ON`` 로컬통신(Loopback)도 기록한다.
+   - ``OFF (基本)`` ローカル通信（Loopback）は記録しない。
+   - ``ON`` ローカル通信（Loopback）も記録する。
 
 ::
 
@@ -346,49 +331,40 @@ Access 로그
     2012.06.27 16:52:26 220.134.10.5 GET /favicon.ico - 80 - 61.50.7.9 Chrome/19.0.1084.56 200 949 2 - - - TCP_HIT gzip+deflate 35 14875
     2012.06.27 17:00:06 220.168.0.13 GET /setup.Eexe - 80 - 61.168.0.102  Mozilla/5.0+(Windows+NT+6.1;+WOW64)+AppleWebKit/536.11+(KHTML,+like+Gecko)+Chrome/20.0.1132.57+Safari/536.11 206 20971800 7008 - - 398458880-419430399 TCP_HIT - 41 89764358
 
-모든 필드는 공백으로 구분되며 각 필드의 의미는 다음과 같다.
+すべてのフィールドは、スペースで区切られ、各フィールドの意味は次のとおりである。
 
--  ``date`` HTTP 트랜잭션이 완료된 날짜
--  ``time`` HTTP 트랜잭션이 완료된 시간
--  ``s-ip`` 서버 IP
--  ``cs-method`` 클라이언트가 보낸 HTTP Method
--  ``cs-uri-stem`` 클라이언트가 보낸 URL중 QueryString을 제외한 부분
--  ``cs-uri-query`` 클라이언트가 보낸 URL중 QueryString
--  ``s-port`` 서버 포트
--  ``cs-username`` 클라이언트 username
--  ``c-ip`` 클라이언트 IP. XFF설정이 "ON"이라면 X-Forwarded-For헤더 값과 클라이언트 IP를 기록한다.
--  ``cs(User-Agent)`` 클라이언트가 보낸 HTTP User-Agent
--  ``sc-status`` 서버 응답코드
--  ``sc-bytes`` 서버가 보낸 Bytes (헤더 + 컨텐츠)
--  ``time-taken`` HTTP트랜잭션이 완료될 때까지 소요된 전체시간(밀리세컨드)
--  ``cs-referer`` 클라이언트가 보낸 HTTP Referer
--  ``sc-resinfo`` 부가 정보. "+"문자로 구분된다.
-   압축된 컨텐츠를 서비스했다면 압축옵션(gzip 또는 deflate)이 명시된다.
-   보안통신이라면 SSL 프로토콜 버전(SSL3, TLS1, TLS1.1, TLS1.2)이 명시된다.
-   바이패스한 통신이라면 "Bypass"가 명시된다.
+-  ``date`` HTTPトランザクションが完了した日付
+-  ``time`` HTTPトランザクションが完了した時刻
+-  ``s-ip`` サーバのIP
+-  ``cs-method`` クライアントが送信したHTTP Method
+-  ``cs-uri-stem`` クライアントが送信したURLの中でQueryStringを除いた部分
+-  ``cs-uri-query`` クライアントが送信したURLの中でQueryString
+-  ``s-port`` サーバーのポート
+-  ``cs-username`` クライアントusername
+-  ``c-ip`` クライアントのIPアドレス。 XFFの設定が "ON"であれば、X-Forwarded-Forヘッダの値とクライアントのIPアドレスを記録する。
+-  ``cs(User-Agent)`` クライアントが送信したHTTP User-Agent
+-  ``sc-status`` サーバーの応答コード
+-  ``sc-bytes`` サーバーが送信Bytes（ヘッダ+コンテンツ）
+-  ``time-taken`` HTTPトランザクションが完了するまでかかった合計時間（ミリ秒）
+-  ``cs-referer`` クライアントが送信したHTTP Referer
+-  ``sc-resinfo`` 付加情報。 "+"の文字に区分される。 圧縮されたコンテンツをサービスした場合、圧縮オプション（gzipまたはdeflate）が明示される。 安全な通信であれば、SSLプロトコルのバージョン（SSL3、TLS1、TLS1.1、TLS1.2）が明示される。 バイパスした通信であれば、 "Bypass"が明示されている。
 
--  ``cs-range`` 클라이언트가 보낸 Range 헤더를 기록한다.
--  ``sc-cachehit`` 캐시 HIT결과
--  ``cs-acceptencoding`` 클라이언트가 보낸 Accept-Encoding헤더
--  ``session-id`` HTTP 클라이언트 세션 ID (unsigned int64)
--  ``sc-content-length`` 서버 응답 Content-Length 헤더 값
+-  ``cs-range`` クライアントが送信したRangeヘッダを記録する。
+-  ``sc-cachehit`` キャッシュHIT結果
+-  ``cs-acceptencoding`` クライアントが送信されるAccept-Encodingヘッダ
+-  ``session-id`` HTTP HTTPクライアントセッションID (unsigned int64)
+-  ``sc-content-length`` サーバの応答Content-Lengthヘッダの値
 
-Access로그는 전송 성공/실패 여부에 상관없이 모든 HTTP 트랜잭션을 기록한다.
-HTTP 트랜잭션은 클라이언트가 HTTP요청을 보낼 때 시작된다.
-STON이 클라이언트에게 응답을 보내기 전에 HTTP연결이 종료된다면 HTTP 트랜잭션 역시
-종료된 것으로 간주한다.
-로그에는 ``sc-status`` 와 ``sc-bytes`` 가 0으로 기록된다.
-주로 STON이 원본서버로부터 응답을 받기 전에 클라이언트가 연결을 종료하는 경우 이런
-로그가 기록된다.
+Accessログは、送信成功/失敗したかに関係なく、すべてのHTTPトランザクションを記録する。 HTTPトランザクションは、クライアントがHTTP要求を送信するときに開始される。 STONがクライアントに応答を送信する前にHTTP接続が終了した場合、HTTPトランザクションも終了されたものとみなす。 ログには、 ``sc-status`` と ``sc-bytes`` が0に記録される。 主STONが元のサーバーからの応答を受信する前に、クライアントが接続を終了する場合、このようなログが記録される。
 
 
 
 .. _admin-log-access-custom:
 
-사용자정의 Access 로그포맷
+ユーザー定義のAccessログのフォーマット
 ====================================
 
-Access 로그형식을 사용자정의 로그로 설정한다. ::
+Accessログの形式をユーザー定義のログに設定する。 ::
 
    # server.xml - <Server><VHostDefault><Log>
    # vhosts.xml - <Vhosts><Vhost><Log>
@@ -396,11 +372,11 @@ Access 로그형식을 사용자정의 로그로 설정한다. ::
    <Access Form="custom">ON</Access>
    <AccessFormat>%a %A %b id=%{userid}C %f %h %H "%{user-agent}i" %m %P "%r" %s %t %T %X %I %O %R %e %S %K</AccessFormat>
 
--  ``<Access>`` 의 ``Form`` 속성을 ``custom`` 으로 설정한다.
+-  ``<Access>`` の ``Form`` 属性を ``custom`` に設定する。
 
--  ``<AccessFormat>`` 사용자정의 로그 형식.
+-  ``<AccessFormat>`` カスタムログ形式。
 
-위 예제의 경우 다음과 같이 Access로그가 기록된다. (#Fields는 기록하지 않는다.) ::
+上の例の場合は、次のようにAccessログが記録される。 （#Fieldsは記録しない。） ::
 
     192.168.0.88 192.168.0.12 163276 id=winesoft; image.jpg example.com HTTP "STON" GET 80 "GET /ston/image.jpg?type=png HTTP/1.1" 200 2014-04-03 21:21:54 1 C 204 163276 1 2571978 TCP_MISS HTTP/1.1
     192.168.0.88 192.168.0.12 63276 id=winesoft; vod.mp4 example.com HTTP "STON" POST 80 "GET /ston/vod.mp4?start=10 HTTP/1.1" 200 2014-04-03 21:21:54 12 C 304 363276 2 2571979 TCP_REFRESH_HIT HTTP/1.1
@@ -409,50 +385,47 @@ Access 로그형식을 사용자정의 로그로 설정한다. ::
     192.168.0.88 192.168.0.12 6276 id=ston; ui.js example.com HTTP "STON" GET 80 "GET /ui.js HTTP/1.1" 200 2014-04-03 21:21:54 1 X 233 63276 1 2571982 TCP_MISS HTTP/1.1
     192.168.0.88 192.168.0.12 626 id=winesoft; hls.m4u8 example.com HTTP "STON" GET 80 "GET /hls.m4u8 HTTP/1.1" 200 2014-04-03 21:21:54 2 X 124 6312333276 2 2571983 TCP_REFRESH_HIT HTTP/1.1
 
-`Apache로그 형식 <https://httpd.apache.org/docs/2.2/ko/mod/mod_log_config.html>`_ 을
-기반으로 개발되었으며 일부 확장필드가 있다.
-각 필드의 구분자에는 제한이 없지만 Space를 사용할 경우, User-Agent처럼 Space가 포함될
-수 있는 필드는 따옴표("...")로 묶어서 설정한다.
+`Apacheのログ形式 <https://httpd.apache.org/docs/2.2/ko/mod/mod_log_config.html>`_ をベースに開発され、いくつかの拡張フィールドがあります。 各フィールドの区切り文字には制限がありませんSpaceを使用する場合は、User-AgentのようにSpaceが含まれているフィールドは、二重引用符（ "..."）で囲んで設定します。
 
--  ``%...a`` 클라이언트 IP ::
+-  ``%...a`` クライアントのIP ::
 
       192.168.0.66
 
--  ``%...A`` 서버IP 주소 ::
+-  ``%...A`` サーバーのIPアドレス ::
 
       192.168.0.14
 
--  ``%...b`` HTTP헤더를 제외한 전송 바이트수 ::
+-  ``%...b`` HTTPヘッダ以外の送らバイト数 ::
 
       1024
 
--  ``%...{foobar}C`` 서버가 수신한 요청의 Foobar 쿠키의 내용  ::
+-  ``%...{foobar}C`` サーバが受信した要求のクッキーFoobarの値  ::
 
-      %{id=}c 로 입력하면 Cookie 에서 id=에 해당하는 값을 기록
+      %{id=}c に 入力すると、Cookie の id=に 相当する 値を 記録
 
--  ``%...D`` 요청을 처리하는데 걸린 시간(MS) ::
+-  ``%...D`` リクエストを処理するのにかかった時間（MS） ::
 
       3000
 
--  ``%...f`` 파일명 ::
+-  ``%...f`` ファイル名 ::
 
-      /mp4/iu.mp4 라면 iu.mp4를 기록
+      /mp4/iu.mp4 なら iu。  mp4を 記録
 
 -  ``%...h`` HostName ::
 
       example.com
 
--  ``%...H`` 요청 프로토콜 ::
+-  ``%...H`` リクエストプロトコル ::
 
-      http 또는 https
+      http または https
 
--  ``%...{foobar}i`` 서버가 수신한 요청에서 foobar: 헤더의 내용 ::
+-  ``%...{foobar}i`` サーバが受信した要求からfoobar：ヘッダの内容 ::
 
-      %{User-Agent}i 로 입력 할 경우 User-Agent의 값을 기록
+      %{User-Agent}i として 入力 する 場合 User - Agentの 値を 記録
 
--  ``%...m`` 요청 Method ::
+-  ``%...m`` リクエストMethod ::
 
-      GET 또는 POST 또는 HEAD
+      GET または POST または HEAD
 
 -  ``%...P`` Server PORT ::
 
@@ -462,23 +435,23 @@ Access 로그형식을 사용자정의 로그로 설정한다. ::
 
       Id=10&value=20
 
--  ``%...r`` 요청의 첫번째 줄(Request Line) ::
+-  ``%...r`` リクエストの最初の行(Request Line) ::
 
       GET /img.jpg HTTP/1.1
 
--  ``%...s`` 응답코드 ::
+-  ``%...s`` の応答コード ::
 
       200
 
--  ``%...t`` STON 기본 시간형식	::
+-  ``%...t`` STON デフォルトの時間形式	::
 
       2014-01-01 15:27:02
 
--  ``%...{format}t`` Format에 정의된 날짜 형식 ::
+-  ``%...{format}t`` Formatで定義されている日付形式 ::
 
-      %{%Y-%m-%d %H:%M:%S}T 로 입력하면 2014-08-07 06:12:23으로 기록.
+      %{%Y-%m-%d %H:%M:%S}T と 入力すると 2014-08-07 06:12:23に 記録した 。
 
--  ``%...T`` TimeTaken(초단위) ::
+-  ``%...T`` TimeTaken(秒単位) ::
 
       10
 
@@ -490,24 +463,24 @@ Access 로그형식을 사용자정의 로그로 설정한다. ::
 
       /img/img.jpg?session=1232&id=37
 
--  ``%...X`` 트랜잭션이 완료되었을 때의 상태
+-  ``%...X`` トランザクションが完了したときの状態
 
-   - ``X`` 응답이 완료되기 전에 종료
-   - ``C`` 응답이 완료 되었음
+   - ``X`` 応答が完了する前に終了
+   - ``C`` 応答が完了した
 
    ::
 
       C
 
--  ``%...I`` 요청헤더를 포함한 수신바이트 ::
+-  ``%...I`` リクエストヘッダを含む受信バイト ::
 
       2048
 
--  ``%...O`` 응답헤더를 포함한 송신바이트 ::
+-  ``%...O`` レスポンスヘッダを含む、送信バイト ::
 
       2048
 
--  ``%...R`` 응답시간(MS) ::
+-  ``%...R`` 応答時間(MS) ::
 
       2
 
@@ -515,34 +488,31 @@ Access 로그형식을 사용자정의 로그로 설정한다. ::
 
       1
 
--  ``%...S`` 캐싱 HIT 결과 ::
+-  ``%...S`` キャッシュHIT結果 ::
 
       TCP_HIT
 
--  ``%...K`` 요청 HTTP 버전	::
+-  ``%...K`` リクエストHTTPのバージョン	::
 
       HTTP/1.1
 
--  ``%...y`` 요청 HTTP 헤더 크기	::
+-  ``%...y`` リクエストのHTTPヘッダサイズ	::
 
       488
 
--  ``%...z`` 응답 HTTP 헤더 크기	::
+-  ``%...z`` 応答のHTTPヘッダサイズ	::
 
       362
 
-설정한 필드의 값이 존재하지 않으면 - 로 표기한다.
-형식이 잘못되었다면 STON 기본 포맷(Form="ston")으로 동작한다.
+設定したフィールドの値が存在しない場合 - で表記する。 形式が間違ってたらSTON基本フォーマット（Form = "ston"）で動作する。
 
-위 표에서 각 필드의 ...에는 (e.g. “%h %U %r %b) 아무것도 명시하지 않거나,
-기록 조건을 명시할 수 있다(조건을 만족하지 않으면 - 로 기록).
-조건은 HTTP 상태코드 목록으로 설정하거나 !로 NOT 조건을 설정할 수 있다.
+上の表では、各フィールドの...には、 (e.g. “%h %U %r %b) 何も明示しなかったり、記録条件を明示することができる（条件を満たしていない場合 - で記録）。 条件は、HTTPステータスコードのリストに設定するか、！でNOT条件を設定することができる。
 
-다음 예제는 400(Bad Request) 오류 또는 501(Not Implemented) 오류 일 때만 User-agent를 기록한다. ::
+次の例では、 400(Bad Request) エラーまたは 501(Not Implemented) エラーの場合にのみUser-agentを記録する。 ::
 
     "%400,501{User-agent}i"
 
-다음 예제는 정상적인 상태가 아닌 모든 요청에 대해 Referer를 로그에 남긴다. ::
+次の例では、正常な状態ではなく、すべてのリクエストでRefererをログに残す。 ::
 
     "%!200,304,302{Referer}i"
 
@@ -550,11 +520,10 @@ Access 로그형식을 사용자정의 로그로 설정한다. ::
 
 .. _admin-log-origin:
 
-Origin 로그
+Originログ
 ====================================
 
-원본서버의 모든 HTTP 트랜잭션을 기록한다.
-기록 시점은 HTTP 트랜잭션이 완료되는 시점이며 전송완료 또는 전송중단 시점을 의미한다. ::
+ソースサーバーのすべてのHTTPトランザクションを記録する。 記録時点では、HTTPトランザクションが完了した時点で、転送完了または送信停止時点を意味する。 ::
 
    # server.xml - <Server><VHostDefault><Log>
    # vhosts.xml - <Vhosts><Vhost><Log>
@@ -572,79 +541,77 @@ Origin 로그
     2012.06.27 17:40:00 357 901 192.168.0.13 GET i.example.com /exB2.jpg 115.71.9.136 200 - - - 8150 189 273 8150 13 0 0 9 4 - no-cache 80 - 35 cache
     2012.06.27 17:40:00 357 901 192.168.0.13 GET i.example.com /exB3.jpg 115.71.9.136 200 - - - 8150 189 273 8150 13 0 0 9 4 - - 80 - 35 cache
 
-원본서버에 장애가 발생했다면 #[ERROR:xx]로 시작하는 에러 로그가 기록된다.
-모든 필드는 공백으로 구분되며 각 필드의 의미는 다음과 같다.
+ソースサーバーで障害が発生した場合＃[ERROR：xx]で始まるエラーログが記録される。 すべてのフィールドは、スペースで区切られ、各フィールドの意味は次のとおりである。
 
 .. figure:: img/time_taken.jpg
    :align: center
 
-   원본 시간측정 구간
+   元の時間測定区間
 
--  ``date`` HTTP 트랜잭션이 완료된 날짜
--  ``time`` HTTP 트랜잭션이 완료된 시간
--  ``cs-sid`` 세션의 고유ID. 같은 세션을 통해 처리된(재사용된) HTTP 트랜잭션은 같은 값을 가진다.
--  ``cs-tcount`` 트랜잭션 카운트. 이 HTTP 트랜잭션이 현재 세션에서 몇 번째로 처리된 트랜잭션인지 기록한다. 같은 ``cs-sid`` 값을 가지는 트랜잭션이라면 이 값은 중복될 수 없다.
--  ``c-ip`` STON의 IP
--  ``cs-method`` 원본서버에게 보낸 HTTP Method
--  ``s-domain`` 원본서버 도메인
--  ``cs-uri`` 원본서버에게 보낸 URI
--  ``s-ip`` 원본서버 IP
--  ``sc-status`` 원본서버 HTTP 응답코드
--  ``cs-range`` 원본서버에게 보낸 Range요청 값
--  ``sc-sock-error`` 소켓 에러코드(1=전송실패, 2=전송지연, 3=연결종료)
--  ``sc-http-error`` 원본서버가 4xx 또는 5xx응답을 줬을 때 응답코드를 기록
--  ``sc-content-length`` 원본서버가 보낸 Content Length
--  ``cs-requestsize (단위: Bytes)`` 원본서버로 보낸 HTTP 요청 헤더 크기
--  ``sc-responsesize (단위: Bytes)`` 원본서버가 응답한 HTTP 헤더 크기
--  ``sc-bytes (단위: Bytes)`` 수신한 컨텐츠 크기(헤더 제외)
--  ``time-taken (단위: ms)`` HTTP 트랜잭션이 완료될 때까지 소요된 전체시간. 세션 재사용이 아니라면 소켓 접속시간까지 포함한다.
--  ``time-dns (단위: ms)`` DNS쿼리에 소요된 시간
--  ``time-connect (단위: ms)`` 원본서버와 소켓 Established까지 소요된 시간
--  ``time-firstbyte (단위: ms)`` 요청을 보내고 응답이 올때까지 소요된 시간
--  ``time-complete (단위: ms)`` 첫 응답부터 완료될 때까지 소요된 시간
--  ``cs-reqinfo`` 부가 정보. "+"문자로 구분한다. 바이패스한 통신이라면 "Bypass", Private바이패스라면 "PrivateBypass"로 기록된다.
--  ``cs-acceptencoding`` 원본서버에 압축된 컨텐츠를 요청하면 "gzip+deflate"로 기록된다.
--  ``sc-cachecontrol`` 원본서버가 보낸 cache-control헤더
--  ``s-port`` 원본서버 포트
--  ``sc-contentencoding`` 원본서버가 보낸 Content-Encoding헤더
--  ``session-id`` 원본서버 요청을 발생시킨 HTTP 클라이언트 세션 ID (unsigned int64)
--  ``session-type`` 원본서버에 요청한 세션 타입
+-  ``date`` HTTPトランザクションが完了した日付
+-  ``time`` HTTPトランザクションが完了した時刻
+-  ``cs-sid`` セッションの一意のID。 同じセッションを介して処理された（再された）HTTPトランザクションは、同じ値を持つ。
+-  ``cs-tcount`` トランザクション数。 このHTTPトランザクションが現在のセッションで何番目に処理されたトランザクションであることを記録する。 同じ ``cs-sid`` 値を持つトランザクションであれば、この値は、重複することができない。
+-  ``c-ip`` STONのIP
+-  ``cs-method`` 元サーバーに送信HTTP Method
+-  ``s-domain`` ソースサーバーのドメイン
+-  ``cs-uri`` 元サーバーに送信URI
+-  ``s-ip`` ソースサーバーのIP
+-  ``sc-status`` ソースサーバーHTTP応答コード
+-  ``cs-range`` ソースサーバーに送信されるRange要求値
+-  ``sc-sock-error`` ソケットエラーコード（1 =送信失敗、2 =伝送遅延、3 =接続の終了）
+-  ``sc-http-error`` ソースサーバーが4xxまたは5xx応答を与えてくれたときに応答コードを記録
+-  ``sc-content-length`` ソースサーバーが送信したContent Length
+-  ``cs-requestsize (単位: Bytes)`` ソースサーバーに送信されるHTTPリクエストヘッダサイズ
+-  ``sc-responsesize (単位: Bytes)`` ソースサーバーが応答したHTTPヘッダーのサイズ
+-  ``sc-bytes (単位: Bytes)`` 受信したコンテンツサイズ（ヘッダを除く）
+-  ``time-taken (単位: ms)`` HTTPトランザクションが完了するまでにかかった合計時間。 セッションの再利用がない場合は、ソケット接続時間まで含んでいる。
+-  ``time-dns (単位: ms)`` DNSクエリにかかった時間
+-  ``time-connect (単位: ms)`` 元のサーバーとソケットEstablishedまでかかった時間
+-  ``time-firstbyte (単位: ms)`` 要求を送信し、応答が来るまでかかった時間
+-  ``time-complete (単位: ms)`` 最初の応答から完了するまでにかかった時間
+-  ``cs-reqinfo`` 付加情報。 "+"の文字で区切られている。 バイパスした通信であれば、 "Bypass", Privateバイパスなら "PrivateBypass"に記録される。
+-  ``cs-acceptencoding`` ソースサーバーに圧縮されたコンテンツを要求すると、 "gzip+deflate"に記録される。
+-  ``sc-cachecontrol`` 元サーバーが送信したcachecontrolヘッダ
+-  ``s-port`` ソースサーバーのポート
+-  ``sc-contentencoding`` 元サーバーが送信されるContent-Encodingヘッダ
+-  ``session-id`` ソースサーバー要求を発生させたHTTPクライアントセッションID（unsigned int64）
+-  ``session-type`` ソースサーバーに要求されたセッションのタイプ
 
-   -  ``cache`` 캐싱용도로 사용된 세션
-   -  ``recovery`` :ref:`origin_exclusion_and_recovery` 에서 복구용도로 사용된 세션
-   -  ``healthcheck`` :ref:`origin-health-checker` 가 사용한 세션
+   -  ``cache`` キャッシュ用途に使用されたセッション
+   -  ``recovery`` :ref:`origin_exclusion_and_recovery` で回復の目的で使用されたセッション
+   -  ``healthcheck`` :ref:`origin-health-checker` が使用セッション
 
 
 .. admin-log-monitoring:
 
-Monitoring 로그
+Monitoringログ
 ====================================
 
-5분 평균 통계를 기록한다. ::
+5分平均の統計を記録する。 ::
 
    # server.xml - <Server><VHostDefault><Log>
    # vhosts.xml - <Vhosts><Vhost><Log>
 
    <Monitoring Type="size" Unit="10" Retention="10" Form="json">ON</Monitoring>
 
--  ``Form`` 로그형식을 지정한다. ( ``json`` 또는 ``xml`` )
+-  ``Form`` ログ形式を指定する。 ( ``json`` または ``xml`` )
 
 
 
 .. admin-log-filesystem:
 
-FileSystem 로그
+FileSystemログ
 ====================================
 
-:ref:`filesystem` 을 통해 발생하는 모든 File I/O 트랜잭션을 기록한다. ::
+:ref:`filesystem` を使用して発生するすべてのFile I / Oトランザクションを記録する。 ::
 
    # server.xml - <Server><VHostDefault><Log>
    # vhosts.xml - <Vhosts><Vhost><Log>
 
    <FileSystem Type="time" Unit="1440" Retention="10">ON</FileSystem>
 
-File I/O 트랜잭션이 종료될 때 기록된다.
-트랜잭션 종료 시점은 cs-method의 형태에 따라 달라진다. ::
+File I/O トランザクションの終了時に記録される。 トランザクションの終了時点ではcs-methodの形態に依存する。 ::
 
     #Fields: date time cs-method cs-path sc-status sc-bytes response-time time-taken sc-cachehit attr session-id
     2012.06.27 16:52:24 ATTR /t 200 0 100 100 TCP_HIT FOLDER 1
@@ -652,81 +619,74 @@ File I/O 트랜잭션이 종료될 때 기록된다.
     2012.06.27 16:52:24 OPEN /file.txt 200 0 100 2000 TCP_HIT FILE 2
     2012.06.27 16:52:24 READ /file.txt 200 1024768 100 2000 TCP_HIT FILE 2
 
--  ``date`` File I/O 트랜잭션이 완료된 날짜
--  ``time`` File I/O 트랜잭션이 완료된 시간
--  ``cs-method`` File I/O 접근 형태. 다음 3가지 중 하나를 가진다.
+-  ``date`` File I/Oトランザクションが完了した日付
+-  ``time`` File I/Oトランザクションが完了した時刻
+-  ``cs-method`` File I/Oアクセスを形成する。 次の3つのいずれかを持つ。
 
-   -  ``ATTR`` getattr함수 호출. 함수가 리턴될 때 로그 기록
-   -  ``OPEN`` 파일은 열었지만 READ 하지 않음. 파일이 닫힐 때 로그 기록
-   -  ``READ`` 파일을 열고 READ 하였음. 파일이 닫힐 때 로그 기록
+   -  ``ATTR`` getattr関数を呼び出します。 関数が返されたときのログ記録
+   -  ``OPEN`` ファイルは開かれたがREADしません。 ファイルが閉じられるときにログ記録
+   -  ``READ`` ファイルを開き、READした。 ファイルが閉じられるときにログ記録
 
--  ``cs-path`` 접근 경로
--  ``sc-status`` 응답코드. 정상적인 서비스(200)를 제외한 처리 실패코드는 다음과 같다.
+-  ``cs-path`` アクセスパス
+-  ``sc-status`` 応答コード。 通常のサービス（200）を除いた処理に失敗コードは次のとおりである。
 
-   -  ``200`` 정상 서비스
-   -  ``301`` 바이패스 필요
-   -  ``302`` 서비스 거부
-   -  ``303`` Redirect 필요
-   -  ``400`` 잘못된 요청
-   -  ``401`` 가상호스트를 찾지 못했음
-   -  ``402`` 원본으로부터 초기화 실패
-   -  ``500`` 객체 초기화 실패
-   -  ``501`` 객체 Open실패
-   -  ``502`` 저장경로 생성실패
-   -  ``503`` 메모리 초기화 실패
-   -  ``504`` Emergency 상태
-   -  ``600`` 파일 서비스 대기 중 Timeout
-   -  ``601`` 파일 데이터 서비스 대기 중 Timeout
-   -  ``602`` 파일 서비스 대기 중 파일초기화 실패
-   -  ``603`` 파일 데이터 서비스 대기 중 데이터 초기화 실패
-   -  ``701`` 잘못된 Offset
-   -  ``702`` 파일의 특정 영역을 로딩 실패
+   -  ``200`` 通常のサービス
+   -  ``301`` バイパスが必要
+   -  ``302`` サービス拒否
+   -  ``303`` Redirect必要
+   -  ``400`` 不正な要求
+   -  ``401`` 仮想ホストが見つからなかった
+   -  ``402`` 元からの初期化に失敗し
+   -  ``500`` オブジェクトの初期化に失敗し
+   -  ``501`` オブジェクトOpen失敗
+   -  ``502`` 保存パスの作成に失敗し
+   -  ``503`` メモリの初期化に失敗し
+   -  ``504`` Emergency状態
+   -  ``600`` ファイルサービス待機中Timeout
+   -  ``601`` ファイルのデータサービス待機中Timeout
+   -  ``602`` ファイルサービス待機中のファイルの初期化に失敗し
+   -  ``603`` ファイルのデータサービス待機中のデータの初期化に失敗し
+   -  ``701`` 誤ったOffset
+   -  ``702`` ファイルの特定の領域をロードに失敗し
    -  ``703`` Not enough memory
-   -  ``704`` 원본세션 생성 실패
+   -  ``704`` 元セッションの作成に失敗し
 
--  ``sc-bytes`` Read된 크기
--  ``response-time`` 함수 호출 ~ 서비스객체를 연결하는데 소요된 시간
--  ``time-taken`` 함수 호출 ~ File I/O Transaction이 완료되는데 소요된 시간.
--  ``sc-cachehit`` 캐시 HIT결과.
--  ``attr`` FILE 또는 FOLDER
--  ``session-id`` File I/O 세션 ID (unsigned int64)
+-  ``sc-bytes`` Readされたサイズ
+-  ``response-time`` 関数の呼び出し ~ サービスオブジェクトを接続するのに必要された時間
+-  ``time-taken`` 関数の呼び出し ~ File I / O Transactionが完了されかかった時間
+-  ``sc-cachehit`` キャッシュHITの結果
+-  ``attr`` FILE または FOLDER
+-  ``session-id`` File I/O セッション ID (unsigned int64)
 
    .. note::
 
-      ``session-id`` 는 Client(HTTP 또는 File I/O) Context가 생성될 때 할당된다.
-      일반적인 파일 처리 과정인 Open -> Read -> Close에서는 Open시점에 Client Context가
-      생성되며 Close시점에 파괴된다.
-      반면 getattr함수는 원자성(Atomic)함수이므로 매번 Client Context가 생성/파괴되어
-      항상 새로운 session-id를 할당 받는다.
+      ``session-id`` は、Client（HTTPまたはFile I / O）Contextが作成されるときに割り当てられる。 一般的なファイル処理過程であるOpen - > Read - > Closeでは、Open時点でClient Contextが作成され、Close時点で破壊される。 一方、getattr関数はアトミック（Atomic）関数なので、毎回Client Contextが作成/破壊され、常に新しいsession-idを割り当てられる。
 
 
 
 .. _admin-log-ftp:
 
-FTP 전송
+FTP転送
 ====================================
 
-로그가 롤링될 때 지정된 FTP클라이언트를 통해 로그를 업로드 한다.
+ログがローリングされる指定されたFTPクライアントを使用してログをアップロードする。
 
 
 .. _admin-log-ftpclient:
 
-FTP 클라이언트
+FTPクライアント
 ---------------------
 
-FTP 클라이언트를 설정한다.
-롤링된 로그를 실시간으로 FTP서버로 업로드한다.
+FTPクライアントを設定する。 ローリングされたログをリアルタイムでFTPサーバにアップロードする。
 
 .. figure:: img/conf_ftpclient.png
    :align: center
 
-   FTP클라이언트 구조와 동작
+   FTPクライアントの構造と動作
 
-FTP 클라이언트는 위 그림과 같이 STON외부에 존재한다.
-STON은 로컬에 존재하는 로그를 FTP클라이언트 큐에 입력할 뿐 FTP의 동작에는 관여하지 않는다.
-FTP클라이언트는 자신의 설정에 따라 업로드를 진행한다.
+FTPクライアントは、上図のようSTON外部に存在する。 STONは、ローカルに存在するログをFTPクライアントキューに入力するだけでFTPの動作には関与しない。 FTPクライアントは、自分の設定に応じて、アップロードを行う。
 
-FTP 클라이언트는 전역설정(server.xml)에 설정한다. ::
+FTPクライアントは、グローバル設定（server.xml）に設定する。 ::
 
    # server.xml - <Server>
 
@@ -761,66 +721,64 @@ FTP 클라이언트는 전역설정(server.xml)에 설정한다. ::
       <Transfer Time="Static">04:00</Transfer>
    </Ftp>
 
--  ``<Ftp>`` FTP 클라이언트를 설정한다. ``Name`` 속성으로 고유의 이름을 설정한다.
+-  ``<Ftp>`` FTPクライアントを設定する。 ``Name`` 属性に固有の名前を設定する。
 
-   - ``Mode (기본: Passive)`` 접속모드 ( ``Passive`` 또는 ``Active`` )
-   - ``Address`` FTP주소.
-   - ``Account`` FTP 계정. 만약 비밀번호(예를 들어 qwerty)를 암호화하고 싶다면 다음 API 사용한다. ::
+   - ``Mode (基本: Passive)`` 接続モード ( ``Passive`` または ``Active`` )
+   - ``Address`` FTPアドレス。
+   - ``Account`` FTPアカウント。 もしパスワード（例えばqwerty）を暗号化したい場合は、次のAPIを使用する。 ::
 
         /command/encryptpassword?plain=qwerty
 
-     암호화된 비밀번호는 다음과 같이 설정한다. ::
+     暗号化されたパスワードは、次のように設定する。 ::
 
         <Password Type="enc">dXR9k0xNUZVVYQsK5Bi1cg==</Password>
 
-   - ``ConnectTimeout`` 연결대기 시간
-   - ``TransferTimeout`` 전송대기 시간
-   - ``TrafficCap (단위: KB)`` 0보다 큰 값으로 설정할 경우 전송 최대 대역폭을 설정한다.
-   - ``DeleteUploaded (기본: OFF)`` 전송완료 후 해당로그를 삭제한다.
-   - ``BackupOnFail (기본: OFF)`` 전송실패 시 로그가 삭제되지 않도록 해당로그를 다음 경로에 백업한다. ::
+   - ``ConnectTimeout`` 接続待機時間
+   - ``TransferTimeout`` 送信待機時間
+   - ``TrafficCap (単位: KB)`` 0より大きい値に設定した場合の転送の最大帯域幅を設定する。
+   - ``DeleteUploaded (基本: OFF)`` 送信完了後に、ログを削除する。
+   - ``BackupOnFail (基本: OFF)`` 送信失敗時のログが削除されないように、ログを次のパスにバックアップする。 ::
 
         /usr/local/ston/stonb/backup/
 
-     백업된 로그는 재전송하지 않으며 관리자가 삭제하기 전까지 삭제되지 않는다.
+     バックアップされたログは、再送信せず、管理者が削除するまで削除されない。
 
-   - ``UploadPath`` 업로드 경로를 설정한다.
-     별도로 설정하지 않으면 "/가상호스트/" 에 업로드 한다.
-     example.com의 로그는 /example.com/ 디렉토리에 업로드된다.
+   - ``UploadPath`` アップロードパスを設定する。 別に設定しない場合は、 "/가상호스트/" にアップロードする。 example.comのログは/example.com/ディレクトリにアップロードされる。
 
-     - ``%{time format}s`` 로그 시작 시간
-     - ``%{time format}e`` 로그 끝 시간
+     - ``%{time format}s`` ログの開始時間
+     - ``%{time format}e`` ログ終了時刻
      - ``%p`` prefix
-     - ``%v`` 가상호스트 이름
-     - ``%h`` 장비 HOST 이름
+     - ``%v`` 仮想ホスト名
+     - ``%h`` 機器HOST名
 
-     예를 들어 다음과 같이 설정했다면 ::
+     例えば、次のように設定した場合 ::
 
         # server.xml - <Server><Ftp>
 
         <UploadPath>/log_backup/%v/%s-%e.%p.log</UploadPath>
 
-     업로드 경로는 다음과 같다. ::
+     アップロードパスは次のとおりである。 ::
 
         /log_backup/example.com/200140722_0000-200140722_2300.access.log
 
-   - ``Transfer`` 로그 전송시간을 지정한다. ``Type`` 속성에 따라 값의 형식이 달라진다.
+   - ``Transfer`` ログ転送時間を指定する。 ``Type`` 属性に基づいて値の形式が違ってくる。
 
-     - ``Rotate (기본)`` 롤링되면 바로 전송한다. 값을 가지지 않는다.
-     - ``Static`` 하루에 한번 지정된 시간에 전송한다. 예를 들어 04:00으로 설정됐다면 새벽 4시에 전송을 시작한다.
-     - ``Interval`` 일정시간 간격으로 전송한다. 예를 들어 4로 설정했다면 4시간 간격으로 로그를 전송한다.
+     - ``Rotate (基本)`` ローリングされると、すぐに送信する。 値を持たない。
+     - ``Static`` 一日一回、指定した時間に送信する。 たとえば04:00に設定とすれば午前4時に送信を開始する。
+     - ``Interval`` 一定時間間隔で送信する。 たとえば、4に設定した場合、4時間間隔でログを送信する。
 
-     전송시간을 설정할 경우 해당 시점에 로그가 롤링되지 않도록 적절히 로그관리 정책을 구성해야 한다.
+     転送時間を設定した場合、その時点でログがローリングされないように、適切にログ管理ポリシーを設定する必要がある。
 
 
-FTP클라이언트는 curl을 사용한다.
+FTPクライアントは、curlを使用する。
 
 
 .. admin-log-ftplog:
 
-FTP 로그
+FTPのログ
 ---------------------
 
-FTP로그는 /usr/local/ston/sys/stonb/stonb.log에 통합하여 저장된다. ::
+FTPのログは/usr/local/ston/sys/stonb/stonb.logに統合して保存される。 ::
 
     #Fields: date time local-path cs-url file-size time-taken sc-status sc-error-msg
     2014-04-23 17:10:20 /ston_log/winesoft.co.kr/origin_20140423_080000.log ftp://ftp.winesoft.co.kr:21/winesoft.co.kr/origin_20140423_080000.log 381 10006 fail "curl: (7) couldn't connect to host"
@@ -828,26 +786,25 @@ FTP로그는 /usr/local/ston/sys/stonb/stonb.log에 통합하여 저장된다. :
     2014-04-23 17:11:00 /ston_log/winesoft.co.kr/origin_20140423_080000.log ftp://ftp.winesoft.co.kr:21/winesoft.co.kr/origin_20140423_080000.log 381 10008 fail "curl: (7) couldn't connect to host"
     2014-04-23 17:11:00 /ston_log/winesoft.co.kr/filesystem_20140423_080000.log ftp://192.168.0.14:21/winesoft.co.kr/filesystem_20140423_080000.log 179 60 success "-"
 
-모든 필드는 공백으로 구분되며 각 필드의 의미는 다음과 같다.
+すべてのフィールドは、スペースで区切られ、各フィールドの意味は次のとおりである。
 
--  ``date`` 날짜
--  ``time`` 시간
--  ``local-path`` 전송할 로그의 로컬경로
--  ``cs-url`` 전송할 FTP주소
--  ``file-size`` 전송 파일크기
--  ``time-taken (단위: ms)`` 전송 소요시간
--  ``sc-status`` 전송 성공/실패(success 또는 fail)
--  ``sc-error-msg`` 전송 실패 시 curl 에러 메세지
+-  ``date`` 日
+-  ``time`` 時間
+-  ``local-path`` 転送ログのローカルパス
+-  ``cs-url`` 転送FTPアドレス
+-  ``file-size`` 転送ファイルサイズ
+-  ``time-taken (単位: ms)`` 伝送所要時間
+-  ``sc-status`` 伝送成功/失敗（successまたはfail）
+-  ``sc-error-msg`` 送信失敗時curlエラーメッセージ
 
 
 
 .. admin-log-ftptransfer:
 
-로그 FTP전송
+ログFTP転送
 ---------------------
 
-로그가 롤링될 때 지정된 `FTP 클라이언트` 를 통해 업로드 한다.
-콤마(,)로 구분하면 여러 `FTP 클라이언트` 를 동시에 사용할 수 있다. ::
+ログがローリングされる指定されたFTPクライアントを介してアップロードする。 コンマ（、）で区切って、複数のFTPクライアントを同時に使用することができる。 ::
 
    # server.xml - <Server><VHostDefault>
    # vhosts.xml - <Vhosts><Vhost>
@@ -859,8 +816,6 @@ FTP로그는 /usr/local/ston/sys/stonb/stonb.log에 통합하여 저장된다. :
       <FileSystem Ftp="backup2">ON</FileSystem>
    </Log>
 
--  ``Ftp`` 사용할 `FTP 클라이언트`
+-  ``Ftp`` 使用 `FTP クライアント`
 
-ftp://{FTP서버 주소}/{가상호스트이름}/{롤링된 로그 이름} 으로 로그를 업로드 한다.
-예를 들어 ftp.dummy.com서버에 가상호스트 example.com의 롤링된 로그(access_20140424_0000.log)를
-업로드하는 주소는 ftp://ftp.dummy.com/example.com/access_20140424_0000.log가 된다.
+ftp://{FTPサーバーアドレス}/{仮想ホスト名}/{ローリングされたログ名}でログをアップロードする。 たとえばftp.dummy.comサーバーに仮想ホストexample.comのローリングされたログ（access_20140424_0000.log）をアップロードするアドレスは ftp://ftp.dummy.com/example.com/access_20140424_0000.logになる。
