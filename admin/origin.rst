@@ -1,16 +1,11 @@
 ﻿.. _origin:
 
-7장. 원본서버
+第7章 ソースサーバー
 ******************
 
-이 장에서는 STON과 원본서버의 관계에 대해 설명한다.
-원본서버란 일반적으로 HTTP 규격을 준수하는 웹서버를 의미한다.
-관리자라면 원본을 보호하기 위해 이번 장의 모든 내용을 숙지할 필요가 있다.
-이를 바탕으로 원본장애에도 내구성을 갖춘 유연한 서비스를 구축할 수 있다.
+この章では、STONと元のサーバーの関係について説明する。 ソースサーバーとは、一般的にHTTPの仕様に準拠しているWebサーバーを意味する。 管理者であれば、原稿を保護するために、今回の章のすべての内容を熟知する必要がある。 これを基に、元の障害にも耐久性を備えた柔軟なサービスを構築することができる。
 
-원본서버는 보호되어야 한다.
-장애의 종류가 다양한만큼 대처방안도 다양하다.
-원본보호 정책을 적절히 구성하면 여유로운 점검시간을 가질 수 있다.
+ソースサーバーは、保護されるべきである。 障害の種類が多様なだけに対処案も多様である。 ソース保護ポリシーを適切に設定すると、ゆったりとした点検時間を持つことができます。
 
 
 .. toctree::
@@ -20,11 +15,10 @@
 
 .. _origin_exclusion_and_recovery:
 
-장애감지와 복구
+障害の検出と回復
 ====================================
 
-Caching과정 중 원본서버에 장애가 발생하면 자동배제한다.
-다시 안정화됐다고 판단하면 서비스에 투입한다. ::
+Caching過程の中で、元のサーバーに障害が発生した場合、自動的に排除する。 再び安定化されたと判断すると、サービスに投入する。 ::
 
    # server.xml - <Server><VHostDefault><OriginOptions>
    # vhosts.xml - <Vhosts><Vhost><OriginOptions>
@@ -34,35 +28,29 @@ Caching과정 중 원본서버에 장애가 발생하면 자동배제한다.
    <Exclusion>3</Exclusion>
    <Recovery Cycle="10" Uri="/" ResCode="0" Log="ON">5</Recovery>
 
--  ``<ConnectTimeout> (기본: 3초)``
+-  ``<ConnectTimeout> (基本: 3秒)``
 
-   n초 이내에 원본서버와 접속이 이루어지지 않는 경우 접속실패로 간주한다.
+   n秒以内に元のサーバーとの接続が行われていない場合、接続に失敗とみなす。
 
--  ``<ReceiveTimeout> (기본: 10초)``
+-  ``<ReceiveTimeout> (基本: 10秒)``
 
-   정상적인 HTTP요청에도 불구하고 원본서버가 HTTP응답을 n초 동안 보내지 않는 경우 전송실패로 간주한다.
+   通常のHTTPリクエストにもかかわらず、元のサーバーがHTTP応答をn秒間送信しない場合は、送信が失敗であると考えている。
 
--  ``<Exclusion> (기본: 3회)``
+-  ``<Exclusion> (基本: 3回)``
 
-   원본서버에서 연속적으로 n번 장애상황( ``<ConnectTimeout>`` 또는 ``<ReceiveTimeout>`` )이 발생하면 해당 서버를 유효 원본서버 목록에서 배제한다.
-   배제 전 정상적인 통신이 이루어진다면 이 값은 다시 0으로 초기화된다.
+   元のサーバーで連続的にn回障害状況( ``<ConnectTimeout>`` または ``<ReceiveTimeout>`` )が発生した場合、そのサーバーを有効ソースサーバーのリストから排除する。 排除前、通常の通信が行われた場合は、この値は0に初期化される。
 
--  ``<Recovery> (기본: 5회)``
+-  ``<Recovery> (基本: 5回)``
 
-   ``Cycle`` 마다 ``Uri`` 로 요청하여 원본서버가 ``ResCode`` 로 연속적으로 n회 응답하면 해당 서버를 복구한다.
-   이 값을 0으로 설정하면 복구하지 않는다.
+   ``Cycle`` ごと ``Uri`` に要求して、元のサーバーが ``ResCode`` に連続的にn回応答すると、そのサーバーを回復する。 この値を0に設定すると、回復していない。
 
-   -  ``Cycle (기본: 10초)`` 일정시간(초)마다 시도한다.
+   -  ``Cycle (基本: 10秒)`` 一定時間（秒）ごとにしようとする。
 
-   -  ``Uri (기본: /)`` 요청을 보낼 Uri
+   -  ``Uri (基本: /)`` 要求を送信Uri
 
-   -  ``ResCode (기본: 0)`` 정상응답으로 처리할 응답코드.
-      0인 경우 응답코드와 상관없이 응답이 오면 성공으로 간주한다.
-      200으로 설정하면 응답코드가 반드시 200이어야 정상응답으로 처리한다.
-      콤마(,)를 사용하여 유효한 응답코드를 멀티로 설정한다.
-      200, 206, 404로 설정하면 응답코드가 이 중 하나인 경우 정상응답으로 처리한다.
+   -  ``ResCode (基本: 0)`` 正常応答として処理する応答コード。 0の場合は、応答コードに関係なく、応答が来れば成功とみなす。 200に設定すると、応答コードが必ず200でなければなら正常応答で処理する。 コンマ（、）を使用して、有効な応答コードをマルチに設定する。 200、206、404に設定すると、応答コードがこれらのいずれかである場合、通常の応答で処理する。
 
-   -  ``Log (기본: ON)`` 복구를 위해 사용된 HTTP Transaction을 :ref:`admin-log-origin` 에 기록한다.
+   -  ``Log (基本: ON)`` 回復のために使用されたHTTP Transactionを :ref:`admin-log-origin` に記録する。
 
 
 
@@ -71,9 +59,8 @@ Caching과정 중 원본서버에 장애가 발생하면 자동배제한다.
 Health-Checker
 ====================================
 
-`장애감지와 복구`_ 는 Caching 과정 중 발생하는 장애에 대응한다.
-``<Recovery>`` 는 응답코드를 받는 즉시 HTTP Transaction을 종료한다.
-하지만 Health-Checker는 HTTP Transaction이 성공함을 확인한다. ::
+`장애감지와 복구`_ は、Caching過程中に発生する障害に対応する。
+``<Recovery>`` は応答コードを受け取り次第HTTP Transactionを終了する。 しかし、Health-Checkerは、HTTP Transactionが成功することを確認する。 ::
 
    # vhosts.xml - <Vhosts><Vhost>
 
@@ -85,95 +72,89 @@ Health-Checker
                      Exclusion="5" Recovery="20" Log="ON">/alive.html</HealthChecker>
    </Origin>
 
--  ``<HealthChecker> (기본: /)``
+-  ``<HealthChecker> (基本: /)``
 
-   Health-Checker를 구성한다. 멀티로 구성이 가능하다.
-   값으로 Uri를 지정하며, XML예외 문자의 경우 CDATA를 사용한다.
+   Health-Checkerを構成する。 マルチで構成が可能である。 値としてUriを指定し、XML例外文字の場合CDATAを使用する。
 
-   -  ``ResCode (기본: 0)`` 올바른 응답코드 (콤마로 멀티 구성가능)
+   -  ``ResCode (基本: 0)`` 正しい応答コード（コンマでマルチ構成可能）
 
-   -  ``Timeout (기본: 10초)`` 소켓연결부터 HTTP Transaction이 완료될 때까지 유효시간
+   -  ``Timeout (基本: 10秒)`` ソケット接続からHTTP Transactionが完了するまで有効時間
 
-   -  ``Cycle (기본: 10초)`` 실행주기
+   -  ``Cycle (基本: 10秒)`` 実行サイクル
 
-   -  ``Exclusion (기본: 3회)`` 연속 n회 실패 시 해당서버 배제
+   -  ``Exclusion (基本: 3回)`` 連続n回失敗した場合、そのサーバー排除
 
-   -  ``Recovery (기본: 5회)`` 연속 n회 성공 시 해당서버 재투입
+   -  ``Recovery (基本: 5回)`` 連続n回成功した場合、そのサーバーの再投入
 
-   -  ``Log (기본: ON)`` HTTP Transaction을 :ref:`admin-log-origin` 에 기록한다.
+   -  ``Log (基本: ON)`` HTTP Transactionを :ref:`admin-log-origin` に記録する。
 
-Health-Checker는 멀티로 구성할 수 있으며 클라이언트 요청과 상관없이 독립적으로 수행된다.
-`장애감지와 복구`_ 나 다른 Health-Checker와도 정보를 공유하지 않고
-자신만의 기준으로 배제와 투입을 결정한다.
+Health-Checkerは、マルチで構成することができ、クライアントの要求に関係なく独立して実行される。
+`障害の検出と回復`_ や他のHealth-Checkerとも情報を共有せずに、自分だけの基準で排除および責任を決定する。
 
 
 .. _origin-use-policy:
 
-원본주소 사용정책
+送信元アドレスを使用ポリシー
 ====================================
 
-원본주소(IP)는 다음 요소들에 의해 어떻게 사용될지 결정된다.
+送信元アドレス（IP）は、次の要素によってどのように使用されるか決定される。
 
--  :ref:`env-vhost-activeorigin` 주소 형식(IP 또는 Domain)과 보조주소
--  `장애감지와 복구`_
+-  :ref:`env-vhost-activeorigin` アドレスの形式（IPアドレスまたはDomain）とセカンダリアドレス
+-  `障害の検出と回復`_
 -  `Health-Checker`_
 
-서비스를 운영하다보면 원본주소가 배제/복구되는 일은 빈번하다.
-STON은 IP테이블을 기반으로 원본주소를 사용하며 `origin-status`_ API를 통해 정보를 제공한다.
+サービスを運営していると、元のアドレスが排除/回復されることは頻繁である。 STONは、IPテーブルに基づいて、元のアドレスを使用して `origin-status`_ APIを介して情報を提供する。
 
-원본주소를 IP로 설정한 경우 매우 간단하다.
+送信元アドレスをIPに設定した場合、非常に簡単である。
 
--  설정변경 이외에 IP목록을 변화시키는 요인은 없다.
--  TTL에 의해 IP주소가 만료되지 않는다.
--  장애/복구 모두 설정(IP주소)에 기반하여 동작한다.
+-  設定の変更に加えて、IPリストを変化させる要因はない。
+-  TTLにより、IPアドレスが期限切れにならない。
+-  障害/復旧の両方の設定（IPアドレス）に基づいて動作する。
 
-원본주소를 Domain으로 설정하면 Resolving해서 IP를 얻어야 한다.
-( :ref:`admin-log-dns` 에 기록된다.)
-IP 목록은 동적으로 변경될 수 있으며 모든 IP는 TTL(Time To Live)동안만 유효하다.
+送信元アドレスをDomainに設定すると、ResolvingてIPアドレスを得なければならない。
+( :ref:`admin-log-dns` に記録される。)
+IPリストは動的に変更されることができ、すべてのIPは、TTL（Time To Live）の間だけ有効である。
 
--  Domain은 주기적으로(1~10초) Resolving한다.
--  Resolving을 통해 사용할 IP테이블을 구성한다.
--  모든 IP는 TTL만큼만 유효하며 TTL이 만료되면 사용하지 않는다.
--  같은 IP가 다시 Resolving되면 TTL을 갱신한다.
--  IP테이블은 비어서는 안된다. (TTL이 만료되었더라도) 마지막 IP들은 삭제되지 않는다.
+-  Domainは定期的に（1〜10秒）Resolvingする。
+-  Resolvingを介して使用するIPテーブルを構成する。
+-  すべてのIPは、TTL分だけ有効であり、TTLが期限切れになると使用しない。
+-  同じIPアドレスが再びResolvingされると、TTLを更新する。
+-  IPテーブルは空白ではない。 （TTLが期限切れにされても）最後のIPは削除されない。
 
-IP의 TTL이 너무 길 경우 지나치게 많은 IP를 사용하게 되어 의도치 않은 결과를 만들 수 있다. 
-이를 방지하기 위해 IP의 최대 TTL을 제한할 수 있다. ::
+IPのTTLが長すぎる場合、過度に多くのIPアドレスを使用するようになって意図しない結果を作成することができる。 これを防止するために、IPの最大TTLを制限することができる。 ::
 
    # server.xml - <Server><VHostDefault><OriginOptions>
    # vhosts.xml - <Vhosts><Vhost><OriginOptions>
 
    <DnsMaxTTL>60</DnsMaxTTL>
 
--  ``<DnsMaxTTL> (기본: 60초)`` Resolving된 IP의 최대 사용시간(초)을 설정한다.
-   이 값이 0일 경우 DNS로부터 제공받은 TTL을 그대로 사용한다.
+-  ``<DnsMaxTTL> (基本: 60秒)`` ResolvingされたIPアドレスの最大使用時間（秒）を設定する。 この値が0の場合は、DNSから提供されたTTLをそのまま使用する。
 
 
 .. note::
 
-   원본주소를 Domain으로 설정하여도 장애/복구는 IP기반으로 동작한다.
-   Domain주소 장애/복구 정책은 다음과 같다.
+   送信元アドレスをDomainに設定しても、障害/復旧は、IPベースで動作する。 Domainアドレス障害/復旧ポリシーは、次のとおりである。
 
-   -  (Domain에 대해) 알고 있는 모든 IP주소가 배제(Inactive)되면 해당 Domain주소가 배제된다.
-   -  신규 IP가 Resolving되더라도 Domain이 배제되어 있다면 IP주소는 처음부터 배제된다.
-   -  모든 IP가 TTL 만료되더라도 배제된 Domain상태는 풀리지 않는다.
-   -  배제된 Domain에 속한 IP주소가 하나라도 복구되어야 해당 Domain은 다시 활성화된다.
+   -  （Domainについて）知っているすべてのIPアドレスが排除（Inactive）と、そのDomainアドレスが排除される。
+   -  新規IPがResolvingもDomainが排除されている場合は、IPアドレスは、最初から排除される。
+   -  すべてのIPアドレスはTTL有効期限が切れても排除されたDomain状態は解けない。
+   -  排除されたDomainに属するIPアドレスのいずれかが回復されるべきは、Domainは再び有効にされる。
 
-   다소 복잡한 내용이므로 `origin-status`_ API를 통해 서비스 동작상태에 대해 이해도를 높이는 것이 좋다.
+   やや複雑な内容であるため、 `origin-status`_ APIを使用してサービスの動作状態について理解を高めるのが良い。
 
 
 
 .. _origin-status:
 
-원본상태 모니터링
+元の状態の監視
 ====================================
 
-API를 통해 가상호스트의 원본상태를 모니터링한다. ::
+APIを介して、仮想ホストのソースの状態を監視します。 ::
 
-   http://127.0.0.1:10040/monitoring/origin       // 모든 가상호스트
+   http://127.0.0.1:10040/monitoring/origin       // すべての仮想ホスト
    http://127.0.0.1:10040/monitoring/origin?vhost=www.example.com
 
-결과는 JSON형식으로 제공된다. ::
+結果は、JSON形式で提供される。 ::
 
    {
        "origin" :
@@ -215,165 +196,140 @@ API를 통해 가상호스트의 원본상태를 모니터링한다. ::
        ]
    }
 
--  ``VirtualHost`` 가상호스트 이름
+-  ``VirtualHost`` 仮想ホスト名
 
--  ``Address`` :ref:`env-vhost-activeorigin` .
-   설정주소가 사용중이라면 ``Active`` , (장애발생으로) 사용하고 있지 않다면 ``Inactive`` 로 표시된다.
+-  ``Address`` :ref:`env-vhost-activeorigin` 。
+   設定アドレスが使用中であれば ``Active`` , （障害が発生して）使用していない場合 ``Inactive`` として表示される。
 
--  ``Address2`` :ref:`env-vhost-standbyorigin` .
-   설정주소를 사용중이라면 ``Active`` , 사용하고 있지 않다면 ``Inactive`` 로 표시된다.
+-  ``Address2`` :ref:`env-vhost-standbyorigin` 。
+   設定アドレスを使用中であれば ``Active`` 、使用していない場合 ``Inactive`` として表示される。
 
--  ``ActiveIP`` 사용 중인 IP목록과 TTL.
-   원본서버를 IP로 설정하면 ``Address`` 와 동일한 IP에 TTL은 0으로 표시된다.
-   Domain으로 설정하면 Resolving결과에 따른다.
-   다양한 IP와 TTL을 사용한다.
+-  ``ActiveIP`` 使用中のIPリストとTTL。 ソースサーバーをIPに設定すると、 ``Address`` と同じIPにTTLは、0と表示される。 Domainに設定すると、Resolving結果に従う。 様々なIPとTTLを使用する。
 
--  ``InactiveIP`` 사용하지 않는 IP목록과 TTL.
-   사용하지 않더라도 복구 중이거나 HealthChecker에 의해 관리될 수 있다.
-   해당 주소는 TTL 동안 복구되지 않으면 삭제된다.
+-  ``InactiveIP`` 使用しないIPリストとTTL。 使用していなくても、回復しているかHealthCheckerによって管理することができる。 そのアドレスは、TTLの間回復されなければ削除される。
 
 
 
 .. _origin-status-reset:
 
-원본상태 초기화
+元の状態の初期化
 ====================================
 
-API를 통해 가상호스트의 원본서버 배제/복구를 초기화한다.
-또한 현재 사용 중인 세션을 재사용하지 않고 새롭게 연결을 생성한다. ::
+APIを介して、仮想ホストのソースサーバー排除/回復を初期化する。 また、現在使用中のセッションを再利用せずに、新たに接続を作成します。 ::
 
-   http://127.0.0.1:10040/command/resetorigin       // 모든 가상호스트
+   http://127.0.0.1:10040/command/resetorigin       // すべての仮想ホスト
    http://127.0.0.1:10040/command/resetorigin?vhost=www.example.com
 
 
 
 .. _origin-busysessioncount:
 
-과부하 판단
+過負荷判断
 ====================================
 
-처음 요청되는 콘텐츠는 항상 원본서버에 요청해야 한다.
-하지만 이미 Caching된 콘텐츠라면 좀 더 유연하게 대처할 수 있다.
-원본서버가 과부하 상태라고 판단되면 갱신을 늦추어 원본부하를 높이지 않는다. ::
+最初に要求されているコンテンツは、常に元のサーバーに要求しなければならない。 しかし、すでにCachingされたコンテンツであれば、より柔軟に対応することができる。 ソースサーバーが過負荷状態と判断されると、更新をずらして、元の負荷を高くない。 ::
 
    # server.xml - <Server><VHostDefault><OriginOptions>
    # vhosts.xml - <Vhosts><Vhost><OriginOptions>
 
    <BusySessionCount>100</BusySessionCount>
 
--  ``<BusySessionCount> (기본: 100개)``
-   원본서버와 HTTP트랜잭션을 진행 중인 세션 수가 일정개수를 넘으면 과부하 상태로 판단한다.
-   과부하 상태에서 만료된 컨텐츠를 갱신하기 위해 원본서버로 접속하지 않도록 TTL을 :ref:`caching-policy-ttl` 중 ``<OriginBusy>`` 만큼 연장한다.
-   무조건 원본서버로 요청이 가도록 하려면 이 값을 아주 크게 설정하면 된다.
+-  ``<BusySessionCount> (基本: 100個)``
+   ソースサーバーとHTTPトランザクションを進行中のセッションの数が一定数を超えると、過負荷状態と判断する。 過負荷状態で有効期限が切れたコンテンツを更新するために、元のサーバーに接続しないように、TTLを :ref:`caching-policy-ttl` の ``<OriginBusy>`` だけ延長する。 無条件元サーバーに要求が行くようにするには、この値を非常に大きく設定すればよい。
 
 
 .. _origin-balancemode:
 
-원본 선택
+ソースの選択
 ====================================
 
-원본서버 주소가 멀티(2개 이상)로 구성되어 있을 때 원본서버 선택정책을 설정한다. ::
+元サーバーのアドレスがマルチ（2個以上）で構成されているときに、元のサーバーの選択ポリシーを設定する。 ::
 
    # server.xml - <Server><VHostDefault><OriginOptions>
    # vhosts.xml - <Vhosts><Vhost><OriginOptions>
 
    <BalanceMode>RoundRobin</BalanceMode>
 
--  ``<BalanceMode> (기본: RoundRobin)``
+-  ``<BalanceMode> (基本: RoundRobin)``
 
-   -  ``RoundRobin (기본)``
-      모든 원본서버가 균등하게 요청을 받도록 Round-Robin으로 동작한다.
-      연결된 Idle세션은 해당 서버로 요청이 필요할 때만 사용한다.
+   -  ``RoundRobin (基本)``
+      すべてのソースサーバーが均等に要求を受信するようにRoundRobinで動作する。 接続されたIdleセッションは、そのサーバーに要求が必要な場合にのみ使用する。
 
    -  ``Session``
-      재사용할 수 있는 세션이 있다면 우선 사용한다.
-      신규 세션이 필요하면 Round-Robin으로 할당한다.
+      再使用可能なセッションがある場合、まず使用する。 新規セッションが必要な場合Round-Robinに割り当てる。
 
    -  ``Hash``
-      컨텐츠를 `Consistent Hashing <http://en.wikipedia.org/wiki/Consistent_hashing>`_ 알고리즘에 따라 원본서버로 분산하여 요청한다.
-      서버가 선택되면 이미 연결된 세션을 재사용하며 없다면 신규로 접속한다.
+      コンテンツを `Consistent Hashing <http://en.wikipedia.org/wiki/Consistent_hashing>`_ アルゴリズムに基づいて、元のサーバーに分散して要請する。 サーバーが選択されると、既に接続されたセッションを再利用しない場合は、新規に接続する。
 
 
 =========== =================================================================== =====================================================
 /           RoundRobin                                                          Session
 =========== =================================================================== =====================================================
-부하(요청)	모든 서버가 부하를 균등하게 분배	                                반응성과 재사용성이 좋은 서버로 로드가 가중됨
-연결비용	높음 (해당 서버의 순서가 되면 연결된 세션을 찾고 없으면 연결시도)   낮음 (재사용할 수 있는 세션이 없을 때만 연결)
-재사용성	낮음 (서버 분배 우선)	                                            높음 (항상 연결된 세션을 우선 사용)
-세션수	    많음 (각 서버마다 동시에 진행되는 HTTP 트랜잭션의 합)               적음 (동시에 진행되는 HTTP 트랜잭션 만큼 세션 존재)
+負荷（要求）	すべてのサーバーが負荷を均等に分配	                                反応性と再利用性が良いサーバーに負荷が加重される
+接続コスト	高（そのサーバーの順序がされると、接続されたセッションを探していない場合、接続しようと）   低（再使用可能なセッションがない場合のみ接続）
+再利用性	低（サーバー分配優先）	                                            高（常に接続されたセッションを優先使用）
+セッション数	    沢山（各サーバーごとに同時に進行されるHTTPトランザクションの合計）          少ない（同時に進行されるHTTPトランザクションだけセッションが存在）
 =========== =================================================================== =====================================================
 
 
-세션 재사용
+セッションの再利用
 ====================================
 
-원본서버가 Keep-Alive를 지원한다면 연결된 세션은 항상 재사용된다.
-하지만 세션을 재사용하여 보낸 요청에 대해 원본서버가 일방적으로 연결을 종료할 수 있다.
-때문에 연결을 복구하느라 사용자 반응성이 늦어질 가능성이 있다.
-특히 오랫동안 재사용하지 않은 세션의 경우 이러한 가능성은 더욱 높다.
-이를 방지하기 위하여 n초 동안 재사용되지 않은 세션에 대해서 자동으로 연결을 종료하도록 설정한다. ::
+ソースサーバーがKeep-Aliveをサポートする場合接続されたセッションは、常に再使用される。 しかし、セッションを再利用して送信要求に対して、元のサーバーが一方的に接続を終了することができる。 ので、接続を回復するのに、ユーザーの反応が遅くなる可能性がある。 特に長い間再使用していないセッションの場合、これらの可能性はさらに高い。 これを防止するためにn秒の間再利用されていないセッションに対して自動的に接続を終了するように設定する。 ::
 
    # server.xml - <Server><VHostDefault><OriginOptions>
    # vhosts.xml - <Vhosts><Vhost><OriginOptions>
 
    <ReuseTimeout>60</ReuseTimeout>
 
--  ``<ReuseTimeout> (기본: 60초)``
-   일정 시간동안 사용되지 않은 원본세션은 종료한다.
-   0으로 설정하면 원본서버 세션을 재사용하지 않는다.
+-  ``<ReuseTimeout> (基本: 60秒)``
+   一定時間使用されていない元のセッションは終了する。 0に設定すると、元のサーバーのセッションを再利用していない。
 
 
 .. _origin_partsize:
 
-Range요청
+Rangeリクエスト
 ====================================
 
-한번에 다운로드 받는 컨텐츠 크기를 설정한다.
-동영상처럼 앞 부분만이 주로 소비되는 컨텐츠의 경우 다운로드 크기를 제한하면 불필요한 원본 트래픽을 줄일 수 있다. ::
+一度ダウンロードされたコンテンツのサイズを設定する。 動画のように前の部分だけが、主に消費されるコンテンツの場合、ダウンロードサイズを制限すると、不要なソーストラフィックを減らすことができる。 ::
 
    # server.xml - <Server><VHostDefault><OriginOptions>
    # vhosts.xml - <Vhosts><Vhost><OriginOptions>
 
    <PartSize>0</PartSize>
 
--  ``<PartSize> (기본: 0 MB)``
-   0보다 크면 클라이언트가 요청한 지점부터 설정크기(MB) 만큼 Range요청으로 다운로드 한다.
+-  ``<PartSize> (基本: 0 MB)``
+   0よりも大きい場合、クライアントが要求した時点から設定サイズ（MB）だけRangeリクエストにダウンロードする。
 
 
-``<PartSize>`` 를 사용하는 또 다른 이유는 디스크 공간을 절약하기 위함이다.
-기본설정으로 STON은 원본크기의 파일을 디스크에 생성한다.
-하지만 ``<PartSize>`` 가 0이 아니라면 다운로드 되는만큼만 파일을 분할하여 저장한다.
+``<PartSize>`` を使用しているもう一つの理由は、ディスクスペースを節約するためである。 デフォルトの設定でSTONは元のサイズのファイルをディスク上に作成する。 しかし、 ``<PartSize>`` が0でない場合はダウンロードされている分だけファイルを分割して保存する。
 
-예를 들어 1시간짜리 영상(600MB)을 1분(10MB)만 시청한 경우에 디스크 공간을 10MB만 사용한다.
-공간을 절약하는 장점은 있지만 파일이 분할되어 저장되기 때문에 디스크 부하가 조금 높아진다.
+たとえば、1時間の映像（600MB）を1分（10MB）のみ視聴した場合に、ディスク領域を10MBだけを使用する。 スペースを節約する利点はあるが、ファイルが分割されて保存されるため、ディスク負荷が少し高くなる。
 
 .. note::
 
-   최초 콘텐츠를 다운로드할 때 Content-Length를 알 수 없으므로 Range요청을 할 수 없다.
-   때문에 ``<PartSize>`` 가 설정되어 있다면 설정크기만큼만 다운로드 받고 연결을 종료한다.
+   最初のコンテンツをダウンロードする際にContent-Lengthを知ることができないので、Range要求をすることができない。 ため ``<PartSize>`` が設定されている場合は設定サイズ分だけダウンロードして接続を終了する。
 
 
 
 
-전체 Range 초기화
+全体Range初期化
 ====================================
 
-일반적으로 원본서버로부터 처음 파일을 다운로드 할 때나 갱신확인 할 때는 다음과 같이 단순한 형태의 GET 요청을 보낸다. ::
+一般的に、元のサーバーから、最初のファイルをダウンロードするときや更新確認するときは、次のように単純な形のGETリクエストを送信します。 ::
 
     GET /file.dat HTTP/1.1
 
-하지만 원본서버가 일반적인 GET요청에 대하여 항상 파일을 변조하도록 설정되어 있다면 원본파일 그대로를 Caching할 수 없어서 문제가 될 수 있다.
+しかし、元のサーバーが一般的なGETリクエストに対して常にファイルを改ざんするように設定されている場合は、元のファイルをそのままCachingできなく問題になることがあります。
 
-가장 대표적인 예는 Apache 웹서버가 mod_h.264_streaming같은 외부모듈과 같이 구동되는 경우이다.
-Apache 웹서버는 GET요청에 대해서 항상 mod_h.264_streaming모듈을 통해서 응답한다.
-클라이언트(이 경우에는 STON)는 원본파일 그대로가 아닌 모듈에 의해 변조된 파일을 서비스 받는다.
+最も代表的な例は、Apache Webサーバがmod_h.264_streamingなどの外部モジュールのように駆動される場合である。 Apache Webサーバーは、GETリクエストに対して常にmod_h.264_streamingモジュールを介して応答する。 クライアント（この場合には、STON）は、元のファイルのままではなく、モジュールによって変調されたファイルをサービス受ける。
 
    .. figure:: img/conf_origin_fullrangeinit1.png
       :align: center
 
-      mod_h.264_streaming모듈은 항상 원본을 변조한다.
+      mod_h.264_streamingモジュールは常にソースを変調する。
 
-Range요청을 사용하면 모듈을 우회하여 원본을 다운로드할 수 있다. ::
+Range要求を使用すると、モジュールをバイパスして、元のをダウンロードすることができる。 ::
 
    # server.xml - <Server><VHostDefault><OriginOptions>
    # vhosts.xml - <Vhosts><Vhost><OriginOptions>
@@ -382,19 +338,16 @@ Range요청을 사용하면 모듈을 우회하여 원본을 다운로드할 수
 
 -  ``<FullRangeInit>``
 
-   - ``OFF (기본)`` 일반적인 HTTP요청을 보낸다.
+   - ``OFF (基本)`` の一般的なHTTPリクエストを送る。
 
-   - ``ON`` 0부터 시작하는 Range요청을 보낸다.
-     Apache의 경우 Range헤더가 명시되면 모듈을 우회한다. ::
+   - ``ON`` 0から始まるRangeリクエストを送る。 Apacheの場合Rangeヘッダが明示されると、モジュールをバイパスする。 ::
 
         GET /file.dat HTTP/1.1
         Range: bytes=0-
 
-     최초로 파일 Caching할 때는 컨텐츠의 Range를 알지 못하므로 Full-Range(=0부터 시작하는)를 요청한다.
-     원본서버가 Range요청에 대해 정상적으로 응답(206 OK)하는지 반드시 확인해야 한다.
+     最初にファイルCachingするときは、コンテンツのRangeを知らないので、Full-Range（= 0から始まる）を要請する。 ソースサーバーがRange要求に対して正常に応答（206 OK）かどうかを必ず確認しなければならない。
 
-콘텐츠를 갱신할 때는 다음과 같이 **If-Modified-Since** 헤더가 같이 명시된다.
-원본서버가 올바르게 **304 Not Modified** 로 응답해야 한다. ::
+コンテンツを更新するときは、次のように **If-Modified-Since** ヘッダが一緒に指定される。 ソースサーバーが正しく **304 Not Modified** に応答しなければならない。 ::
 
    GET /file.dat HTTP/1.1
    Range: bytes=0-
@@ -402,7 +355,7 @@ Range요청을 사용하면 모듈을 우회하여 원본을 다운로드할 수
 
 .. note::
 
-   ``<FullRangeInit>`` 가 정상동작함을 확인한 웹서버들 목록.
+   ``<FullRangeInit>`` が正常に動作することを確認し、Webサーバーのリスト。
 
    - Microsoft-IIS/7.5
    - nginx/1.4.2
@@ -412,10 +365,10 @@ Range요청을 사용하면 모듈을 우회하여 원본을 다운로드할 수
 
 .. _origin-wholeclientrequest:
 
-클라이언트 요청 유지
+クライアントの要求を維持
 ====================================
 
-원본에 요청할 때 클라이언트가 보낸 요청을 유지하도록 설정한다. ::
+元に要求するとき、クライアントが送信した要求を維持するように設定する。 ::
 
    # server.xml - <Server><VHostDefault><OriginOptions>
    # vhosts.xml - <Vhosts><Vhost><OriginOptions>
@@ -424,20 +377,20 @@ Range요청을 사용하면 모듈을 우회하여 원본을 다운로드할 수
 
 -  ``<WholeClientRequest>``
 
-   - ``OFF (기본)`` Caching-Key를 원본에 요청할 URL로 사용한다.
+   - ``OFF (基本)`` Caching-Keyを元に要求するURLに使用する。
 
-   - ``ON`` 클라이언트가 요청한 URL로 원본에 요청한다.
+   - ``ON`` クライアントが要求されたURLに元に要請する。
 
-Hit Ratio를 높이기 위해 다음 설정들을 통해 Caching-Key를 결정한다.
+Hit Ratioを高めるために、次の設定を使用してCaching-Keyを決定する。
 
 - :ref:`caching-policy-casesensitive`
 - :ref:`caching-policy-applyquerystring`
 - :ref:`caching-policy-post-method-caching`
 
-이에 따라 원본서버로 요청하는 URL과 Caching-Key가 다음과 같이 결정된다.
+これにより、元のサーバーに要求したURLとCaching-Keyは、次のように決定される。
 
 ============================================== ======================= ============================
-설정                                           클라이언트 요청 URL       원본 요청URL / Caching-Key
+設定                                           クライアント要求URL       元の要求URL / Caching-Key
 ============================================== ======================= ============================
 :ref:`caching-policy-casesensitive` ``OFF``    /Image/LOGO.png         /image/logo.png
 :ref:`caching-policy-casesensitive` ``ON``     /Image/LOGO.png         /Image/LOGO.png
@@ -445,10 +398,10 @@ Hit Ratio를 높이기 위해 다음 설정들을 통해 Caching-Key를 결정�
 :ref:`caching-policy-applyquerystring` ``ON``  /view/list.php?type=A   /view/list.php?type=A
 ============================================== ======================= ============================
 
-``<WholeClientRequest>`` 를 ``ON`` 으로 설정하면 다음과 같이 Caching-Key와 상관없이 클라이언트가 보낸 URL을 그대로 원본에 보낸다.
+``<WholeClientRequest>`` を ``ON`` に設定すると、次のようにCaching-Keyとは関係なく、クライアントが送信したURLをそのまま元に送る。
 
 ============================================== =================================== ============================
-설정                                            클라이언트 / 원본 요청 URL           Caching-Key
+設定                                            クライアント/元の要求URL           Caching-Key
 ============================================== =================================== ============================
 :ref:`caching-policy-casesensitive` ``OFF``    /Image/LOGO.png                     /image/logo.png
 :ref:`caching-policy-casesensitive` ``ON``     /Image/LOGO.png                     /Image/LOGO.png
@@ -456,23 +409,22 @@ Hit Ratio를 높이기 위해 다음 설정들을 통해 Caching-Key를 결정�
 :ref:`caching-policy-applyquerystring` ``ON``  /view/list.php?type=A               /view/list.php?type=A
 ============================================== =================================== ============================
 
-POST 요청을 캐싱하는 경우 원본서버로 요청할 때 클라이언트가 보낸 POST요청의 Body데이터가 수정없이 전송된다.
+POSTリクエストをキャッシュする場合、元のサーバーに要求したとき、クライアントが送信したPOSTリクエストのBodyデータが変更なしで送信される。
 
 .. note::
 
-   클라이언트가 보낸 URL을 그대로 보내기 때문에 :ref:`media-trimming` 처럼 부가기능을 위해 붙여진 QueryString도 그대로 원본서버로 전달된다.
+   クライアントが送信したURLをそのまま送信するため :ref:`media-trimming` ようアドオンのためにつけられたQueryStringもそのまま元のサーバーに転送される。
 
 
 .. _origin-httprequest:
 
-원본요청 기본 Header
+元の要求の基本Header
 ====================================
 
-Host 헤더
+Hostヘッダ
 ---------------------
 
-원본서버로 보내는 HTTP요청의 Host헤더를 설정한다.
-별도로 설정하지 않은 경우 가상호스트 이름이 명시된다. ::
+ソースサーバーに送信HTTPリクエストのHostヘッダを設定する。 別に設定していない場合は、仮想ホスト名が明示される。 ::
 
    # server.xml - <Server><VHostDefault><OriginOptions>
    # vhosts.xml - <Vhosts><Vhost><OriginOptions>
@@ -480,8 +432,7 @@ Host 헤더
    <Host />
 
 -  ``<Host>``
-   원본서버로 보낼 Host헤더를 설정한다.
-   원본서버에서 80포트 이외의 포트로 서비스하고 있다면 반드시 포트 번호를 명시해야 한다. ::
+   元のサーバーに送信Hostヘッダを設定する。 元のサーバーで80ポート以外のポートでサービスしている場合、必ずポート番号を明示しなければならない。 ::
 
       # server.xml - <Server><VHostDefault><OriginOptions>
       # vhosts.xml - <Vhosts><Vhost><OriginOptions>
@@ -489,31 +440,30 @@ Host 헤더
       <Host>www.example2.com:8080</Host>
 
 
-클라이언트가 보낸 Host헤더를 원본으로 보내고 싶은 경우 *로 설정한다.
+クライアントが送信したHostヘッダを元に送りたい場合*に設定する。
 
 
-User-Agent 헤더
+User-Agentヘッダ
 ---------------------
 
-원본서버로 보내는 HTTP요청의 User-Agent헤더를 설정한다. ::
+ソースサーバーに送信HTTPリクエストのUser-Agentヘッダを設定する。 ::
 
    # server.xml - <Server><VHostDefault><OriginOptions>
    # vhosts.xml - <Vhosts><Vhost><OriginOptions>
 
    <UserAgent>STON</UserAgent>
 
--  ``<UserAgent> (기본: STON)``
-   원본서버로 보낼 User-Agent헤더를 설정한다.
+-  ``<UserAgent> (基本: STON)``
+   元のサーバーに送信UserAgentヘッダーを設定する。
 
 
-클라이언트가 보낸 User-Agent헤더를 원본으로 보내고 싶은 경우 *로 설정한다.
+クライアントが送信したUser-Agentヘッダを元に送りたい場合*に設定する。
 
 
-XFF(X-Forwarded-For) 헤더
+XFF(X-Forwarded-For) ヘッダ
 ---------------------
 
-클라이언트와 원본서버 사이에 STON이 위치하면 원본서버는 클라이언트 IP를 얻을 수 없다.
-때문에 STON은 원본서버로 보내는 모든 HTTP요청에 X-Forwarded-For헤더를 명시한다. ::
+클クライアントと元のサーバーとの間にSTONが位置すると、元のサーバーは、クライアントのIPアドレスを取得することができない。 ためSTONは、元のサーバーに送信されるすべてのHTTP要求にX-Forwarded-Forヘッダを明示する ::
 
    # server.xml - <Server><VHostDefault><OriginOptions>
    # vhosts.xml - <Vhosts><Vhost><OriginOptions>
@@ -522,20 +472,19 @@ XFF(X-Forwarded-For) 헤더
 
 -  ``<XFFClientIPOnly>``
 
-   - ``OFF (기본)`` 클라이언트(IP: 128.134.9.1)가 보낸 XFF헤더에 클라이언트 IP를 추가한다.
-     클라이언트가 XFF헤더를 보내지 않았다면 클라이언트 IP만 명시된다. ::
+   - ``OFF (基本)`` クライアント（IP：128.134.9.1）が送信XFFヘッダにクライアントのIPアドレスを追加します。 クライアントがXFFヘッダを送信していない場合、クライアントのIPのみ明示される。 ::
 
         X-Forwarded-For: 220.61.7.150, 61.1.9.100, 128.134.9.1
 
-   - ``ON`` XFF헤더의 첫번째 주소만을 원본서버로 전송한다. ::
+   - ``ON`` XFFヘッダの最初のアドレスだけを元のサーバーに転送する。 ::
 
         X-Forwarded-For: 220.61.7.150
 
 
-ETag 헤더 인식
+ETagヘッダ認識
 ---------------------
 
-원본서버에서 응답하는 ETag인식여부를 설정한다. ::
+ソースサーバーからの応答するETag認識するかどうかを設定する。 ::
 
    # server.xml - <Server><VHostDefault><OriginOptions>
    # vhosts.xml - <Vhosts><Vhost><OriginOptions>
@@ -544,18 +493,18 @@ ETag 헤더 인식
 
 -  ``<OriginalETag>``
 
-   - ``OFF (기본)`` ETag헤더를 무시한다.
+   - ``OFF (基本)``  ETagヘッダを無視する。
 
-   - ``ON`` ETag를 인식하며 컨텐츠 갱신시 If-None-Match헤더를 추가한다.
+   - ``ON`` ETagを認識し、コンテンツ更新時If-None-Matchヘッダを追加します。
 
 
 
 .. _origin_url_rewrite:
 
-원본요청 URL변경
+元の要求URLの変更
 ====================================
 
-캐싱을 목적으로 원본으로 보내는 HTTP요청의 URL을 변경한다. ::
+キャッシュを目的として、元に送信するHTTPリクエストのURLを変更する。 ::
 
    # vhosts.xml - <Vhosts><Vhost><OriginOptions>
 
@@ -573,22 +522,21 @@ ETag 헤더 인식
    // Pattern : /img/image.jpg?date=20140326
    // Replace : /image.jpg?date=20140326/STON/composite/watermark1
 
-:ref:`handling_http_requests_url_rewrite` 와 같은 표현을 사용하지만
-가상호스트마다 독립적으로 설정하기 때문에 가상호스트명을 입력하지 않는다.
+:ref:`handling_http_requests_url_rewrite` のような表現を使用しますが、仮想ホストごとに独立して設定するため、仮想ホスト名を入力していない。
 
 .. note::
 
-   바이패스되는 HTTP요청의 URL은 변경할 수 없다.
-   ``<WholeClientRequest>`` 보다 우선한다.
+   バイパスされるHTTP要求のURLは変更できない。
+   ``<WholeClientRequest>`` よりも優先します。
 
 
 
 .. _origin_modify_client:
 
-원본요청 헤더변경
+元のリクエストヘッダの変更
 ====================================
 
-원본으로 HTTP요청을 보낼 때 조건에 따라 HTTP 헤더를 변경한다. ::
+元にHTTPリクエストを送信するときの条件に応じて、HTTPヘッダーを変更する。 ::
 
    # server.xml - <Server><VHostDefault><OriginOptions>
    # vhosts.xml - <Vhosts><Vhost><OriginOptions>
@@ -597,15 +545,13 @@ ETag 헤더 인식
 
 -  ``<ModifyHeader>``
 
-   -  ``OFF (기본)`` 변경하지 않는다.
+   -  ``OFF (基本)`` 変更しない。
 
-   -  ``ON`` 헤더 변경조건에 따라 헤더를 변경한다.
+   -  ``ON`` ヘッダ変更条件に応じて、ヘッダーを変更する。
 
-헤더 변경시점은 HTTP 요청패킷이 완성되어 원본서버로 전송하기 직전에 수행된다.
-단, Range헤더는 변조할 수 없다.
+ヘッダ変更時点は、HTTP要求パケットが完成されて、元のサーバーに転送する直前に実行される。 ただし、Rangeヘッダは変調することができない。
 
-이 기능은 :ref:`handling_http_requests_modify_client` 의 하위 기능이다.
-헤더변경에는 $ORGREQ 키워드를 사용한다. ::
+この機能は、 :ref:`handling_http_requests_modify_client` のサブ機能である。 ヘッダ変更には$ ORGREQキーワードを使用する。 ::
 
    # /svc/www.example.com/headers.txt
 
@@ -614,10 +560,10 @@ ETag 헤더 인식
    *, $ORGREQ[If-Modified-Since], unset
    *, $ORGREQ[If-None-Match], unset
 
-   # #PROTOCOL 키워드를 통해 클라이언트가 요청한 프로토콜을 헤더에 추가한다.
+   # #PROTOCOLキーワードを介してクライアントが要求したプロトコルをヘッダに追加します。
    $URL[*], $ORGREQ[X-Forwarded-Proto: #PROTOCOL], set
 
 
 .. note::
 
-   If-Modified-Since 헤더와 If-None-Match 헤더를 ``unset`` 하면 TTL이 만료된 컨텐츠는 항상 다시 다운로드 한다.
+   If-Modified-SinceヘッダとIf-None-Matchヘッダを ``unset`` するTTLが期限切れコンテンツは常に再度ダウンロードする。
