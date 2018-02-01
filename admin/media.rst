@@ -1,17 +1,14 @@
 .. _media:
 
-17장. 미디어
+第17章 メディア
 ******************
 
 .. note::
 
-   - `[동영상 강좌] 해보자! STON Edge Server - Chapter 4. 실시간 이미지 가공 <https://youtu.be/Pdfe-HbtXVs?list=PLqvIfHb2IlKeZ-Eym_UPsp6hbpeF-a2gE>`_
-   - `[동영상 강좌] 해보자! STON Edge Server - Chapter 5. 동영상 전달 <https://youtu.be/YjOEVamhah4?list=PLqvIfHb2IlKeZ-Eym_UPsp6hbpeF-a2gE>`_
+   - `[動画講座]みよう！ STON Edge Server - Chapter 4.リアルタイム画像処理 <https://youtu.be/Pdfe-HbtXVs?list=PLqvIfHb2IlKeZ-Eym_UPsp6hbpeF-a2gE>`_
+   - `[動画講座]みよう！ STON Edge Server - Chapter 5動画配信 <https://youtu.be/YjOEVamhah4?list=PLqvIfHb2IlKeZ-Eym_UPsp6hbpeF-a2gE>`_
 
-이 장에서는 미디어를 스마트하게 서비스하는 방법에 대해 설명한다.
-클라이언트 환경과 서비스 다양화와 함께 콘텐츠를 다양한 형태로 가공하는 경우가 많다.
-때문에 같은 콘텐츠지만 다양한 형태로 원본서버에 존재하게 된다.
-이런 방식은 처리시간과 저장공간의 낭비로 이어질 뿐만 아니라 관리가 어렵다.
+この章では、メディアをスマートにサービスする方法について説明する。 クライアント環境とサービスの多様化とコンテンツを様々な形に加工する場合が多い。 ため、同じコンテンツがさまざまな形で元のサーバーに存在することになる。 この方法は、処理時間とストレージ容量の無駄につながるだけでなく、管理が難しい。
 
 
 .. toctree::
@@ -19,16 +16,12 @@
 
 
 
-MP4/M4A 헤더위치 변경
+MP4 / M4Aヘッダの位置を変更
 ====================================
 
-보통 MP4포맷의 경우 인코딩 과정 중에는 헤더를 완성할 수 없기 때문에 완료 후 파일의 맨 뒤에 붙인다.
-헤더를 앞으로 옮기려면 별도의 처리가 필요하다.
-헤더가 뒤에 있다면 이를 지원하지 않는 플레이어에서 Pseudo-Streaming이 불가능하다.
-헤더위치 변경을 통해 Pseudo-Streaming을 간편하게 지원할 수 있다.
+通常MP4形式の場合エンコード処理中にヘッダを完成することができないため、完了後にファイルの末尾に付ける。 ヘッダを今後移動するには、別の処理が必要である。 ヘッダが続いている場合、これをサポートしていないプレーヤーでPseudo-Streamingが不可能である。 ヘッダの位置の変更により、Pseudo-Streamingを簡単にサポートすることができる。
 
-헤더위치 변경은 전송단계에서만 발생할 뿐 원본의 형태를 변경하지 않는다.
-별도의 저장공간을 사용하지도 않는다. ::
+ヘッダの位置の変更は、送信段階でのみ発生するだけでテキストの形を変更しない。 別のストレージスペースを使用することもない。 ::
 
    # server.xml - <Server><VHostDefault><Media>
    # vhosts.xml - <Vhosts><Vhost><Media>
@@ -38,23 +31,21 @@ MP4/M4A 헤더위치 변경
 
 -  ``<UpfrontMP4Header>``
 
-   - ``OFF (기본)`` 아무 것도 하지 않는다.
+   - ``OFF (基本)`` 何もしない。
 
-   - ``ON`` 확장자가 .mp4이고 헤더가 뒤에 있다면 헤더를 앞으로 옮겨서 전송한다.
+   - ``ON`` 拡張子が.mp4でヘッダが続いている場合、ヘッダーを今後移し送信する。
 
 -  ``<UpfrontM4AHeader>``
 
-   - ``OFF (기본)`` 아무 것도 하지 않는다.
+   - ``OFF (基本)`` 何もしない。
 
-   - ``ON`` 확장자가 .m4a이고 헤더가 뒤에 있다면 헤더를 앞으로 옮겨서 전송한다.
+   - ``ON`` 拡張子が.m4aでヘッダが続いている場合、ヘッダーを今後移し送信する。
 
-처음 요청되는 콘텐츠의 헤더를 앞으로 옮겨야 한다면 헤더를 옮기기위해 필요한 부분을 우선적으로 다운로드 받는다.
-아주 영리할뿐만 아니라 빠르게 동작한다.
-커튼 뒤의 복잡한 과정과는 상관없이, 클라이언트는 원래부터 헤더가 앞에 있는 온전한 파일을 서비스 받는다.
+最初に要求されているコンテンツのヘッダを前に移動する必要が場合、ヘッダを移すために必要な部分を優先的にダウンロードされる。 非常にスマートなだけでなく高速に動作する。 カーテンの後ろの複雑なプロセスとは関係なく、クライアントはもともとヘッダが前にある完全なファイルをサービス受ける。
 
 .. note::
 
-   분석할 수 없거나 깨진 파일이라면 원본형태 그대로 서비스된다.
+   分析することができない場合、または壊れたファイルであれば、元の形のままサービスされる。
 
 
 .. _media-trimming:
@@ -62,9 +53,7 @@ MP4/M4A 헤더위치 변경
 Trimming
 ====================================
 
-시간 값을 기준으로 원하는 구간을 추출한다.
-Trimming은 전송단계에서만 발생할 뿐 원본의 형태를 변경하지 않는다.
-별도의 저장공간을 사용하지 않는다. ::
+時間値に基づいて必要な区間を抽出する。 Trimmingは、送信段階でのみ発生するだけでテキストの形を変更しない。 別のストレージスペースを使用していない。 ::
 
    # server.xml - <Server><VHostDefault><Media>
    # vhosts.xml - <Vhosts><Vhost><Media>
@@ -75,67 +64,58 @@ Trimming은 전송단계에서만 발생할 뿐 원본의 형태를 변경하지
 
 -  ``<MP4Trimming>`` ``<MP3Trimming>`` ``<M4ATrimming>``
 
-   - ``OFF (기본)`` 아무 것도 하지 않는다.
+   - ``OFF (基本)`` 何もしない。
 
-   - ``ON`` 확장자(.mp4, .mp3, .m4a)가 일치하면 원하는 구간만큼 서비스하도록 Trimming한다.
-     Trimming구간은 ``StartParam`` 속성과 ``EndParam`` 으로 설정한다.
+   - ``ON`` 拡張子（.mp4、.mp3、.m4a）が一致すると、必要な区間だけサービスするようにTrimmingする。 Trimming区間は ``StartParam`` 属性と ``EndParam`` に設定する。
 
-   - ``AllTracks`` 속성
+   - ``AllTracks`` 属性
 
-     - ``OFF (기본)`` Audio/Video 트랙만 Trimming한다. (Mod-H264 방식)
+     - ``OFF (基本)`` Audio/Video トラックのみTrimmingする。 （Mod-H264方式）
 
-     - ``ON`` 모든 트랙을 Trimming한다. 사용 전 반드시 플레이어 호환성을 확인해야 한다.
+     - ``ON`` すべてのトラックをTrimmingする。 使用前に必ずプレーヤーの互換性を確認しなければならない。
 
-파라미터는 클라이언트 QueryString을 통해 입력받는다.
-예를 들어 10분 분량의 동영상(/video.mp4)을 특정 구간만 Trimming하고 싶다면 QueryString에 원하는 시점(단위: 초)을 명시한다. ::
+パラメータは、クライアントQueryStringを介して入力される。 たとえば、10分の動画（/video.mp4）を特定区間だけTrimmingしたい場合はQueryStringに任意の時点（単位：秒）を指定する。 ::
 
-   http://vod.wineosoft.co.kr/video.mp4                // 10분 : 전체 동영상
-   http://vod.wineosoft.co.kr/video.mp4?end=60         // 1분 : 처음부터 60초까지
-   http://vod.wineosoft.co.kr/video.mp4?start=120      // 8분 : 2분(120초)부터 끝까지
-   http://vod.wineosoft.co.kr/video.mp4?start=3&end=13 // 10초 : 3초부터 13초까지
+   http://vod.wineosoft.co.kr/video.mp4                // 10分：全ムービー
+   http://vod.wineosoft.co.kr/video.mp4?end=60         // 1分：最初から60秒まで
+   http://vod.wineosoft.co.kr/video.mp4?start=120      // 8分：2分（120秒）から最後まで
+   http://vod.wineosoft.co.kr/video.mp4?start=3&end=13 // 10秒：3秒から13秒まで
 
-``StartParam`` 값이 ``EndParam`` 값보다 클 경우 구간이 지정되지 않은 것으로 판단한다.
-이 기능은 HTTP Pseudo-Streaming으로 구현된 동영상 플레이어의 Skip기능을 위해서 개발되었다.
-그러므로 Range요청을 처리하는 것처럼 파일을 Offset기반으로 자르지 않고 올바르게 재생될 수 있도록 키프레임과 시간을 인지하여 구간을 추출한다.
+``StartParam`` 値が ``EndParam`` 値よりも大きい場合、区間が指定されていないものと判断する。 この機能は、HTTP Pseudo-Streamingに実装されたビデオプレーヤーのSkip機能のために開発された。 したがって、Range要求を処理するようにファイルをOffsetに基づいて切らずに正常に再生されるように、キーフレームと時間を認知して区間を抽出する。
 
-클라이언트에게 전달되는 파일은 다음 그림처럼 MP4헤더가 재생성된 완전한 형태의 MP4파일이다.
+クライアントに配信されるファイルは、次の図のようにMP4ヘッダが再生成された完全な形のMP4ファイルである。
 
 .. figure:: img/conf_media_mp4trimming.png
    :align: center
 
-   완전한 형태의 파일이 제공된다.
+   完全な形のファイルが提供される。
 
-추출된 구간은 별도의 파일로 인식되기 때문에 200 OK로 응답된다.
-그러므로 다음과 같이 Range헤더가 명시된 경우 추출된 파일로부터 Range를 계산하여 **206 Particial Content** 로 응답한다.
+抽出された区間は、別のファイルとして認識されるため、200 OKで応答される。 したがって、次のようにRangeヘッダが記載されている場合、抽出されたファイルからRangeを計算して **206 Particial Content** で応答する。
 
 .. figure:: img/conf_media_mp4trimming_range.png
    :align: center
 
-   일반적인 Range요청처럼 처리된다.
+   一般的なRangeリクエストのように処理される。
 
-구간추출 파라미터가 QueryString 표현을 사용하기 때문에 자칫 :ref:`caching-policy-applyquerystring` 과 헷갈릴 수 있다.
-``<ApplyQueryString>`` 설정이 ``ON`` 인 경우 클라이언트가 요청한 URL의 QueryString이 모두 인식되지만 ``StartParam`` 과 ``EndParam`` 은 제거된다. ::
+区間抽出パラメータがQueryString表現を使用するため、ややもすると :ref:`caching-policy-applyquerystring` と混乱することができる。
+``<ApplyQueryString>`` の設定が ``ON`` の場合、クライアントが要求されたURLのQueryStringがすべて認識され ``StartParam`` と ``EndParam`` は除去される。 ::
 
    GET /video.mp4?start=30&end=100
    GET /video.mp4?tag=3277&start=30&end=100&date=20130726
 
-예를 들어 위와 같이 ``StartParam`` 이 **start** 로 ``EndParam`` 이 **end** 로 입력된 경우
-이 값들은 구간을 추출하는데 쓰일 뿐 Caching-Key를 생성하거나 원본서버로 요청을 보낼 때는 제거된다.
-각각 다음과 같이 인식된다. ::
+例えば上記のように ``StartParam`` が **start** で ``EndParam`` が **end** で入力された場合、この値は、区間を抽出するのに使われるだけでCaching-Keyを生成したり、元のサーバーに要求を送信する場合は削除される。 それぞれ次のように認識される。 ::
 
    GET /video.mp4
    GET /video.mp4?tag=3277&date=20130726
 
-또한 QueryString파라미터는 확장모듈이나 CDN솔루션에 따라 달라질 수 있다.
+また、QueryStringパラメータは、拡張モジュールやCDNソリューションによって異なることができる。
 
 .. figure:: img/conf_media_mp4trimming_range.png
    :align: center
 
-   JW Player에서 제공하고 있는 Module/CDN별 참고자료
+   JW Playerで提供しているModule / CDN星参考資料
 
-이외의 nginx의 `ngx_http_mp4_module <http://nginx.org/en/docs/http/ngx_http_mp4_module.html>`_ 과,
-lighttpd의 `Mod-H264-Streaming-Testing-Version2 <http://h264.code-shop.com/trac/wiki/Mod-H264-Streaming-Testing-Version2>`_ 에서도
-모두 **start** 를 QueryString으로 사용하고 있다.
+以外のnginxの `ngx_http_mp4_module <http://nginx.org/en/docs/http/ngx_http_mp4_module.html>`_ と、lighttpdの `Mod-H264-Streaming-Testing-Version2 <http://h264.code-shop.com/trac/wiki/Mod-H264-Streaming-Testing-Version2>`_ もすべて **start** をQueryStringに使用している。
 
 
 
@@ -144,14 +124,14 @@ lighttpd의 `Mod-H264-Streaming-Testing-Version2 <http://h264.code-shop.com/trac
 Multi-Trimming
 ====================================
 
-시간 값을 기준으로 복수로 지정된 구간을 하나의 영상으로 추출한다.
+時間値に基づいて、複数の指定された区間を一つの映像として抽出する。
 
 .. figure:: img/conf_media_multitrimming.png
    :align: center
 
    /video.mp4?trimming=0-30,210-270,525-555
 
-구간 지정방법만 다를뿐 동작방식은 `Trimming`_ 과 동일하다. ::
+区間の指定方法が違うだけで動作は `Trimming`_ と同じである。 ::
 
    # server.xml - <Server><VHostDefault><Media>
    # vhosts.xml - <Vhosts><Vhost><Media>
@@ -161,32 +141,30 @@ Multi-Trimming
 
 -  ``<MP4Trimming>`` ``<M4ATrimming>``
 
-   - ``MultiParam (기본: "trimming")``
-     설정된 이름을 QueryString Key로 사용하여 추출 구간을 지정한다.
-     하나의 구간은 "시작시간 - 종료시간" 으로 표기하며 각 구간은 콤마(,)로 연결한다.
+   - ``MultiParam (基本: "trimming")``
+     に設定され名前をQueryString Keyとして使用して抽出区間を指定する。 一つの区間は "開始時刻 - 終了時刻" と表記し、各区間はコンマ（、）で接続する。
 
-   - ``MaxRatio (기본: 50%)``
-     Multi-Trimming된 영상은 원본보다 ``MaxRatio (최대 100%)`` 비율만큼까지 커질 수 있다.
-     ``MaxRatio`` 를 넘어가는 구간은 무시된다.
+   - ``MaxRatio (基本: 50%)``
+    Multi-Trimmingされた映像は、オリジナルよりも ``MaxRatio (最大 100%)`` の割合だけまで大きくなることができる。
+     ``MaxRatio`` を移る区間は無視される。
 
 
-예를 들어 다음과 같이 호출하면 3분짜리 영상이 생성된다. ::
+例えば、次のように呼び出すと、3分の映像が生成される。 ::
 
    http://example.com/video.mp4?trimming=10-70,560-620,1245-1305
 
-같은 영상을 반복하거나 앞 뒤가 바뀐 영상을 만들 수도 있다. ::
+同じ映像を繰り返したり、前の背部変わった映像を作成することもできる。 ::
 
    http://example.com/video.mp4?trimming=17-20,17-20,17-20,17-20
    http://example.com/video.mp4?trimming=1000-1200,500-623,1900-2000
    http://example.com/video.mp4?trimming=600-,400-600
 
-구간 값을 지정하지 않은 경우 맨 앞 또는 맨 뒤를 의미한다.
+区間値を指定しない場合先頭または最後に意味する。
 
 
 .. note::
 
-   `Multi-Trimming`_ 은 `Trimming`_ 보다 우선한다.
-   QueryString에 `Multi-Trimming`_ 키가 명시되어 있다면 `Trimming`_ 키는 무시된다.
+   `Multi-Trimming`_ は `Trimming`_ より優先する。 QueryStringに `Multi-Trimming`_ キーが明示されている場合は `Trimming`_ キーは無視される。
 
 
 .. _media-hls:
@@ -194,16 +172,11 @@ Multi-Trimming
 MP4 HLS
 ====================================
 
-MP4파일을 HLS(HTTP Live Streaming)로 서비스한다.
-원본서버는 더 이상 HLS서비스를 위해 파일을 분할저장할 필요가 없다.
-MP4파일 헤더의 위치에 상관없이 다운로드와 동시에 실시간으로 .m3u8/.ts파일 변환 후 서비스한다.
+MP4ファイルをHLS（HTTP Live Streaming）にサービスする。 ソースサーバーは、もはやHLSサービスのためにファイルを分割保存する必要がない。 MP4ファイルのヘッダの位置に関係なく、ダウンロードと同時にリアルタイムで.m3u8 / .tsファイルの変換後のサービスである。
 
 ..  note::
 
-    MP4HLS는 Elementary Stream(Video 또는 Audio)을 변환하는 트랜스코딩(Transcoding)이 아니다.
-    그러므로 HLS에 적합한 형식으로 인코딩된 MP4파일에 한해서 원활한 단말 재생이 가능하다.
-    인코딩이 적합하지 않을 경우 화면이나 깨지거나 소리가 재생되지 않을 수 있다.
-    현재(2014.2.20) Apple에서 밝히고 있는 Video/Audio 인코딩 규격은 다음과 같다.
+    MP4HLSはElementary Stream（VideoまたはAudio）を変換するトランスコーディング（Transcoding）ではない。 したがって、HLSに適した形式でエンコードされたMP4ファイルに限って円滑な端末の再生が可能である。 エンコーディングが適合しない場合は、画面や割れたり音が再生されないことがあります。 現在（2014.2.20）Appleの言っているVideo / Audioエンコード規格は、次のとおりである。
 
     What are the specifics of the video and audio formats supported?
     Although the protocol specification does not limit the video and audio formats, the current Apple implementation supports the following formats:
@@ -219,24 +192,21 @@ MP4파일 헤더의 위치에 상관없이 다운로드와 동시에 실시간�
     Note: iPad, iPhone 3G, and iPod touch (2nd generation and later) support H.264 Baseline 3.1. If your app runs on older versions of iPhone or iPod touch, however, you should use H.264 Baseline 3.0 for compatibility. If your content is intended solely for iPad, Apple TV, iPhone 4 and later, and Mac OS X computers, you should use Main Level 3.1.
 
 
-기존 방식의 경우 Pseudo-Streaming과 HLS를 위해 다음과 같이 원본파일이 각각 존재해야 한다.
-이런 경우 STON 역시 원본 파일을 그대로 복제하여 고객에게 서비스한다.
-하지만 재생시간이 길수록 파생파일은 많아지며 관리의 어려움은 증가한다.
+従来方式の場合、Pseudo-StreamingとHLSのために、以下のように、元のファイルがそれぞれ存在しなければならない。 このような場合、STONも、元のファイルをそのまま複製して、顧客にサービスする。 しかし、再生時間が長いほど、派生ファイルは多くなり、管理の難しさは増加する。
 
 .. figure:: img/conf_media_mp4hls1.png
    :align: center
 
-   수고가 많은 HLS
+   手間が多くHLS
 
-``<MP4HLS>`` 는 원본파일로부터 HLS서비스에 필요한 파일을 동적으로 생성한다.
+``<MP4HLS>`` は、元のファイルからHLSサービスに必要なファイルを動的に生成する。
 
 .. figure:: img/conf_media_mp4hls2.png
    :align: center
 
-   똑똑한 HLS
+   スマートHLS
 
-모든 .m3u8/.ts파일은 원본파일에서 파생되며 별도의 저장공간을 소비하지 않는다.
-서비스 즉시 메모리에 임시적으로 생성되며 서비스되지 않을 때 자동으로 없어진다. ::
+すべての.m3u8 / .tsファイルは、元のファイルから派生し、別のストレージスペースを消費しない。 サービスすぐにメモリに一時的に生成されサービスされない場合、自動的になくなる。 ::
 
    # server.xml - <Server><VHostDefault><Media>
    # vhosts.xml - <Vhosts><Vhost><Media>
@@ -250,65 +220,58 @@ MP4파일 헤더의 위치에 상관없이 다운로드와 동시에 실시간�
 
 -  ``<MP4HLS>``
 
-   - ``Status (기본: Inactive)`` 값이 ``Active`` 일 때만 활성화된다.
+   - ``Status (基本: Inactive)`` の値が ``Active`` の場合にのみ有効になる。
 
-   - ``Keyword (기본: mp4hls)`` HLS 서비스 키워드
+   - ``Keyword (基本: mp4hls)`` HLSサービスキーワード
 
--  ``<Index> (기본: index.m3u8)`` HLS 인덱스(.m3u8) 파일명
+-  ``<Index> (基本: index.m3u8)`` HLSインデックス（.m3u8）ファイル名
 
-   - ``Ver (기본 3)`` 인덱스 파일 버전.
-     3인 경우 ``#EXT-X-VERSION:3`` 헤더가 명시되며 ``#EXTINF`` 의 시간 값이 소수점 3째 자리까지 표시된다.
-     1인 경우 ``#EXT-X-VERSION`` 헤더가 없으며, ``#EXTINF`` 의 시간 값이 정수(반올림)로 표시된다.
+   - ``Ver (基本 3)`` インデックスファイルのバージョン。 3である場合、 ``#EXT-X-VERSION:3`` ヘッダが明示されて ``#EXTINF`` の時間値が小数点3桁目まで表示される。 1の場合、 ``#EXT-X-VERSION`` ヘッダがなく、 ``#EXTINF`` の時間値が整数（丸め）に表示される。
 
-   - ``Alternates (기본: OFF)`` Stream Alternates 사용여부.
+   - ``Alternates (基本: OFF)`` Stream Alternates 使用するかどうか。
 
      .. figure:: img/hls_alternates_off.png
         :align: center
 
-        OFF. ``<Index>`` 에서 TS목록을 서비스한다.
+        OFF。 ``<Index>`` でTSリストをサービスする。
 
      .. figure:: img/hls_alternates_on.png
         :align: center
 
-        ON. ``<AlternatesName>`` 에서 TS목록을 서비스한다.
+        ON。 ``<AlternatesName>`` でTSリストをサービスする。
 
--  ``<Sequence> (기본: 0)`` .ts 파일의 시작 번호. 이 수를 기준으로 순차적으로 증가한다.
+-  ``<Sequence> (基本: 0)`` .tsファイルの開始番号。 このことに基づいて順次増加する。
 
--  ``<Duration> (기본: 10초)`` MP4를 HLS로 분할하는 기준 시간(초).
-   분할의 기준은 Video/Audio의 KeyFrame이다.
-   KeyFrame은 들쭉날쭉할 수 있으므로 정확히 분할되지 않는다.
-   만약 10초로 분할하려는데 KeyFrame이 9초와 12초에 있다면 가까운 값(9초)을 선택한다.
+-  ``<Duration> (基本: 10秒)`` のMP4 HLSに分割する基準時間（秒）。 分割の基準は、Video / AudioのKeyFrameある。 KeyFrameはギザギザすることができますので、正確に分割されない。 もし10秒分割しようとしてKeyFrameが9秒と12秒の場合は近い値（9秒）を選択する。
 
--  ``<AlternatesName> (기본: playlist.m3u8)`` Stream Alternates 파일명. ::
+-  ``<AlternatesName> (基本: playlist.m3u8)`` Stream Alternates ファイル名。 ::
 
       http://www.example.com/video.mp4/mp4hls/playlist.m3u8
 
 
-서비스 주소가 다음과 같다면 해당 주소로 Pseudo-Streaming을 진행할 수 있다. ::
+サービスアドレスは次のとおりである場合は、そのアドレスにPseudo-Streamingを行うことができる。 ::
 
     http://www.example.com/video.mp4
 
-가상호스트는 ``<MP4HLS>`` 에 정의된 ``Keyword`` 문자열을 인식함으로써 HLS서비스를 진행한다.
-다음 URL이 호출되면 /video.mp4로부터 index.m3u8파일을 생성한다. ::
+仮想ホストは ``<MP4HLS>`` に定義された ``Keyword`` 文字列を認識することにより、HLSサービスを進行する。 次のURLが呼び出されると、/video.mp4からindex.m3u8ファイルを生成する。 ::
 
    http://www.example.com/video.mp4/mp4hls/index.m3u8
 
-``Alternates`` 속성이 ON이라면 ``<Index>`` 파일은 ``<AlternatesName>`` 파일을 서비스한다. ::
+``Alternates`` 属性がONであれば、 ``<Index>`` ファイルは、 ``<AlternatesName>`` ファイルをサービスする。 ::
 
    #EXTM3U
    #EXT-X-VERSION:3
    #EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=200000,RESOLUTION=720x480
    /video.mp4/mp4hls/playlist.m3u8
 
-``#EXT-X-STREAM-INF`` 의 Bandwidth와 Resolution은 영상을 분석하여 동적으로 제공한다.
+``#EXT-X-STREAM-INF`` のBandwidthとResolutionは映像を分析して、動的に提供する。
 
 .. note::
 
-   Stream Alternates를 제공하긴 하지만 현재 버전에서 index.m3u8는 항상 하나의 서브 인덱스 파일(playlist.m3u8)만을 제공한다.
-   캐시 입장에서는 video_1080.mp4와 video_720.mp4가 (인코딩 옵션만 다른) 같은 영상인지 알 수 없기 때문이다.
+   Stream Alternatesを提供しますが、現在のバージョンではindex.m3u8は常に一つのサブインデックスファイル（playlist.m3u8）だけを提供する。 キャッシュの立場では、video_1080.mp4とvideo_720.mp4が（エンコードオプションが、他の）のような映像なのか知ることができないからである。
 
 
-최종적으로 생성된 .ts 목록(버전 3)은 다음과 같다. ::
+最終的に生成された.tsリスト（バージョン3）は、次のとおりである。 ::
 
    #EXTM3U
    #EXT-X-TARGETDURATION:10
@@ -321,7 +284,7 @@ MP4파일 헤더의 위치에 상관없이 다운로드와 동시에 실시간�
    #EXTINF:10.112,
    /video.mp4/mp4hls/2.ts
 
-   ... (중략)...
+   ... (中略)...
 
    #EXTINF:10.847,
    /video.mp4/mp4hls/161.ts
@@ -329,40 +292,38 @@ MP4파일 헤더의 위치에 상관없이 다운로드와 동시에 실시간�
    /video.mp4/mp4hls/162.ts
    #EXT-X-ENDLIST
 
-분할에는 3가지 정책이 있다.
+分割には、3つのポリシーがあります。
 
--  **KeyFrame 간격보다** ``<Duration>`` **설정이 큰 경우**
-   KeyFrame이 3초, ``<Duration>`` 이 20초라면 20초를 넘지 않는 KeyFrame의 배수인 18초로 분할된다.
+-  **KeyFrame 間隔よりも** ``<Duration>`` **の設定が大きい場合**
+   KeyFrameが3秒、 ``<Duration>`` が20秒であれば、20秒を超えないKeyFrameの倍数である18秒に分割される。
 
--  **KeyFrame 간격과** ``<Duration>`` **이 비슷한 경우**
-   KeyFrame이 9초, ``<Duration>`` 이 10초라면 10초를 넘지 않는 KeyFrame의 배수인 9초로 분할된다.
+-  **KeyFrame 間隔と ** ``<Duration>`` **が似ている場合**
+   KeyFrameが9秒、 ``<Duration>`` が10秒であれば、10秒を超えないKeyFrameの倍数である9秒分けられる。
 
--  **KeyFrame 간격이** ``<Duration>`` **설정보다 큰 경우**
-   KeyFrame단위로 분할된다.
+-  **KeyFrame 間隔が** ``<Duration>`` **設定よりも大きい場合**
+   KeyFrame単位に分割される。
 
-다음 클라이언트 요청에 대해 STON이 어떻게 동작하는지 이해해보자. ::
+次のクライアント要求に対してSTONがどのように動作するのかを理解しましょう。 ::
 
    GET /video.mp4/mp4hls/99.ts HTTP/1.1
    Range: bytes=0-512000
    Host: www.winesoft.co.kr
 
-1.	``STON`` 최초 로딩 (아무 것도 캐싱되어 있지 않음.)
-#.	``Client`` HTTP Range 요청 (100번째 파일의 최초 500KB 요청)
-#.	``STON`` /video.mp4 파일 캐싱객체 생성
-#.	``STON`` /video.mp4 파일 분석을 위해 필요한 부분만을 원본서버에서 다운로드
-#.	``STON`` 100번째(99.ts)파일 서비스를 위해 필요한 부분만을 원본서버에서 다운로드
-#.	``STON`` 100번째(99.ts)파일 생성 후 Range 서비스
-#.	``STON`` 서비스가 완료되면 99.ts파일 파괴
+1.	``STON`` 最初のロード (何もキャッシュされていない。)
+#.	``Client`` HTTP Range要求（100番目のファイルの最初の500KBリクエスト）
+#.	``STON`` /video.mp4 ファイルのキャッシュオブジェクトの作成
+#.	``STON`` /video.mp4 ファイルの分析のために必要な部分だけを元のサーバーからダウンロード
+#.	``STON`` 100番目(99.ts)ファイルサービスのために必要な部分だけを元のサーバーからダウンロード
+#.	``STON`` 100番目(99.ts)ファイルを作成した後Rangeサービス
+#.	``STON`` サービスが完了すると、99.tsファイル破壊
 
 .. note::
 
-   ``MP4Trimming`` 기능이 ``ON`` 이라면 Trimming된 MP4를 HLS로 변환할 수 있다. (HLS영상을 Trimming할 수 없다. HLS는 MP4가 아니라 MPEG2TS 임에 주의하자.)
-   영상을 Trimming한 뒤, HLS로 변환하기 때문에 다음과 같이 표현하는 것이 자연스럽다. ::
+   ``MP4Trimming`` 機能が ``ON`` であれば、TrimmingされたMP4をHLSに変換することができる。 （HLS画像をTrimmingすることができない。HLSのMP4ではなく、MPEG2TSであることに注意しよう。）映像をTrimmingした後、HLSに変換するため、次のように表現するのが自然である。 ::
 
       /video.mp4?start=0&end=60/mp4hls/index.m3u8
 
-   동작에는 문제가 없지만 QueryString을 맨 뒤에 붙이는 HTTP 규격에 어긋난다.
-   이를 보완하기 위해 다음과 같은 표현해도 동작은 동일하다. ::
+   動作には問題ありませんがQueryStringを一番後ろに付けるHTTP仕様に反する。 これを補完するために、次のような表現も動作は同じである。 ::
 
       /video.mp4/mp4hls/index.m3u8?start=0&end=60
       /video.mp4?start=0/mp4hls/index.m3u8?end=60
@@ -373,7 +334,7 @@ MP4파일 헤더의 위치에 상관없이 다운로드와 동시에 실시간�
 MP3 HLS
 ====================================
 
-MP3파일을 HLS(HTTP Live Streaming)로 서비스한다. ::
+MP3ファイルをHLS（HTTP Live Streaming）にサービスする。 ::
 
    # server.xml - <Server><VHostDefault><Media>
    # vhosts.xml - <Vhosts><Vhost><Media>
@@ -385,15 +346,15 @@ MP3파일을 HLS(HTTP Live Streaming)로 서비스한다. ::
       <AlternatesName>playlist.m3u8</AlternatesName>
    </MP3HLS>
 
-모든 설정과 동작방식이 `MP4 HLS`_ 와 동일하며 추가적으로 Segement형식을 선택할 수 있다.
+すべての設定と動作が `MP4 HLS`_ と同じでさらにSegement形式を選択することができる。
 
 -  ``<MP3HLS>``
 
-   - ``SegmentType (기본: TS)`` 원본 MP3를 MPEG2-TS( ``TS`` ) 또는 ``MP3`` 로 분할한다.
+   - ``SegmentType (基本: TS)`` ソースのMP3 MPEG2-TS( ``TS`` ) または ``MP3`` に分割する。
 
 .. note::
 
-   `MP4 HLS`_ 와 `MP3 HLS`_ 가 같은 ``Keyword`` 로 설정되어 있을 경우 `MP3 HLS`_ 는 동작하지 않는다.
+   `MP4 HLS`_ と `MP3 HLS`_ が同じ ``Keyword`` に設定されている場合、 `MP3 HLS`_ は動作しない。
 
 
 
@@ -402,28 +363,26 @@ MP3파일을 HLS(HTTP Live Streaming)로 서비스한다. ::
 DIMS
 ====================================
 
-DIMS(Dynamic Image Management System)는 원본이미지를 다양한 형태로 가공하는 기능이다.
-`mod_dims <https://code.google.com/p/moddims/wiki/WebserviceApi>`_ 를 기반으로 확장한 형태이다.
-가공형태는 모두 7가지(optimize, crop, thumbnail, resize, format, quality, composite)이며 이를 조합한 복합가공이 가능하다.
+DIMS(Dynamic Image Management System)は、元の画像を様々な形に加工する機能である。
+`mod_dims <https://code.google.com/p/moddims/wiki/WebserviceApi>`_ をベースに拡張した形態である。 加工形状は、すべての7つの（optimize、crop、thumbnail、resize、format、quality、composite）であり、これを組み合わせた複合加工が可能である。
 
 .. figure:: img/dims.png
    :align: center
 
-   다양한 동적 이미지 가공
+   様々な動的な画像加工
 
-이미지는 동적으로 생성되며 원본 이미지 URL뒤에 약속된 키워드와 가공옵션을 붙여서 호출한다.
-가공된 이미지는 캐싱되어 원본서버 이미지가 바뀌지 않는 이상 다시 가공되지 않는다.
+画像は、動的に生成され、元の画像のURLの後ろに約束されたキーワードと加工オプションを付けて呼び出します。 加工された画像は、キャッシュされて、元のサーバーのイメージが変わらない以上、再加工されない。
 
-예를 들어 원본 파일이 /img.jpg라면 다음과 같은 형식으로 이미지를 가공할 수 있다.
-("12AB"는 약속된 Keyword이다.) ::
+たとえば、元のファイルが/img.jpgなら、次のような形式で画像を加工することができる。
+("12AB"は、約束されたKeywordある。) ::
 
-   http://image.example.com/img.jpg    // 원본 이미지
+   http://image.example.com/img.jpg    // 元の 画像
    http://image.example.com/img.jpg/12AB/optimize
    http://image.example.com/img.jpg/12AB/resize/500x500/
    http://image.example.com/img.jpg/12AB/crop/400x400/
    http://image.example.com/img.jpg/12AB/composite/watermark1/
 
-``<Dims>`` 는 별도로 설정하지 않으면 모두 비활성화되어 있다. ::
+``<Dims>`` は別に設定しなければ、すべて無効にされている。 ::
 
    # server.xml - <Server><VHostDefault><Options>
    # vhosts.xml - <Vhosts><Vhost><Options>
@@ -432,38 +391,34 @@ DIMS(Dynamic Image Management System)는 원본이미지를 다양한 형태로 
 
 -  ``<Dims>``
 
-   - ``Status`` DIMS활성화 ( ``Active`` 또는 ``Inactive`` )
-   - ``Keyword`` 원본과 DIMS를 구분하는 키워드
-   - ``MaxSourceSize (기본: 10MB)`` 변환을 허용할 최대 원본 이미지 크기 (단위: MB)
-   - ``OnFailure`` 이미지 변환실패 시 동작방식
+   - ``Status`` DIMS有効 ( ``Active`` または ``Inactive`` )
+   - ``Keyword`` ソースとDIMSを区別するキーワード
+   - ``MaxSourceSize (基本: 10MB)`` 変換を可能にする最大元の画像サイズ（単位：MB）
+   - ``OnFailure`` 画像変換失敗時の動作方式
 
-     - ``message (기본)`` 500 Internal Error로 응답한다. 본문에는 구체적인 실패 이유를 명시한다.
+     - ``message (基本)`` 500 Internal Errorで応答する。 本文には、具体的な失敗の理由を明示する。
 
-       - ``The original file was not successfully downloaded.`` 원본이미지를 완전하게 다운로드 하지 못했다.
-       - ``The original file size is too large.`` 원본이미지 크기가 ``MaxSourceSize`` 를 넘어 변환하지 못했다.
-       - ``The original file loading failed.`` 원본 이미지 데이터를 불러오지 못했다.
-       - ``Image converting failed or invalid DIMS command.`` 잘못된 명령어 또는 지원되지 않는 이미지등으로 인해 변환하지 못했다.
+       - ``The original file was not successfully downloaded.`` 元の画像を完全にダウンロードできなかった。
+       - ``The original file size is too large.`` 元画像のサイズが ``MaxSourceSize`` を超え変換していなかった。
+       - ``The original file loading failed.`` 元の画像データを読み込まなかった。
+       - ``Image converting failed or invalid DIMS command.`` 正しくない命令またはサポートされていない画像などが原因で変換していなかった。
 
-     - ``redirect`` 원본 이미지 주소로 302 Redirect한다.
+     - ``redirect`` 元の画像のアドレスに302 Redirectする。
 
 
 
-최적화
+最適化
 -----------------------
 
-최적화란 이미지 품질을 저하시키지 않으면서 이미지를 압축하는 과정이다.
-JPEG, JPEG-2000, Loseless-JPEG 이미지만 지원이 가능하다.
-이미 다른 도구등을 통해 최적화된 이미지는 더 이상 최적화되지 않는다. ::
+最適化とは、イメージの品質を低下させずに、画像を圧縮する過程である。 JPEG、JPEG-2000、Loseless-JPEG画像のみをサポートが可能である。 既に他のツールなどを使用して最適化された画像は、もはや最適化されない。 ::
 
    http://image.example.com/img.jpg/dims/optimize
 
-최적화는 키워드 이외 별도의 옵션을 가지지 않는다.
-그러므로 다른 변환조건과 조합할 때 맨 뒤에 명시하는 편이 바람직하다. ::
+最適化は、キーワード以外の別のオプションを持たない。 したがって、他の変換条件と組み合わせたときに一番後ろ明示した方が望ましい。 ::
 
    http://image.example.com/img.jpg/dims/resize/100x100/optimize
 
-다른 모든 DIMS기능이 시스템 자원을 많이 사용하지만 그 중에서도 최적화가 가장 무거운 작업이다.
-다음은 HitRatio가 0%인 상태에서 이미지 크기별 성능 테스트 결과이다.
+他のすべてのDIMSの機能がシステムリソースを大量に使用しますが、その中でも最適化が最も重い作業である。 以下は、HitRatioが0％の状態で、画像サイズ別パフォーマンステストの結果である。
 
 -  ``OS`` CentOS 6.2 (Linux version 2.6.32-220.el6.x86_64 (mockbuild@c6b18n3.bsys.dev.centos.org) (gcc version 4.4.6 20110731 (Red Hat 4.4.6-3) (GCC) ) #1 SMP Tue Dec 6 19:48:22 GMT 2011)
 -  ``CPU`` `Intel(R) Xeon(R) CPU E3-1230 v3 @ 3.30GHz (8 processors) <http://www.cpubenchmark.net/cpu.php?cpu=Intel+Xeon+E3-1230+v3+%40+3.30GHz>`_
@@ -471,7 +426,7 @@ JPEG, JPEG-2000, Loseless-JPEG 이미지만 지원이 가능하다.
 -  ``HDD`` SMC2108 SAS 275GB X 3EA
 
 ====== ======= ============= ======================= ================== ================
-크기   처리량  응답속도(ms)  클라이언트 트래픽(Mbps) 원본 트래픽(Mbps)  트래픽 절감률(%)
+サイズ   スループット  応答速度(ms)  クライアントのトラフィック(Mbps) 元トラフィック(Mbps)  トラフィックの削減率(%)
 ====== ======= ============= ======================= ================== ================
 16KB   720     19.32         46.32                   92.62              49.99
 32KB   680     20.68         86.42                   165.08             47.65
@@ -482,46 +437,30 @@ JPEG, JPEG-2000, Loseless-JPEG 이미지만 지원이 가능하다.
 1MB    20      981.07        90.62                   179.88             49.62
 ====== ======= ============= ======================= ================== ================
 
-약 50%내외의 트래픽 절감률이 있으므로 매우 효과적이다.
-다시 한번 말하지만 최적화는 매우 무거운 작업이다.
-표를 통해 알 수 있듯이 이미지 크기가 가장 큰 변수가 된다.
+約50％内外のトラフィックを削減率があるので非常に有効である。 もう一度言うが最適化は非常に重い作業である。 表を使用して分かるように、画像サイズが最大の変数となる。
 
-때문에 충분한 고려없이 서비스에 적용했다가는 큰 낭패를 볼 수 있다.
-적당한 :ref:`adv_topics_req_hit_ratio` 가 있는 상황이 바람직하나,
-그렇지 않다면 서비스 규모에 맞게 물리적인 CPU자원을 충분히 확보해야 한다.
+ため、十分な検討なしにサービスに適用たあとは大きな床を見ることができる。 適切な :ref:`adv_topics_req_hit_ratio` がある状況が望ましいが、そうでない場合はサービスの規模に合わせて、物理的なCPUリソースを十分に確保しなければならない。
 
 
 
-잘라내기
+カット
 -----------------------
 
-좌상단을 기준으로 원하는 영역만큼 이미지를 잘라낸다.
-영역은 **width x height{+-}x{+-}y{%}** 로 표현한다.
-다음은 좌상단 x=20, y=30을 기준으로 width=100, height=200만큼 잘라내는 예제다. ::
+左上を基準にしたい領域だけの画像を切り取る。 領域は、 **width x height{+-}x{+-}y{%}** で表現する。 次は左上端x = 20、y = 30を基準にwidth = 100、height = 200だけ切り取る例だ。 ::
 
    http://image.example.com/img.jpg/dims/crop/100x200+20+30/
 
 
-Thumbnail 생성
+Thumbnail生成
 -----------------------
 
-Thumbnail 을 생성한다.
-크기와 옵션은 **width x height{%} {@} {!} {<} {>}** 로 표현한다.
-기본적으로 이미지의 가로와 세로는 최대값을 사용한다.
-이미지를 확대 또는 축소하여도 가로 세로 비율은 유지된다.
-정확하게 지정한 크기로 이미지를 조절할 때는 크기 뒤에 느낌표(!)를 추가한다.
-**640X480!** 라는 표현은 정확하게 640x480 크기의 Thumbnail을 생성한다는 뜻이다.
-만약 가로 또는 세로 크기만 지정된 경우, 생략된 값은 가로/세로 비율에 의해 자동결정 된다.
+Thumbnailを生成する。 サイズとオプションは、 **width x height{%} {@} {!} {<} {>}** で表現する。 基本的には画像の横と縦の最大値を使用する。 画像を拡大または縮小しても、アスペクト比は維持される。 正確に指定したサイズで画像を調整するときは、サイズの後ろに感嘆符（！）を追加します。
+**640X480!** という表現は正確に640x480サイズのThumbnailを生成するという意味である。 もし、水平方向または垂直方向のサイズのみ指定した場合、省略された値は、水平/垂直比によって自動的に決定される。
 
-예를 들어 **/thumbnail/100/** 은 가로 크기에 맞추어 세로 크기가 결정되며
-**/thumbnail/x200/** 은 세로 크기에 맞추어 가로 크기가 결정된다.
-가로/세로 크기를 이미지의 크기에 맞추어 백분율(%)로 표현할 수 있다.
-이미지 크기를 늘리려면, 100 보다 큰 값(예 : 125 %)을 사용한다.
-이미지 크기를 줄이려면 100 미만의 비율을 사용한다.
-URL Encoding규칙에 따라 %문자가 %25로 인코딩 됨을 명심해야 한다.
+例えば、 **/thumbnail/100/** は横幅に合わせて縦サイズが決定され、
+**/thumbnail/x200/** は、縦サイズに合わせて横幅が決定される。 水平/垂直サイズを画像のサイズに合わせて割合（％）で表現することができる。 画像のサイズを増やすには、100よりも大きい値（例えば、125％）を使用する。 画像のサイズを小さくするには、100未満の割合を使用する。 URL Encodingルールに基づいて％の文字が％25にエンコードされることを覚えておかなければならない。
 
-예를 들어 50%라는 표현은 50%25로 인코딩 된다.
-다음은 width=78, height=110크기의 Thumbnail을 생성하는 예제다. ::
+例えば、50％という表現は、50％、25でエンコードされる。 以下は、width = 78、height = 110サイズのThumbnailを生成する例である。 ::
 
    http://image.example.com/img.jpg/dims/thumbnail/78x110/
 
@@ -529,41 +468,31 @@ URL Encoding규칙에 따라 %문자가 %25로 인코딩 됨을 명심해야 한
 Resizing
 -----------------------
 
-이미지 크기를 변경한다.
-크기는 **width x height** 로 표현한다.
-이미지는 변경되어도 비율은 유지된다.
-다음은 원본 이미지를 width=200, height=200크기로 변경하는 예제다. ::
+画像のサイズを変更する。 サイズは **width x height** で表現する。 画像は変更されても比率は維持される。 以下は、元の画像をwidth = 200、height = 200サイズに変更する例である。 ::
 
    http://image.example.com/img.jpg/dims/resize/200x200/
 
 
-Format 변경
+Format 変更
 -----------------------
 
-이미지 포맷을 변경한다.
-지원되는 포맷은 "png", "jpg", "gif" 이다.
-다음은 JPG를 PNG로 변환하는 예제다. ::
+画像フォーマットを変更する。 サポートされるフォーマットは、 "png", "jpg", "gif" である。 以下は、JPGをPNGへ変換する例である。 ::
 
    http://image.example.com/img.jpg/dims/format/png/
 
 
-품질 변경
+品質変更
 -----------------------
 
-이미지 품질을 조절한다.
-이 기능은 전송되는 이미지 용량을 줄일 수 있어서 효과적이다.
-유효 범위는 0부터 100까지다.
-다음은 이미지 품질을 25%로 조절하는 예제다. ::
+画質を調節する。 この機能は、送信される画像の容量を減らすことができて有効である。 有効範囲は0から100までだ。 次は、画像の品質を25％に調節する例である。 ::
 
    http://image.example.com/img.jpg/dims/quality/25/
 
 
-합성
+合成
 -----------------------
 
-두 이미지를 합성한다.
-앞서 설명한 기능과는 다르게 합성조건은 미리 설정되어 있어야 한다.
-주로 워터마크 효과를 내기 위해 사용된다. ::
+二つの画像を合成する。 前述の機能とは別の方法で合成条件は、あらかじめ設定されてなければならない。 主にウォーターマーク効果を出すために使用される。 ::
 
    # server.xml - <Server><VHostDefault><Options>
    # vhosts.xml - <Vhosts><Vhost><Options>
@@ -576,44 +505,34 @@ Format 변경
 
 -  ``<Composite>``
 
-    이미지 합성조건을 설정한다. 속성에 의해 정해지며 별도의 값을 가지지 않는다.
+    画像合成条件を設定する。 属性によって決まり、別の値を持たない。
 
-    -  ``Name`` 호출될 이름을 지정한다.
-       '/'문자는 입력할 수 없다.
-       URL의 "/composite/" 뒤에 위치한다.
+    -  ``Name`` 呼び出される名前を指定します。 '/'文字は入力できない。 URLの "/composite/" の後に位置する。
 
-    -  ``File`` 합성할 이미지파일 경로를 지정한다.
+    -  ``File`` 合成する画像ファイルのパスを指定する。
 
-    -  ``Gravity (기본: c)`` 합성할 위치는 좌측상단부터 9가지의 포인트(nw, n, ne, w, c, e, sw, s, se)가 존재한다.
+    -  ``Gravity (基本: c)`` 合成する位置は、左上から9つのポイント（nw、n、ne、w、c、e、sw、s、se）が存在する。
 
        .. figure:: img/conf_dims2.png
           :align: center
 
-          Gavity 기준점
+          Gavity基準点
 
-    -  ``Geometry (기본: +0+0)`` ``Gravity`` 기준으로 합성할 이미지 위치를 설정한다.
-       {+-}x{+-}y. 붉은색 원은 Gravity속성에 따라 +0+0이 의미하는 기준점으로 +x+y의
-       값이 커질수록 이미지 안쪽으로 배치된다.
-       초록색 화살표는 +x, 보라색 화살표는 +y가 증가하는 방향이다.
-       -x-y를 사용하면 대상 이미지의 바깥에 위치하게 되어 결과 이미지에서는 보여지지 않는다.
-       이 속성은 다소 복잡해 보이지만 이미지 크기를 자동으로 계산하여 배치하므로
-       일관된 결과물을 얻을 수 있어서 효과적이다.
-       또한 +x%+y% 처럼 %옵션을 주어 비율로 배치할 수도 있다.
+    -  ``Geometry (基本: +0+0)`` ``Gravity`` 基準で合成する画像の位置を設定する。
+       {+-}x{+-}y. 赤丸はGravity属性に基づいて +0+0が意味する基準点に+ x + yの値が大きくなるほど画像の中に配置される。 緑の矢印は、+ x、紫の矢印は+ yが増加する方向である。 -xyを使用すると、対象画像の外側に位置するようにされ、結果の画像は見られない。 この属性は、多少複雑に見えますが、画像のサイズを自動的に計算して配置するので、一貫性のある結果を得ることができて有効である。 また、+ x％+ y％のように％オプションを与え割合で配置することもできる。
 
-    -  ``Dissolve (기본: 50)`` 합성할 이미지의 투명도(0~100).
+    -  ``Dissolve (基本: 50)`` 合成する画像の透明度（0〜100）。
 
-``<Composite>`` 을 설정했다면 ``Name`` 속성을 사용하여 이미지를 합성할 수 있다. ::
+``<Composite>`` を設定した場合 ``Name`` プロパティを使用して画像を合成することができる。 ::
 
     http://image.example.com/img.jpg/dims/composite/water1/
 
 
 
-원본이미지 조건판단
+元の画像の条件判断
 -----------------------
 
-원본 이미지 조건에 따라 동적으로 가공 옵션을 다르게 적용할 수 있다.
-예를 들어 1024 X 768 이하의 이미지는 품질을 50%로 떨어트리고 그 이상의
-이미지는 1024 X 768로 크기변환을 하려면 다음과 같이 ``<ByOriginal>`` 을 설정한다. ::
+원元の画像の条件に応じて動的に加工オプションを別の方法で適用することができる。 たとえば1024 X 768以下の画像は、品質を50％に落とし、それ以上の画像は、1024 X 768にサイズ変換をするには、次のように ``<ByOriginal>`` を設定する。 ::
 
    # server.xml - <Server><VHostDefault><Options>
    # vhosts.xml - <Vhosts><Vhost><Options>
@@ -626,25 +545,20 @@ Format 변경
    </Dims>
 
 -  ``<ByOriginal>``
-   ``Name`` 속성으로 호출한다.
-   하위에 다양한 조건의 ``<Condition>`` 을 설정한다.
+   ``Name`` 属性で呼び出します。 サブさまざまな条件の ``<Condition>`` を設定する。
 
 -  ``<Condition>``
-   조건에 만족하는 경우 설정된 변환을 수행한다.
+   条件に満足している場合、設定された変換を実行する。
 
-   - ``Width`` 가로 길이가 설정 값보다 작으면 적용된다.
-   - ``Height`` 세로 길이가 설정 값보다 작으면 적용된다.
+   - ``Width`` 幅が設定値よりも小さい場合に適用される。
+   - ``Height`` 縦の長さが設定値よりも小さい場合に適用される。
+条件を設定しないと、元の画像のサイズに関係なく、変換される。
 
-   조건을 설정하지 않으면 원본 이미지 크기에 상관없이 변환된다.
-
-``<Condition>`` 은 명시된 순서대로 적용된다.
-그러므로 작은 이미지 조건을 먼저 배치해야 한다.
-다음과 같이 호출한다. ::
+``<Condition>`` は指定された順序で適用される。 したがって、小さな画像の条件を最初に配置しなければならない。 次のように呼び出します。 ::
 
    http://image.example.com/img.jpg/dims/byoriginal/size1/
 
-또 다른 예로 이미지 크기에 따라 다른 ``<Composite>`` 조건을 줄 수 있다.
-이런 경우 다음과 같이 사전에 정의된 ``<Composite>`` 의 ``Name`` 으로 설정한다. ::
+別の例として、画像サイズに応じて、他の ``<Composite>`` 条件を与えることができる。 このような場合は、次のように事前に定義された ``<Composite>`` の ``Name`` に設定する。 ::
 
    # server.xml - <Server><VHostDefault><Options>
    # vhosts.xml - <Vhosts><Vhost><Options>
@@ -660,7 +574,7 @@ Format 변경
       </ByOriginal>
    </Dims>
 
-다음과 같이 호출하면 원본 이미지 크기에 따라 합성이 적용된다. ::
+次のように呼び出すと、元の画像のサイズに応じて、合成が適用される。 ::
 
    http://image.example.com/img.jpg/dims/byoriginal/size_water/
 
@@ -670,59 +584,53 @@ Format 변경
 Animated GIF
 -----------------------
 
-Animated GIF에 대해서도 모든 DIMS변환이 동일하게 적용된다.
-처리 순서는 다음과 같다.
+Animated GIFにもすべてのDIMS変換が同様に適用される。 処理順序は次のとおりである。
 
-1. Animated GIF를 낱개의 이미지들로 분해한다.
-2. 각각의 이미지를 변환한다.
-3. 변환된 이미지를 Animated GIF로 결합한다.
+1. Animated GIFを別途のイメージに分解する。
+2. それぞれの画像を変換する。
+3. 変換された画像をAnimated GIFに結合する。
 
-결합된 이미지가 많을수록 처리비용이 높아 서비스 품질이 저하될 수 있다.
-이런 경우 첫 번째 이미지에 대해서만 변환하도록 설정하면 처리 비용을 낮출 수 있다. ::
+結合された画像が多いほど処理コストが高く、サービスの品質が低下することができる。 このような場合、最初の画像にのみ変換するように設定すると、処理コストを下げることができる。 ::
 
    # server.xml - <Server><VHostDefault><Options>
    # vhosts.xml - <Vhosts><Vhost><Options>
 
    <Dims FirstFrameOnly="OFF" />
 
--  ``FirstFrameOnly (기본: OFF)`` ON인 경우 Animated GIF의 첫 장면만 변환한다.
+-  ``FirstFrameOnly (基本: OFF)`` ONの場合Animated GIFの最初のシーンだけを変換する。
 
-다음과 같이 URL을 호출할 때 ``FirstFrameOnly`` 옵션을 명시적으로 지정할 수 있다. ::
+次のようにURLを呼び出すときに ``FirstFrameOnly`` オプションを明示的に指定することができる。 ::
 
    http://image.example.com/img.jpg/dims/firstframeonly/on/resize/200x200/
    http://image.example.com/img.jpg/dims/firstframeonly/off/resize/200x200/
 
-위와 같이 URL에 명시적으로 지정되어 있는 경우 설정보다 우선한다.
+上記のように、URLに明示的に指定されている場合、設定よりも優先される。
 
 
 .. note::
 
-   ``limit`` 명령어를 통해 Animated GIF의 프레임 수를 조절할 수 있다. ::
+   ``limit`` コマンドを使用してAnimated GIFのフレーム数を調節することができる。 ::
       
       http://image.example.com/img.jpg/dims/limit/3
       http://image.example.com/img.jpg/dims/limit/3/resize/200x200
 
 
 
-기타
+その他
 -----------------------
 
-이상의 기본기능을 결합하여 복합적인 이미지 가공을 할 수 있다.
-예를 들어 Thumbnail생성(78x110), 포맷을 JPG에서 PNG로 변환, 품질 50% 이상의 옵션을 한번의 호출로 실행할 수 있다. ::
+以上の基本的な機能を組み合わせて、複合的なイメージ処理を行うことができる。 たとえばThumbnail生成（78x110）は、フォーマットをJPGからPNGに変換すると、品質の50％以上のオプションを一度の呼び出しで実行することができる。 ::
 
    http://image.example.com/img.jpg/dims/thumbnail/78x110/format/png/quality/50/
 
-DIMS는 URL을 이용하여 이미지 가공이 이루어진다.
-그러므로 URL에 영향을 주는 다른 옵션들 때문에 원하지 않는 결과가 얻어지지 않도록 주의해야 한다.
+DIMSは、URLを利用して、画像加工が行われる。 したがって、URLに影響を与える他のオプションのために望ましくない結果が得られないように注意しなければならない。
 
--  :ref:`caching-policy-applyquerystring` 이 ``OFF`` 라면 키워드 이전의 QueryString이 무시된다. ::
+-  :ref:`caching-policy-applyquerystring` が ``OFF`` であれば、キーワード前のQueryStringが無視される。 ::
 
       http://image.example.com/img.jpg?session=5234&type=37/dims/resize/200x200/
 
-   위와 같은 호출에 이 설정이 ``ON`` 이라면 입력된 URL 그대로 인식되지만 OFF라면 다음과 같이 인식된다. ::
+   上記のような呼び出しに、この設定が ``ON`` であれば、入力されたURLのまま認識されOFFであれば、次のように認識される。 ::
 
       http://image.example.com/img.jpg/dims/resize/200x200/
 
--  :ref:`caching-policy-casesensitive` 이 ``OFF`` 라면 모든 URL을 소문자로 변환하여 처리한다.
-   그러므로 DIMS 키워드에 대문자가 포함되었다면 키워드를 인식하지 못한다.
-   항상 키워드는 소문자로 사용하는 것이 좋다.
+-  :ref:`caching-policy-casesensitive` が ``OFF`` であれば、すべてのURLを小文字に変換して処理する。 したがって、DIMSキーワードに大文字が含まれている場合、キーワードを認識していない。 常にキーワードは小文字で使用するのがよい。
