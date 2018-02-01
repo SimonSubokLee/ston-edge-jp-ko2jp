@@ -1,29 +1,22 @@
 ﻿.. _monitoring_stats:
 
-10장. 모니터링 & 통계
+第10章 監視＆統計
 ******************
 
-이 장에서는 모니터링과 통계에 대해 설명한다.
-모니터링과 통계는 용도에 따라 서로 다르게 이해되는 경우가 많다.
-하지만 서비스는 숫자로 이야기한다는 관점에서 둘은 같다.
+この章では、モニタリングと統計について説明する。 監視と統計は用途に応じて異なる理解されている場合が多い。 しかし、サービスは数字で話するという観点から、二人は同じである。
 
-여기서 가장 중요한 요소는 실시간성이다.
-5분도 너무 길다.
-실시간으로 서비스 상태변화를 볼 수 있어야 한다.
-수 많은 정책이 적용과 동시에 효과를 내는지 즉시 알 수 있어야 한다.
-모든 통계는 1초단위로 수집되며 최소 단위가 된다.
+ここで最も重要な要素は、リアルタイム性である。 5分も長い。 リアルタイムでサービスの状態の変化を見ることができなければならない。 多くのポリシーが適用さと同時に効果を出すのか、すぐに知ることができなければならない。 すべての統計情報は、1秒単位で収集され、最小単位となる。
 
-모든 통계는 가상호스트별로 따로 수집될 뿐만 아니라 실시간(1초), 5분 평균으로 제공된다.
-고객이 통계를 보다 쉽게 분석, 가공할 수 있도록 JSON과 XML 포맷으로 제공한다. ::
+すべての統計情報は、仮想ホストごとに別々に収集されるだけでなく、リアルタイム（1秒）、5分平均で提供される。 顧客が統計をより簡単に分析、加工することができるようにJSONとXMLフォーマットで提供する。 ::
 
-    http://127.0.0.1:10040/monitoring/realtime?type=[JSON 또는 XML]
-    http://127.0.0.1:10040/monitoring/average?type=[JSON 또는 XML]
+    http://127.0.0.1:10040/monitoring/realtime?type=[JSON または XML]
+    http://127.0.0.1:10040/monitoring/average?type=[JSON または XML]
 
 -  ``realtime``
-   1초 전 서비스 상태를 제공한다.
+   1秒前のサービスの状態を提供する。
 
 -  ``average``
-   5분 단위 통계를 제공한다.
+   5分単位の統計情報を提供する。
 
 
 .. toctree::
@@ -31,10 +24,10 @@
 
 
 
-수집범위
+収集範囲
 ====================================
 
-통계수집 범위를 설정한다. ::
+統計情報の収集範囲を設定する。 ::
 
    # server.xml - <Server><VHostDefault>
    # vhosts.xml - <Vhosts><Vhost>
@@ -47,68 +40,63 @@
       <OriginLocal>OFF</OriginLocal>
    </Stats>
 
--  ``<DirDepth> (기본: 0)``
+-  ``<DirDepth> (基本: 0)``
 
-   디렉토리별로 통계를 수집한다.
-   0으로 설정된 경우 모든 통계를 루트(/) 디렉토리로 수집한다.
-   1로 설정하면 통계는 첫 번째 Depth 디렉토리별로 수집된다.
+   ディレクトリごとの統計情報を収集している。 0に設定された場合、すべての統計情報を、ルート（/）ディレクトリに収集する。 1に設定すると、統計情報は、最初のDepthディレクトリごとに収集される。
 
    .. note:
 
-      값의 제한은 없지만 수 만개 이상의 디렉토리 통계를 수집할 경우 자칫 메모리 문제를 초래할 수 있다.
+      値の制限はありませんが数万個以上のディレクトリの統計情報を収集する場合、ややもするメモリの問題を引き起こすことができる。
 
 -  ``<DirDepthAccum>``
 
-   디렉토리별로 통계수집할 때 상위 디렉토리 통계 합산여부를 설정한다.
-   ``<DirDepth>`` 이 0이라면 이 설정은 무시된다.
+   ディレクトリごとの統計情報を収集する際に、親ディレクトリの統計情報合算するかどうかを設定する。
+   ``<DirDepth>`` が0であれば、この設定は無視される。
 
-   - ``OFF (기본)`` 상위 디렉토리로 통계를 합산하지 않는다.
+   - ``OFF (基本)`` 上位ディレクトリに統計を合算していない。
 
-   - ``ON`` 상위 디렉토리로 통계를 합산한다.
+   - ``ON`` 上位ディレクトリに統計を合算する。
 
-   예를 들어, ``<DirDepth>`` 이 2이고 모든 디렉토리에 동일하게 10만큼의 트래픽이 발생하고 있다고 가정한다.
-   ``<DirDepthAccum>`` 이 ``OFF`` 라면 좌측 그림처럼 트래픽이 발생하는 디렉토리별로 따로 통계가 수집된다.
-   ``ON`` 이라면 우측 그림처럼 하위 디렉토리의 모든 통계가    부모 디렉토리로 누적된다.
+   たとえば、 ``<DirDepth>`` が2であり、すべてのディレクトリに同じように10ほどのトラフィックが発生していると仮定する。
+   ``<DirDepthAccum>`` が ``OFF`` であれば、左図のように、トラフィックが発生しているディレクトリ別に統計が収集される。
+   ``ON`` であれば、右図のようにサブディレクトリのすべての統計情報が親ディレクトリに累積される。
 
    .. figure:: img/stats_dirdepth.jpg
       :align: center
 
-      상위 디렉토리 누적통계
+      親ディレクトリの累積統計
 
-   예를 들어 /img 디렉토리는 하위 디렉토리의 트래픽과 자신의 트래픽을 더한 30을    통계 값으로 가지며 이 트래픽은 부모 디렉토리로 합산된다.
+   たとえば、/ imgディレクトリはサブディレクトリのトラフィックと自分のトラフィックを加えた30の統計値に持ち、このトラフィックは、親ディレクトリに含まれる。
 
 -  ``<HttpsTraffic>``
 
-   - ``OFF (기본)`` HTTPS트래픽을 SSL통계로만 수집한다.
+   - ``OFF (基本)`` HTTPSトラフィックをSSL統計のみを収集する。
 
-   - ``ON`` HTTPS트래픽을 SSL과 HTTP양쪽 통계에 같이 수집한다.
+   - ``ON`` HTTPSトラフィックをSSLとHTTPの両方の統計にように収集する。
 
-   기본적으로 SSL레이어를 통과하면 별도의 SSL 통계로 수집한다.
-   HTTPS의 경우 상위 프로토콜에서 HTTP로 처리되기 때문에 보다 세세한 통계수집이 가능하다.
-   하지만 SSL통계와 HTTP통계 양쪽에 중복 통계수집이 되므로 HTTP통계만을 신뢰할 것을 권장한다.
+   基本的にはSSL層を通過すると、別のSSL統計に収集する。 HTTPSの場合、上位プロトコルで、HTTPで処理されるため、より細かい統計情報の収集が可能である。 しかし、SSL統計およびHTTP統計の両方に重複して統計情報の収集となりますのでHTTP統計だけ信頼することを推奨する。
 
 -  ``<ClientLocal>``
 
-   Loopback 클라이언트와 STON구간의 트래픽을 통계로 집계한다.
+   LoopbackクライアントとSTON区間のトラフィックを統計に集計する。
 
-   - ``OFF (기본)`` 집계하지 않는다.
+   - ``OFF (基本)`` 集計していない。
 
-   - ``ON`` 집계한다.
+   - ``ON`` 集計する。
 
 -  ``<OriginLocal>``
 
-   STON구간과 Loopback 원본서버 구간의 트래픽을 통계로 집계한다.
+   STON区間とLoopbackソースサーバー区間のトラフィックを統計に集計する。
 
-   - ``OFF (기본)`` 집계하지 않는다.
+   - ``OFF (基本)`` 集計していない。
 
-   - ``ON`` 집계한다.
+   - ``ON`` 集計する。
 
 
-호스트 종합통계
+ホスト総合統計
 ====================================
 
-호스트 통계는 가장 상위 개념의 통계로 서비스하는 모든 가상호스트의 통계를 종합한다.
-같은 통계를 JSON과 XML형식으로 제공한다. ::
+ホスト統計情報は、最も上位概念の統計にサービスするすべての仮想ホストの統計を総合する。 などの統計をJSONとXML形式で提供する。 ::
 
    {                                            <Host
      "Host":                                      Version="2.0.0"
@@ -202,89 +190,84 @@
      }
    }
 
--  ``Version`` STON 버전
--  ``Name`` 호스트이름. 설정하지 않았다면 시스템 이름을 보여준다.
--  ``State`` 서비스 상태. (Healthy=정상 서비스, Inactive=라이센스 비활성화, Emergency)
--  ``Uptime (단위: 초)`` 서비스 실행시간
--  ``OriginSession`` 원본세션 수
--  ``OriginActiveSession`` 전송 중인 원본세션 수
--  ``OriginInbound (단위: Bytes, 평균)`` 원본서버로부터 받은 양
--  ``OriginReqCount (평균)`` 원본서버로 보낸 요청횟수
--  ``OriginOutbound (단위: Bytes, 평균)`` 원본서버로 보낸 양
--  ``OriginResTotalCount (평균)`` 원본서버 응답횟수
--  ``OriginResTotalTimeRes (단위: 0.01ms, 평균)`` 원본서버 응답시간 (HTTP요청 전송 ~ HTTP응답 첫 수신)
--  ``OriginResTotalTimeComplete (단위: 0.01ms, 평균)`` 원본서버 HTTP 트랜잭션 완료시간 (HTTP요청 전송 ~ HTTP응답 완료)
--  ``OriginRes2xxCount (평균)`` 원본서버 2xx응답횟수
--  ``OriginRes2xxTimeRes (단위: 0.01ms, 평균)`` 원본서버 2xx응답시간
--  ``OriginRes2xxTimeComplete (단위: 0.01ms, 평균)`` 원본서버 2xx 트랜잭션 완료시간
--  ``OriginRes3xxCount (평균)`` 원본서버 3xx응답횟수
--  ``OriginRes3xxTimeRes (단위: 0.01ms, 평균)`` 원본서버 3xx응답시간
--  ``OriginRes3xxTimeComplete (단위: 0.01ms, 평균)`` 원본서버 3xx 트랜잭션 완료시간
--  ``OriginRes4xxCount (평균)`` 원본서버 4xx응답횟수
--  ``OriginRes4xxTimeRes (단위: 0.01ms, 평균)`` 원본서버 4xx응답시간
--  ``OriginRes4xxTimeComplete (단위: 0.01ms, 평균)`` 원본서버 4xx 트랜잭션 완료시간
--  ``OriginRes5xxCount (평균)`` 원본서버 5xx응답횟수
--  ``OriginRes5xxTimeRes (단위: 0.01ms, 평균)`` 원본서버 5xx응답시간
--  ``OriginRes5xxTimeComplete (단위: 0.01ms, 평균)`` 원본서버 5xx 트랜잭션 완료시간
--  ``ClientSession`` 클라이언트 세션 수
--  ``ClientActiveSession`` 전송 중인 클라이언트 세션 수
--  ``ClientInbound (단위: Bytes, 평균)`` 클라이언트로부터 받은 양
--  ``ClientOutbound (단위: Bytes, 평균)`` 클라이언트에게 보낸 양
--  ``ClientReqCount (평균)`` 클라이언트가 보낸 요청횟수
--  ``ClientResTotalCount (평균)`` 클라이언트 응답횟수
--  ``ClientResTotalTimeRes (단위: 0.01ms, 평균)`` 클라이언트 응답시간 (HTTP요청 수신 ~ HTTP응답 전송)
--  ``ClientResTotalTimeComplete (단위: 0.01ms, 평균)`` 클라이언트 HTTP 트랜잭션 완료시간 (HTTP요청 수신 ~ HTTP응답 완료)
--  ``ClientRes2xxCount (평균)`` 클라이언트 2xx응답횟수
--  ``ClientRes2xxTimeRes (단위: 0.01ms, 평균)`` 클라이언트 2xx응답시간
--  ``ClientRes2xxTimeComplete (단위: 0.01ms, 평균)`` 클라이언트 2xx 트랜잭션 완료시간
--  ``ClientRes3xxCount (평균)`` 클라이언트 3xx응답횟수
--  ``ClientRes3xxTimeRes (단위: 0.01ms, 평균)`` 클라이언트 3xx응답시간
--  ``ClientRes3xxTimeComplete (단위: 0.01ms, 평균)`` 클라이언트 3xx 트랜잭션 완료시간
--  ``ClientRes4xxCount (평균)`` 클라이언트 4xx응답횟수
--  ``ClientRes4xxTimeRes (단위: 0.01ms, 평균)`` 클라이언트 4xx응답시간
--  ``ClientRes4xxTimeComplete (단위: 0.01ms, 평균)`` 클라이언트 4xx 트랜잭션 완료시간
--  ``ClientRes5xxCount (평균)`` 클라이언트 5xx응답횟수
--  ``ClientRes5xxTimeRes (단위: 0.01ms, 평균)`` 클라이언트 5xx응답시간
--  ``ClientRes5xxTimeComplete (단위: 0.01ms, 평균)`` 클라이언트 5xx 트랜잭션 완료시간
--  ``RequestHitRatio (단위: 0.01%, 평균)`` Hit율.
-   캐싱객체가 생성되어 있고 해당 객체가 초기화되어 있다면 Hit이다.
-   반대로 캐싱객체가 없거나 해당 객체가 원본서버로부터 초기화되지 않았다면 Hit로 치지 않는다.
-   응답코드와 Hit율은 관련이 없다.
+-  ``Version`` STONバージョン
+-  ``Name`` ホスト名。 設定しなかった場合、システムの名前を示している。
+-  ``State`` サービスの状態。 （Healthy =通常のサービス、Inactive =ライセンス無効化、Emergency）
+-  ``Uptime (単位: 秒)`` サービスの実行時間
+-  ``OriginSession`` 元セッション数
+-  ``OriginActiveSession`` 転送中のソースセッション数
+-  ``OriginInbound (単位: Bytes, 平均)`` 元のサーバーから受信した量
+-  ``OriginReqCount (平均)`` 元のサーバーに送信される要求の数
+-  ``OriginOutbound (単位: Bytes, 平均)`` 元のサーバーに送信さ量
+-  ``OriginResTotalCount (平均)`` 元のサーバーの応答回数
+-  ``OriginResTotalTimeRes (単位: 0.01ms, 平均)`` 元のサーバーの応答時間（HTTPリクエスト送信〜HTTP応答の最初の受信）
+-  ``OriginResTotalTimeComplete (単位: 0.01ms, 平均)`` 元のサーバーHTTPトランザクションの完了時間（HTTPリクエスト送信〜HTTP応答完了）
+-  ``OriginRes2xxCount (平均)`` 元のサーバー2xx応答回数
+-  ``OriginRes2xxTimeRes (単位: 0.01ms, 平均)`` 元のサーバー2xx応答時間
+-  ``OriginRes2xxTimeComplete (単位: 0.01ms, 平均)`` 元のサーバー2xxトランザクションの完了時間
+-  ``OriginRes3xxCount (平均)`` 元のサーバー3xx応答回数
+-  ``OriginRes3xxTimeRes (単位: 0.01ms, 平均)`` 元のサーバー3xx応答時間
+-  ``OriginRes3xxTimeComplete (単位: 0.01ms, 平均)`` 元のサーバー3xxトランザクションの完了時間
+-  ``OriginRes4xxCount (平均)`` 元のサーバー4xx応答回数
+-  ``OriginRes4xxTimeRes (単位: 0.01ms, 平均)`` 元のサーバー4xx応答時間
+-  ``OriginRes4xxTimeComplete (単位: 0.01ms, 平均)`` 元のサーバー4xxトランザクションの完了時間
+-  ``OriginRes5xxCount (平均)`` 元のサーバー5xx応答回数
+-  ``OriginRes5xxTimeRes (単位: 0.01ms, 平均)`` 元のサーバー5xx応答時間
+-  ``OriginRes5xxTimeComplete (単位: 0.01ms, 平均)`` 元のサーバー5xxトランザクションの完了時間
+-  ``ClientSession`` クライアントセッション数
+-  ``ClientActiveSession`` 送信しているクライアントセッションの数
+-  ``ClientInbound (単位: Bytes, 平均)`` クライアントから受信した量
+-  ``ClientOutbound (単位: Bytes, 平均)`` クライアントに送信量
+-  ``ClientReqCount (平均)`` クライアントが送信した要求数
+-  ``ClientResTotalCount (平均)`` クライアントの応答回数
+-  ``ClientResTotalTimeRes (単位: 0.01ms, 平均)`` クライアントの応答時間（HTTPリクエストを受信〜HTTP応答送信）
+-  ``ClientResTotalTimeComplete (単位: 0.01ms, 平均)`` クライアントHTTPトランザクションの完了時間（HTTPリクエストを受信〜HTTP応答完了）
+-  ``ClientRes2xxCount (平均)`` クライアント2xx応答回数
+-  ``ClientRes2xxTimeRes (単位: 0.01ms, 平均)`` クライアント2xx応答時間
+-  ``ClientRes2xxTimeComplete (単位: 0.01ms, 平均)`` クライアント2xxトランザクションの完了時間
+-  ``ClientRes3xxCount (平均)`` クライアント3xx応答回数
+-  ``ClientRes3xxTimeRes (単位: 0.01ms, 平均)`` クライアント3xx応答時間
+-  ``ClientRes3xxTimeComplete (単位: 0.01ms, 平均)`` クライアント3xxトランザクションの完了時間
+-  ``ClientRes4xxCount (平均)`` クライアント4xx応答回数
+-  ``ClientRes4xxTimeRes (単位: 0.01ms, 平均)`` クライアント4xx応答時間
+-  ``ClientRes4xxTimeComplete (単位: 0.01ms, 平均)`` クライアント4xxトランザクションの完了時間
+-  ``ClientRes5xxCount (平均)`` クライアント5xx応答回数
+-  ``ClientRes5xxTimeRes (単位: 0.01ms, 平均)`` クライアント5xx応答時間
+-  ``ClientRes5xxTimeComplete (単位: 0.01ms, 平均)`` クライアント5xxトランザクションの完了時間
+-  ``RequestHitRatio (単位: 0.01%, 平均)`` Hit率。 キャッシュオブジェクトが生成されており、そのオブジェクトが初期化されている場合Hitある。 逆にキャッシュオブジェクトが存在しないか、そのオブジェクトが元のサーバーから初期化されていない場合Hitで打たない。 応答コードとHit率は関連がない。
 
    .. figure:: img/stat_filesystem1.png
       :align: center
 
-      HTTP와 File I/O는 가상호스트를 공유한다.
+      HTTPとFile I / Oは、仮想ホストを共有する。
 
-   Apache를 통해 접근되는 File I/O의 RequestHitRatio는 0%이 된다.
-   하지만 HTTP Server의 경우 File I/O에 의해 캐싱된 파일이 서비스되기 때문에 100%의 RequestHitRatio를 가진다.
-   ByteHitRatio의 경우 원본 Inbound대비 Http outbound, File I/O outbound로 각각 계산된다.
+   Apacheを使用してアクセスされるFile I / OのRequestHitRatioは0％になる。 しかし、HTTP Serverの場合、File I / Oによってキャッシュされたファイルがサービスされるので、100％のRequestHitRatioを持つ。 ByteHitRatioの場合、元のInbound比Http outbound、File I / O outboundにそれぞれ計算される。
 
--  ``ByteHitRatio (단위: 0.01%, 평균)`` 원본서버 대비 클라이언트 전송률. ::
+-  ``ByteHitRatio (単位: 0.01%, 平均)`` 元のサーバーに比べ、クライアント転送速度。 ::
 
-      (클라이언트 Outbound - 원본서버 Inbound) / 클라이언트 Outbound
+      (クライアント Outbound - ソースサーバー Inbound) / クライアント Outbound
 
-   원본서버가 훨씬 빠른 속도를 가지고 있거나 클라이언트 세션이 금방 끊어진다면 음수가 된다.
+   ソースサーバーがはるかに速い速度を持っているか、クライアントセッションがすぐに切断された場合、負になる。
 
--  ``FileSystem`` 독립적인 FileSystem 통계로 다른 통계 수치에 취합되지 않는다.
+-  ``FileSystem`` 独立FileSystem統計に他の統計数値に収集されない。
 
-   - ``RequestHitRatio (단위: 0.01%, 평균)`` File I/O를 통한 Hit율
-   - ``ByteHitRatio (단위: 0.01%, 평균)`` 원본서버 대비 File I/O 전송률
-   - ``Outbound (단위: Bytes, 평균)`` File I/O로 서비스한 데이터 크기
-   - ``Session (평균)`` File I/O 진행 중인 Thread 수
+   - ``RequestHitRatio (単位: 0.01%, 平均)`` File I / Oを使用したHit率
+   - ``ByteHitRatio (単位: 0.01%, 平均)`` 元のサーバーに比べFile I / Oレート
+   - ``Outbound (単位: Bytes, 平均)`` File I / Oサービスデータサイズ
+   - ``Session (平均)`` File I / O処理中のThreadができ
 
 .. note::
 
-   5분 통계에서만 제공되는 항목.
+   5分の統計のみ提供されているアイテムです。
 
-   -  ``HttpCountSum`` HTTP 트랜잭션의 총 개수
-   -  ``HttpRequestHitSum`` 캐시 HIT 결과
+   -  ``HttpCountSum`` HTTPトランザクションの合計数
+   -  ``HttpRequestHitSum`` キャッシュHIT結果
 
 
-System 통계
+System統計
 ====================================
 
-시스템 및 전역자원 통계를 JSON과 XML형식으로 제공한다. ::
+システムとグローバル・リソースの統計情報をJSONとXML形式で提供する。 ::
 
     "System":                                   <System>
     {                                             <CPU
@@ -377,75 +360,74 @@ System 통계
       "URLRewrite":57
     }
 
--  ``CPU (단위: 0.01%)`` CPU사용량. 전체 CPU사용량은 Kernel + User로 계산해야 한다.
+-  ``CPU (単位: 0.01%)`` CPU使用率。 全体的なCPUの使用率は、Kernel + Userで計算しなければならない。
 
-   - ``Kernel`` CPU(Kernel) 사용량
-   - ``User`` CPU(User) 사용량
-   - ``Idle`` 사용되지 않는 CPU량
-   - ``ProcKernel`` STON이 사용하는 CPU(Kernel) 사용량
-   - ``ProcUser`` STON이 사용하는 CPU(User) 사용량
+   - ``Kernel`` CPU(Kernel) の使用量
+   - ``User`` CPU(User) の使用量
+   - ``Idle`` 使用されていないCPU量
+   - ``ProcKernel`` STONが使用するCPU（Kernel）の使用量
+   - ``ProcUser`` STONが使用するCPU（User）の使用量
    - ``Nice`` niced processes executing in user mode
    - ``IOWait`` waiting for I/O to complete
    - ``IRQ`` servicing interrupts
    - ``SoftIRQ`` servicing softirqs
    - ``Steal`` involuntary wait
 
--  ``Mem (단위: Bytes)`` 메모리 사용량
+-  ``Mem (単位: Bytes)`` メモリ使用量
 
-   - ``Free`` 시스템 Free 메모리 크기
-   - ``STON`` STON이 사용하는 메모리 크기
+   - ``Free`` システムFreeメモリサイズ
+   - ``STON`` STONが使用するメモリサイズ
 
--  ``Disk`` 디스크 성능지표
+-  ``Disk`` ディスク性能指標
 
-   - ``Path`` 디스크 경로
-   - ``Status`` 디스크 상태 (Normal: 정상동작, Invalid: 장애로 배제됨, Unmounted: 관리자에 의해 Unmount됨)
-   - ``Read`` 읽기 성공 횟수
-   - ``ReadMerged`` 읽기가 병합된 횟수
-   - ``ReadSectors`` 읽은 섹터 수
-   - ``ReadTime (단위: ms)`` 읽기 소요시간
-   - ``Write`` 쓰기 성공 횟수
-   - ``WriteMerged`` 쓰기가 병합된 횟수
-   - ``WriteSectors`` 써진 섹터 수
-   - ``WriteTime (단위: ms)`` 쓰기 소요시간
-   - ``IOProgress`` 진행 중인 IO개수
-   - ``IOTime (단위: ms)`` IO 소요시간
-   - ``IOWeightedTime (단위: ms)`` IO 소요시간(가중치 적용)
+   - ``Path`` ディスクパス
+   - ``Status`` ディスクの状態（Normal：正常動作、Invalid：障害に古い関数、Unmounted：管理者によってUnmountさ）
+   - ``Read`` 読む成功回数
+   - ``ReadMerged`` 読み込みがマージされた回数
+   - ``ReadSectors`` 読んだセクタ数
+   - ``ReadTime (単位: ms)`` を読む所要時間
+   - ``Write`` 執筆成功回数
+   - ``WriteMerged`` 書き込みがマージされた回数
+   - ``WriteSectors`` 書かれているセクタ数
+   - ``WriteTime (単位: ms)`` を送る所要時間
+   - ``IOProgress`` 進行中IO数
+   - ``IOTime (単位: ms)`` IO所要時間
+   - ``IOWeightedTime (単位: ms)`` IO所要時間（重み付け）
 
--  ``ServerSocket`` 서버 소켓(클라이언트와 STON 구간) 정보
+-  ``ServerSocket`` サーバソケット（クライアントとSTON区間）について
 
-   - ``Total`` 전체 서버소켓 수
-   - ``Established`` 연결된 상태의 서버소켓 수
-   - ``Accepted`` 새롭게 연결된 서버소켓 수
-   - ``Closed`` 연결이 종료된 서버소켓 수
+   - ``Total`` 全サーバソケット数
+   - ``Established`` 接続された状態のサーバソケット数
+   - ``Accepted`` 新た接続されたサーバソケットができ
+   - ``Closed`` 接続が終了されたサーバーソケット数
 
--  ``ClientSocket`` 클라이언트 소켓(STON과 원본서버 구간) 정보
+-  ``ClientSocket`` クライアントソケット（STONと元サーバー区間）について
 
-   - ``Total`` 전체 클라이언트소켓 수
-   - ``Established`` 연결된 상태의 클라이언트소켓 수
-   - ``Connected`` 새롭게 연결된 클라이언트소켓 수
-   - ``Closed`` 연결이 종료된 클라이언트소켓 수
+   - ``Total`` 全クライアントソケット数
+   - ``Established`` 接続された状態のクライアントソケット数
+   - ``Connected`` 新た接続されたクライアントソケット数
+   - ``Closed`` 接続が終了されたクライアントソケット数
 
--  ``TCPSocket`` 시스템(OS)이 제공하는 TCP상태 정보
+-  ``TCPSocket`` システム（OS）が提供するTCPの状態情報
 
-   - ``Established`` Established상태의 TCP 연결개수
-   - ``Timewait`` TIME_WAIT 상태의 TCP 연결개수
-   - ``Orphan`` 아직 file handle에 attach되지 않은 TCP 연결
-   - ``Alloc`` 할당된 TCP 연결
+   - ``Established`` Established状態のTCP接続数
+   - ``Timewait`` TIME_WAIT状態のTCP接続数
+   - ``Orphan`` まだfile handleにattachされていないTCP接続
+   - ``Alloc`` 割り当てられたTCP接続
    - ``Mem`` (undocumented)
 
--  ``EQ`` STON Framework에서 아직 처리되지 않은 Event개수
--  ``RQ`` 최근 서비스된 컨텐츠 참조 큐에 저장된 Event 개수
--  ``WaitingFiles2Write`` 디스크에 쓰기 대기중인 파일개수
--  ``ServiceAccess`` ServiceAccess에 의해 허가(Allow), 거부(Deny)된 소켓 수
--  ``SystemLoadAverage`` System Load Average의 1분/5분/15분 평균
--  ``URLRewrite`` URL전처리에 의해 변환이 성공한 횟수
+-  ``EQ`` STON Frameworkでまだ処理されていないEvent数
+-  ``RQ`` 最近サービスされたコンテンツを参照キューに格納されたEvent数
+-  ``WaitingFiles2Write`` ディスクへの書き込み待機しているファイルの数
+-  ``ServiceAccess`` ServiceAccessによって許可（Allow）、拒否（Deny）されたソケット数
+-  ``SystemLoadAverage`` System Load Averageの1分/ 5分/ 15分の平均
+-  ``URLRewrite`` URL前処理によって変換が成功した回数
 
 
-가상호스트 통계
+仮想ホストの統計
 ====================================
 
-가상호스트별로 통계가 제공된다.
-가상호스트 통계는 HTTP전송(디렉토리 별), URL바이패스, 포트바이패스, SSL로 구분된다. ::
+仮想ホストごとに統計が提供される。 仮想ホストの統計は、HTTP転送（ディレクトリ別）、URL、バイパス、ポートバイパス、SSLに区分される。 ::
 
    "VirtualHost":                               <VirtualHost
    [                                                Name="image.11st.co.kr"
@@ -530,37 +512,37 @@ System 통계
 
    ※ Name부터 FileSystem까지 호스트 통계와 동일하다.
 
--  ``Memory (단위: Bytes)`` 메모리에 적재된 컨텐츠 양
--  ``SecuredMemory (단위: Bytes)`` 메모리에서 삭제한 컨텐츠 양
--  ``Disk`` 디스크 정보
--  ``Session`` 세션 정보
--  ``Dims`` DIMS변환 통계
--  ``Compression`` 압축 통계
--  ``FileTotal`` 전체파일 개수
--  ``FileOpened`` 열려져 있는 로컬파일 개수
--  ``FileInstance`` 캐싱파일 개수
--  ``Cached`` 캐싱 정보
--  ``CacheFileEvent`` 캐싱파일 이벤트
--  ``WaitingFiles2Delete`` 삭제대기 중인 파일개수
--  ``ClientHttpReqBypass`` 바이패스한 클라이언트 HTTP요청 횟수
--  ``ClientHttpReqDenied`` HTTP요청이 차단된 횟수
--  ``OriginTraffic`` 원본서버 트래픽 통계
--  ``PortBypass`` 포트 바이패스 트래픽 통계
--  ``ClientTraffic`` 클라이언트 트래픽 통계
--  ``UrlBypass`` URL매칭 또는 ``<BypassNoCacheRequest>`` 를 통해 원본서버로변환 통계되는 HTTP트래픽 통계
+-  ``Memory (単位: Bytes)`` メモリにロードされたコンテンツの量
+-  ``SecuredMemory (単位: Bytes)`` メモリから削除されたコンテンツの量
+-  ``Disk`` ディスク情報
+-  ``Session`` セッション情報
+-  ``Dims`` DIMS変換統計
+-  ``Compression`` 圧縮統計
+-  ``FileTotal`` ファイル全体数
+-  ``FileOpened`` 開いているローカルファイルの数
+-  ``FileInstance`` キャッシュファイルの数
+-  ``Cached`` キャッシュ情報
+-  ``CacheFileEvent`` キャッシュファイルイベント
+-  ``WaitingFiles2Delete`` 削除待機しているファイルの数
+-  ``ClientHttpReqBypass`` バイパスしたクライアントのHTTP要求の数
+-  ``ClientHttpReqDenied`` HTTP要求がブロックされた回数
+-  ``OriginTraffic`` ソースサーバーのトラフィックの統計情報
+-  ``PortBypass`` ポートバイパストラフィックの統計情報
+-  ``ClientTraffic`` クライアントのトラフィックの統計情報
+-  ``UrlBypass`` URLマッチングまたは ``<BypassNoCacheRequest>`` を介して、元のサーバーに変換統計されたHTTPトラフィックの統計情報
 
 .. note::
 
-   5분 통계에서만 제공되는 항목.
+   5分の統計のみ提供されているアイテムです。
 
-   -  ``ClientHttpReqBypassSum`` 바이패스되는 HTTP요청의 총 개수
-   -  ``ClientHttpReqDeniedSum`` Deny되는 HTTP요청의 총 개수
+   -  ``ClientHttpReqBypassSum`` バイパスされるHTTPリクエストの合計数
+   -  ``ClientHttpReqDeniedSum`` DenyされるHTTPリクエストの合計数
 
 
-디스크 통계
+ディスク統計
 ------------------------------
 
-가상호스트가 사용하는 디스크통계를 제공한다. ::
+仮想ホストが使用するディスクの統計情報を提供する。 ::
 
    "Disk":                                      <Disk>
    {                                              <TotalSize>22003701435</TotalSize>
@@ -604,48 +586,48 @@ System 통계
      }
    }
 
--  ``TotalSize (단위: Bytes)`` 로컬파일 크기 합
--  ``Create`` 로컬파일 생성 횟수
--  ``Open`` 로컬파일 Open 횟수
--  ``Delete`` 로컬파일 삭제 횟수
--  ``ReadCount`` 로컬파일에서 Read한 횟수
--  ``ReadSize (단위: Bytes)`` 로컬파일에서 Read한 크기
--  ``WriteCount`` 로컬파일에서 Write한 횟수
--  ``WriteSize (단위: Bytes)`` 로컬파일에서 Write한 크기
--  ``Distribution`` 로컬파일 크기별 분포
+-  ``TotalSize (単位: Bytes)`` ローカルファイルサイズがあり
+-  ``Create`` ローカルファイルの作成回数
+-  ``Open`` ローカルファイルOpen回数
+-  ``Delete`` ローカルファイルの削除回数
+-  ``ReadCount`` ローカルファイルからReadした回数
+-  ``ReadSize (単位: Bytes)`` ローカルファイルからReadしたサイズ
+-  ``WriteCount`` ローカルファイルからWriteした回数
+-  ``WriteSize (単位: Bytes)`` ローカルファイルからWriteサイズ
+-  ``Distribution`` ローカルファイル人数分布
 
-   - ``U1K`` 1KB 미만 파일 개수
-   - ``U2K`` 2KB 미만 파일 개수
-   - ``U4K`` 4KB 미만 파일 개수
-   - ``U8K`` 8KB 미만 파일 개수
-   - ``U16K`` 16KB 미만 파일 개수
-   - ``U32K`` 32KB 미만 파일 개수
-   - ``U64K`` 64KB 미만 파일 개수
-   - ``U128K`` 128KB 미만 파일 개수
-   - ``U256K`` 256KB 미만 파일 개수
-   - ``U512K`` 512KB 미만 파일 개수
-   - ``U1M`` 1MB 미만 파일 개수
-   - ``U2M`` 2MB 미만 파일 개수
-   - ``U4M`` 4MB 미만 파일 개수
-   - ``U8M`` 8MB 미만 파일 개수
-   - ``U16M`` 16MB 미만 파일 개수
-   - ``U32M`` 32MB 미만 파일 개수
-   - ``U64M`` 64MB 미만 파일 개수
-   - ``U128M`` 128MB 미만 파일 개수
-   - ``U256M`` 256MB 미만 파일 개수
-   - ``U512M`` 512MB 미만 파일 개수
-   - ``U1G`` 1GB 미만 파일 개수
-   - ``U2G`` 2GB 미만 파일 개수
-   - ``U4G`` 4GB 미만 파일 개수
-   - ``U8G`` 8GB 미만 파일 개수
-   - ``U16G`` 16GB 미만 파일 개수
-   - ``O16G`` 16GB 이상 파일 개수
+   - ``U1K`` 1KB 未満のファイル数
+   - ``U2K`` 2KB 未満のファイル数
+   - ``U4K`` 4KB 未満のファイル数
+   - ``U8K`` 8KB 未満のファイル数
+   - ``U16K`` 16KB 未満のファイル数
+   - ``U32K`` 32KB 未満のファイル数
+   - ``U64K`` 64KB 未満のファイル数
+   - ``U128K`` 128KB 未満のファイル数
+   - ``U256K`` 256KB 未満のファイル数
+   - ``U512K`` 512KB 未満のファイル数
+   - ``U1M`` 1MB 未満のファイル数
+   - ``U2M`` 2MB 未満のファイル数
+   - ``U4M`` 4MB 未満のファイル数
+   - ``U8M`` 8MB 未満のファイル数
+   - ``U16M`` 16MB 未満のファイル数
+   - ``U32M`` 32MB 未満のファイル数
+   - ``U64M`` 64MB 未満のファイル数
+   - ``U128M`` 128MB 未満のファイル数
+   - ``U256M`` 256MB 未満のファイル数
+   - ``U512M`` 512MB 未満のファイル数
+   - ``U1G`` 1GB 未満のファイル数
+   - ``U2G`` 2GB 未満のファイル数
+   - ``U4G`` 4GB 未満のファイル数수
+   - ``U8G`` 8GB 未満のファイル数
+   - ``U16G`` 16GB 未満のファイル数
+   - ``O16G`` 16GB 以上のファイル数
 
 
-세션 통계
+セッション統計
 ------------------------------
 
-가상호스트가 사용하는 디스크통계를 제공한다. ::
+仮想ホストが使用するディスクの統計情報を提供する。 ::
 
    "Session":                                   <Session
    {                                              Client="30"
@@ -655,17 +637,17 @@ System 통계
      "ActiveOrigin":7
    },
 
--  ``Client`` 전체 HTTP 클라이언트 세션수
--  ``ActiveClient`` 전체 HTTP 클라이언트 중 전송 중인 세션수
--  ``Origin`` 전체 원본서버 세션수
--  ``ActiveOrigin`` 전송 중인 원본서버 세션수
+-  ``Client`` 完全なHTTPクライアントセッション数
+-  ``ActiveClient`` 完全なHTTPクライアントの転送中のセッション数
+-  ``Origin`` 全体元のサーバーのセッション数
+-  ``ActiveOrigin`` 転送中のソースサーバーセッション数
 
 
 
-DIMS 통계
+DIMS統計
 ------------------------------
 
-DIMS의 성능지표를 제공한다. ::
+DIMSの性能指標を提供する。 ::
 
    "Dims":                                   <Dims
    {                                           Requests="30"
@@ -677,18 +659,18 @@ DIMS의 성능지표를 제공한다. ::
      "AvgTime": 34
    },
 
--  ``Requests`` 변환요청 횟수
--  ``Converted`` 변환성공 횟수
--  ``Failed`` 변환실패 횟수
--  ``AvgSrcSize (단위: Bytes)`` 원본 이미지의 평균 크기
--  ``AvgDestSize (단위: Bytes)`` 변환된 이미지의 평균 크기
--  ``AvgTime (단위: ms)`` 변환 소요시간
+-  ``Requests`` 変換要求数
+-  ``Converted`` 変換成功回数
+-  ``Failed`` 変換に失敗した回数
+-  ``AvgSrcSize (単位: Bytes)`` 元の画像の平均サイズ
+-  ``AvgDestSize (単位: Bytes)`` 変換された画像の平均サイズ
+-  ``AvgTime (単位: ms)`` 変換所要時間
 
 
-압축 통계
+圧縮統計
 ------------------------------
 
-압축의 성능지표를 제공한다. ::
+圧縮の性能指標を提供する。 ::
 
    "Compression":                             <Compression
    {                                           Requests="30"
@@ -700,19 +682,19 @@ DIMS의 성능지표를 제공한다. ::
      "AvgTime": 34
    },
 
--  ``Requests`` 압축요청 횟수
--  ``Converted`` 압축성공 횟수
--  ``Failed`` 압축실패 횟수
--  ``AvgSrcSize (단위: Bytes)`` 원본 파일의 평균 크기
--  ``AvgDestSize (단위: Bytes)`` 압축된 파일의 평균 크기
--  ``AvgTime (단위: ms)`` 압축 소요시간
+-  ``Requests`` 圧縮要求数
+-  ``Converted`` 圧縮成功回数
+-  ``Failed`` 圧縮に失敗した回数
+-  ``AvgSrcSize (単位: Bytes)`` ソースファイルの平均サイズ
+-  ``AvgDestSize (単位: Bytes)`` 圧縮されたファイルの平均サイズ
+-  ``AvgTime (単位: ms)`` 圧縮所要時間
 
 
 
-원본 통계
+ソース統計
 ------------------------------
 
-STON과 원본서버 사이에 발생하는 트래픽통계를 제공한다. ::
+STONと元のサーバーの間で発生するトラフィックの統計情報を提供する。 ::
 
    "OriginTraffic":                             <OriginTraffic>
    {                                              <HttpReqCount Sum="600">2</HttpReqCount>
@@ -784,47 +766,47 @@ STON과 원본서버 사이에 발생하는 트래픽통계를 제공한다. ::
      }
    },
 
--  ``HttpReqCount`` 원본서버로 보낸 HTTP 요청 횟수
--  ``HttpReqHeaderSize (단위: Bytes)`` 원본서버로 보낸 HTTP 헤더 크기
--  ``HttpReqBodySize (단위: Bytes)`` 원본서버로 보낸 HTTP Body 크기
--  ``HttpResHeaderSize (단위: Bytes)`` 원본서버에서 받은 HTTP 헤더 크기
--  ``HttpResBodySize (단위: Bytes)`` 원본서버에서 받은 HTTP Body 크기
--  ``Response`` 원본서버에서 보낸 응답 (ResXXX)
+-  ``HttpReqCount`` 元サーバーに送信されるHTTPリクエストの数
+-  ``HttpReqHeaderSize (単位: Bytes)`` ソースサーバーに送信されるHTTPヘッダーのサイズ
+-  ``HttpReqBodySize (単位: Bytes)`` ソースサーバーに送信されるHTTP Bodyサイズ
+-  ``HttpResHeaderSize (単位: Bytes)`` ソースサーバーから受信したHTTPヘッダーのサイズ
+-  ``HttpResBodySize (単位: Bytes)`` ソースサーバーから受信したHTTP Bodyサイズ
+-  ``Response`` 元サーバーから送信される応答 (ResXXX)
 
-   -  ``Count`` 응답횟수
-   -  ``Completed`` 정상적으로 전송완료된 HTTP트랜잭션 횟수
-   -  ``TimeRes`` HTTP 응답시간
-   -  ``TimeComplete`` HTTP 트랜잭션 완료시간
+   -  ``Count`` 応答回数
+   -  ``Completed`` 正常に送信完了したHTTPトランザクションの数
+   -  ``TimeRes`` HTTP応答時間
+   -  ``TimeComplete`` HTTPトランザクションの完了時間
 
--  ``Response`` 기타 필드
+-  ``Response`` その他のフィールド
 
-   -  ``ConnectTimeout`` 연결실패
-   -  ``ReceiveTimeout`` 전송지연
-   -  ``Close`` 전송 중 원본서버에서 먼저 소켓 종료
+   -  ``ConnectTimeout`` 接続に失敗し
+   -  ``ReceiveTimeout`` 伝送遅延
+   -  ``Close`` 転送中、ソースサーバーから最初のソケットを終了
 
--  ``Connect`` 원본서버 접속통계
+-  ``Connect`` ソースサーバー接続の統計情報
 
-   -  ``Count`` 접속횟수
-   -  ``AvgDNSQueryTime (단위: 0.01ms)`` 평균 DNS쿼리 시간
-   -  ``AvgConnTime (단위: 0.01ms)`` 평균 접속시간 (TCP SYN전송 ~ TCP SYN ACK수신)
+   -  ``Count`` 接続回数
+   -  ``AvgDNSQueryTime (単位: 0.01ms)`` 平均DNSクエリ時間
+   -  ``AvgConnTime (単位: 0.01ms)`` の平均接続時間（TCP SYN送信〜TCP SYN ACK受信）
 
 .. note::
 
-   5분 통계에서만 제공되는 항목.
+   5分の統計のみ提供されているアイテムです。
 
-   -  ``HttpReqCountSum`` HTTP요청의 총 회수
-   -  ``CountSum`` HTTP응답의 총 회수
-   -  ``CompletedSum`` 완료된 HTTP 트랜잭션의 총 회수
-   -  ``ConnectTimeoutSum`` 원본서버 접속실패 총 회수
-   -  ``ReceiveTimeoutSum`` 원본서버 전송지연 총 회수
-   -  ``CloseSum`` 원본서버에서 먼저 연결을 종료한 총 회수
+   -  ``HttpReqCountSum`` HTTPリクエストの合計回数
+   -  ``CountSum`` HTTP応答の合計回数
+   -  ``CompletedSum`` 完了したHTTPトランザクションの合計回数
+   -  ``ConnectTimeoutSum`` ソースサーバー接続に失敗し、合計回収
+   -  ``ReceiveTimeoutSum`` ソースサーバーの伝送遅延の合計回数
+   -  ``CloseSum`` 元サーバーで最初に接続を終了した総回数
 
 
 
-포트바이패스 통계
+ポートバイパス統計
 ------------------------------
 
-``<PortBypass>`` 를 통해 발생한 트래픽통계를 제공한다. ::
+``<PortBypass>`` を介して発生したトラフィックの統計情報を提供する。 ::
 
    "PortBypass":                                            <PortBypass SrcPort="1935" DestPost="1935">
    [                                                          <Session>0</Session>
@@ -845,28 +827,26 @@ STON과 원본서버 사이에 발생하는 트래픽통계를 제공한다. ::
    ],
 
 
--  ``SrcPort/DestPort`` 바이패스 하는 STON포트/원본서버 포트
--  ``Session`` 현재 연결된 세션 수
--  ``Hit`` 바이패스 접속 통계
+-  ``SrcPort/DestPort`` バイパスするSTONポート/ソースサーバーのポート
+-  ``Session`` 現在接続しているセッション数
+-  ``Hit`` バイパス接続統計
 
-   -  ``Established`` 성립된 연결 개수
-   -  ``ClientClosed`` 클라이언트가 연결 종료한 횟수
-   -  ``OriginClosed`` 원본서버에서 연결 종료한 횟수
-   -  ``OriginCT`` 원본서버 접속실패 횟수
+   -  ``Established`` 成立した接続数
+   -  ``ClientClosed`` クライアントが接続を終了した回数
+   -  ``OriginClosed`` 元のサーバーで接続を終了した回数
+   -  ``OriginCT`` ソースサーバー接続に失敗した回数
 
--  ``ClientTraffic (단위: Bytes)`` 클라이언트 트래픽 (In=Inbound, Out=Outbound)
--  ``OriginTraffic (단위: Bytes)`` 원본서버 트래픽 (In=Inbound, Out=Outbound)
+-  ``ClientTraffic (単位: Bytes)`` クライアントのトラフィック (In=Inbound, Out=Outbound)
+-  ``OriginTraffic (単位: Bytes)`` ソースサーバーのトラフィック (In=Inbound, Out=Outbound)
 
 
 
 .. _monitoring_stats_vhost_client:
 
-클라이언트 통계
+クライアント統計
 ------------------------------
 
-클라이언트 트래픽은 디렉토리별 통계설정 여부에 의해 "Traffic"이 멀티로 표현된다.
-디렉토리별 통계를 설정하지 않았다면 모든 트래픽은 루트(/)로 집계된다.
-디렉토리 통계가 설정되어 있다면 루트(/)와 트래픽이 발생한 디렉토리만 제공된다. ::
+クライアントのトラフィックはディレクトリ毎の統計の設定かどうかによって、「Traffic」がマルチで表現される。ディレクトリ毎の統計情報を設定しなかった場合、すべてのトラフィックは、ルート（/）に集計される。ディレクトリの統計情報が設定されている場合は、ルート（/）と、トラフィックが発生したディレクトリのみ提供される。 ::
 
    "ClientTraffic":                             <ClientTraffics Depth="0" Accum="OFF" HttpsTraffic="OFF">
    {                                              <TrafficCount>1</TrafficCount>
@@ -1025,52 +1005,50 @@ STON과 원본서버 사이에 발생하는 트래픽통계를 제공한다. ::
      ]
    }
 
--  ``Depth`` 통계를 수집할 디렉토리 Depth
--  ``Accum`` 디렉토리 통계가 설정된 경우 하위 디렉토리의 통계를 상위 디렉토리로 누적시키는 설정
--  ``HttpsTraffic`` HTTPS트래픽을 HTTP트래픽으로 중복하여 집계하는 설정
--  ``TrafficCount`` 집계된 트래픽 카운트
--  ``Traffic`` 디렉토리별 통계. 루트(/)는 항상 존재한다.
+-  ``Depth`` 統計情報を収集するディレクトリDepth
+-  ``Accum`` ディレクトリの統計情報が設定されている場合、サブディレクトリの統計情報を親ディレクトリに累積させる設定
+-  ``HttpsTraffic`` HTTPSトラフィックをHTTPトラフィックに重複して集計する設定
+-  ``TrafficCount`` 集計されたトラフィックのカウント
+-  ``Traffic`` ディレクトリ毎の統計情報です。ルート（/）は常に存在する。
 
-   -  ``Path`` 서비스 디렉토리
-   -  ``HttpReqCount(단위: Bytes)`` 클라이언트가 보낸 HTTP 요청 개수
-   -  ``HttpReqHeaderSize(단위: Bytes)`` 클라이언트가 보낸 HTTP 요청 헤더 크기
-   -  ``HttpReqBodySize(단위: Bytes)`` 클라이언트가 보낸 HTTP 요청 Body 크기
-   -  ``HttpResHeaderSize(단위: Bytes)`` STON이 보낸 HTTP 응답 헤더 크기
-   -  ``HttpResBodySize(단위: Bytes)`` STON이 보낸 HTTP 응답 Body 크기
-   -  ``Response`` STON이 보낸 응답
+   -  ``Path`` サービスディレクトリ
+   -  ``HttpReqCount(単位: Bytes)`` クライアントが送信したHTTPリクエスト数
+   -  ``HttpReqHeaderSize(単位: Bytes)`` クライアントが送信したHTTPリクエストヘッダサイズ
+   -  ``HttpReqBodySize(単位: Bytes)`` クライアントが送信したHTTPリクエストBodyサイズ
+   -  ``HttpResHeaderSize(単位: Bytes)`` STONが送信されるHTTP応答ヘッダーのサイズ
+   -  ``HttpResBodySize(単位: Bytes)`` STONが送信されるHTTPレスポンスBodyサイズ
+   -  ``Response`` STONが送信応答
 
-      -  ``Count`` 응답횟수
-      -  ``Completed`` 정상적으로 전송완료된 HTTP트랜잭션 횟수
-      -  ``TimeRes`` HTTP 응답시간
-      -  ``TimeComplete`` HTTP 트랜잭션 완료시간
+      -  ``Count`` 応答回数
+      -  ``Completed`` 通常送信完了したHTTPトランザクションの数
+      -  ``TimeRes`` HTTP応答時間
+      -  ``TimeComplete`` HTTPトランザクションの完了時間
 
--  ``SSL(단위: Bytes)`` HTTPS 트래픽 (RecvSize=수신크기, SendSize=송신크기)
--  ``RequestHit`` 캐싱 HIT결과
--  ``FileSystem`` FileSystem 접근
+-  ``SSL(単位: Bytes)`` HTTPSトラフィック（RecvSize =受信サイズ、SendSize =送信サイズ）
+-  ``RequestHit``  キャッシュHIT結
+-  ``FileSystem`` FileSystemアクセス
 
-   -  ``GetAttr`` getattr함수 호출회수와 응답시간. (FileCount: File응답, DirCount: Dir응답, FailCount: 실패응답)
-   -  ``Open`` open함수 호출회수와 응답시간
-   -  ``Read`` read함수 호출회수와 응답시간, 요청크기(BufferSize)와 응답크기(BufferFilled)
-   -  ``RequestHit`` (File I/O 접근) 캐싱 HIT결과
+   -  ``GetAttr`` getattr関数呼び出し回数と応答時間。（FileCount：File応答、DirCount：Dir応答、FailCount：失敗応答）
+   -  ``Open`` open関数の呼び出し回数と応答時間
+   -  ``Read`` read関数の呼び出し回数と応答時間、要求のサイズ（BufferSize）と応答のサイズ（BufferFilled）
+   -  ``RequestHit`` （File I / Oアクセス）キャッシュHIT結果
 
 
 .. note::
 
-   5분 통계에서만 제공되는 항목.
+   5分の統計のみ提供されているアイテムです。
 
-   -  ``HttpReqCountSum`` HTTP요청의 총 회수
-   -  ``CountSum`` HTTP응답의 총 회수
-   -  ``CompletedSum`` 완료된 HTTP 트랜잭션의 총 회수
-   -  ``RequestHitSum`` 캐시 HIT 결과
+   -  ``HttpReqCountSum`` HTTPリクエストの合計回数
+   -  ``CountSum`` HTTP応答の合計回数
+   -  ``CompletedSum`` 完了したHTTPトランザクションの合計回数
+   -  ``RequestHitSum`` キャッシュHIT結果
 
 
 
 View
 ====================================
 
-View는 가상호스트들을 하나로 묶어 통계를 추출하는 방식이다.
-Database에서 여러 Table을 마치 하나인 것처럼 다루는 View에서 따온 개념이다.
-구성은 다음과 같이 아주 간단하다. ::
+Viewは、仮想ホストを一つにまとめ、統計を抽出する方式である。Databaseの複数Tableをあたかも一つであるかのように扱うViewから取った概念である。構成は次のように非常に簡単である。 ::
 
    # vhosts.xml
 
@@ -1093,14 +1071,12 @@ Database에서 여러 Table을 마치 하나인 것처럼 다루는 View에서 �
      </View>
    </Vhosts>
 
-존재하지 않는 가상호스트로 View를 구성해도 상관없다.
-View가 제공하는 통계는 다음과 같다. ::
+存在しない仮想ホストでViewを構成しても構わない。Viewが提供する統計情報は以下の通りである。 ::
 
 -  Realtime XML/JSON
 -  SNMP - cache(1.3.6.1.4.1.40001.1.4).10 ~ 12
 
-이해를 돕기 위해 View가 필요한 예를 들어보자.
-류헌진, 서장혼, 박지송은 각각 자신이 좋아하는 스포츠 커뮤니티 사이트를 운영하고 있다. ::
+理解を助けるためにViewが必要例を挙げてみよう。リュホンジン、署長ホーン、薄紙ソングそれぞれ自分の好きなスポーツコミュニティサイトを運営している。 ::
 
    # vhosts.xml
 
@@ -1110,31 +1086,28 @@ View가 제공하는 통계는 다음과 같다. ::
      <Vhost Name="football.com"> ... </Vhost>
    </Vhosts>
 
-평소 친분이 있던 셋은 의기투합하여 스포츠 종합 커뮤니티 서비스를 오픈하기로 결정했다.
-도메인도 서비스를 모두 아우를 수 있는 sports.com으로 정했다.
-개발/운영팀이 해결해야하는 미션은 다음과 같다.
+普段親しみがあった三人は意気投合し、スポーツの総合コミュニティサービスをオープンすることを決定した。ドメインもすべてのサービスを合わせることができるsports.comに決めた。開発/運営チームが解決しなければならミッションは以下の通りである。
 
-- 통합 서비스는 sports.com으로 한다.
-- 기존 사용자를 위해 기존 도메인과 서비스는 그대로 유지한다.
-- 개발팀은 통합한다. 운영팀은 통합한다.
-- 대문(첫 페이지)만 신규 개발한다. 링크를 통해 기존 서비스를 이용한다.
-- 예산이 없다. 사람이 없다. 시간이 없다. 정신이 없다.
-- 이미 모든 구매절차가 끝났다.
+- 統合サービスはsports.comとする。
+- 既存のユーザーのために、既存のドメインとサービスはそのまま維持する。
+- 開発チームは、統合する。運営チームは統合する。
+- メイン（最初のページ）のみ、新規開発する。リンクを介して既存のサービスを利用する。
+- 予算がない。人がいない。時間がない。精神がない。
+- すでにすべての購入手続きが終わった。
 
-이 모든 요구사항을 처리하는 현실적인 방법으로 개발팀은 다음과 같이 1번째 디렉토리에
-기존 도메인을 명시하는 규칙을 사용하기로 결정했다. ::
+このすべての要件を処理する現実的な方法で開発チームは、次のように1番目のディレクトリに既存のドメインを指定するルールを使用することを決定した。 ::
 
-   # 기존 서비스
+   # 既存のサービス
    http://baseball.com/standing/list.html
    http://basketball.com/stats/2014/view.html
    http://football.com/player/messi.php
 
-   # 통합 서비스
+   # 統合サービス
    http://sports.com/baseball/standing/list.html
    http://sports.com/basketball/stats/2014/view.html
    http://sports.com/football/player/messi.php
 
-URL 전처리를 사용하면 간단히 설정할 수 있다. ::
+URLの前処理を使用すると、簡単に設定することができる。 ::
 
    # vhosts.xml
 
@@ -1148,9 +1121,7 @@ URL 전처리를 사용하면 간단히 설정할 수 있다. ::
      </URLRewrite>
    </Vhosts>
 
-통합된 운영팀에서는 이제 각각의 서비스 뿐만 아니라 통합된 서비스(트래픽, 세션, 응답코드 등)에
-대해서도 모니터링해야 한다.
-대부분 SNMP에 익숙한 관리자들이며 통합된 지표를 얻기 위해 다음과 같이 View를 구성한다.
+統合された運営チームでは、現在、それぞれのサービスだけでなく、統合されたサービス（交通、セッション、応答コードなど）にも監視する必要がある。ほとんどSNMPに慣れている管理者であり、統合された指標を得るためには、次のようにViewを構成する。
 
 .. figure:: img/view1.png
    :align: center
@@ -1174,13 +1145,13 @@ URL 전처리를 사용하면 간단히 설정할 수 있다. ::
       </View>
    </Vhosts>
 
-이상의 예에서 알 수 있듯이 URL Rewrite와 View의 조합은 기존 사이트를 하나로 묶어 서비스할 때 효과적이다.
+以上の例からわかるようにURL RewriteとViewの組み合わせは、既存のサイトを一つにまとめてサービスするときに効果的である。
 
 
-View 통계
+View統計
 ----------------------------
 
-가상호스트와 동일한 통계를 제공한다. 다음과 같이 태그 이름만 다르다. ::
+仮想ホストと同じ統計を提供する。次のようにタグ名のみ異なる。 ::
 
    "View":                                  <View ...>
    [                                           ...
@@ -1191,14 +1162,14 @@ View 통계
 
 .. _api-monitoring-vhostlist:
 
-가상호스트 목록조회
+仮想ホストのリスト参照
 ====================================
 
-가상호스트 목록을 조회한다. ::
+仮想ホストのリストを照会する。 ::
 
     http://127.0.0.1:10040/monitoring/vhostslist
 
-결과는 JSON형식으로 제공된다. ::
+結果は、JSON形式で提供される。 ::
 
     {
         "version": "2.0.0",
@@ -1214,17 +1185,14 @@ View 통계
 
 .. _api-monitoring-fileinfo:
 
-캐싱정보
+キャッシュ情報
 ====================================
 
-캐싱하고 있는 파일상태를 모니터링한다.
-일반적으로 파일은 URL로 구분되지만 같은 URL에 다른 옵션(i.e. Accept-Encoding등)이
-존재하는 경우 여러 개의 파일이 존재할 수 있다. ::
+キャッシュしているファイルの状態を監視する。一般的に、ファイルは、URLで区切られますが、同じURLに他のオプション(i.e. Accept-Encodingなど)が存在する場合、複数のファイルが存在することができる。 ::
 
     http://127.0.0.1:10040/monitoring/fileinfo?url=example.com/sample.dat
 
-결과는 JSON형식으로 제공된다.
-다음은 /sample.dat파일의 정보를 열람한 결과이다. ::
+結果は、JSON形式で提供される。以下は、/sample.datファイルの情報を閲覧した結果である。 ::
 
     {
         "version": "2.0.0",
@@ -1270,39 +1238,39 @@ View 통계
         ]
     }
 
--  ``URI`` 파일 URI
--  ``Accept-Encoding`` ("Y" or "N") Accept-Encoding을 지원한다면 "Y"
--  ``RefCount`` 파일참조 카운트
--  ``Size`` (Bytes) 파일크기
--  ``Disk-Index`` (0부터 시작) 저장된 디스크 인덱스
--  ``FID`` 파일 ID
--  ``LocalPath`` 로컬 경로
--  ``File-Opened`` ("Y" or "N") 로컬파일을 열고 있다면 "Y"
--  ``File-Updating`` 파일을 갱신 중이라면 갱신하는 객체의 포인터가 명시
--  ``Downloader-Count`` 원본서버에서 이 파일을 다운로드 받는 현재 세션의 개수
--  ``LastAccess`` (마지막 접근시간, 마지막 접근시간-현재시간) [ 2012.09.03 14:29:50, -2 ]의 의미는 2012.09.03 14:29:50에 접근됐으며 현재로부터 2초 전에 접근됐다는 의미이다.
--  ``UpdateTime`` (갱신시간, 갱신시간-현재시간) 파일이 마지막으로 갱신된 시간. 304 Not Modified에도 시간은 갱신된다.
--  ``TTL-Left`` (만료시간, 만료시간-현재시간) 컨텐츠 만료 예정시간. TTL이 남았다면 양수로, 만료됐다면 음수로 표기된다.
--  ``ResponseCode`` 원본서버 응답코드
+-  ``URI`` ファイルURI
+-  ``Accept-Encoding`` ("Y" or "N") Accept-Encodingをサポートする場合は "Y"
+-  ``RefCount`` ファイルの参照カウント
+-  ``Size`` (Bytes) ファイルサイズ
+-  ``Disk-Index`` (0から始まる) 保存されたディスクのインデックス
+-  ``FID`` ファイルID
+-  ``LocalPath`` ローカルパス
+-  ``File-Opened`` ("Y" or "N") ローカルファイルを開き場合、 "Y"
+-  ``File-Updating`` ファイルを更新している場合、更新するオブジェクトのポインタが明示
+-  ``Downloader-Count`` 元のサーバーでは、このファイルをダウンロードする現在のセッションの数
+-  ``LastAccess`` (最後のアクセス時間、最後のアクセス時間 - 現在時刻) [ 2012.09.03 14:29:50, -2 ]の意味は、2012.09.03 14:29:50にアクセスされ、現在から2秒前にアクセスされたという意味である。
+-  ``UpdateTime`` (更新時間、更新時間 - 現在時刻) ファイルが最後に更新された時間。304 Not Modifiedも時間は更新される。
+-  ``TTL-Left`` (有効期限、有効期限 - 現在の時刻) コンテンツの有効期限予定の時間。TTLが残ったら正であり、有効期限が切れたとすれば負の表記される。
+-  ``ResponseCode`` ソースサーバーの応答コード
 -  ``ContentType`` MIME Type
--  ``LastModifiedTime`` (Last Modified Time, Last Modified Time`` 현재시간) 원본서버가 보낸 Last Modified Time. 원본서버가 이 값을 보내지 않았다면 0으로 표시된다.
--  ``ExpireTime`` (Expire Time, Expire Time`` 현재시간) 원본서버가 보낸 Expire Time. 원본서버가 이 값을 보내지 않았다면 0으로 표시된다.
--  ``CacheControl`` ("no-cache" or "not-specified" or (정수)) 원본서버가 보낸 Cache-Contorl 값
--  ``ETag`` STON이 생성한 ETag
--  ``CustomTTL`` 커스텀 TTL. 설정되어 있지 않다면 0이다.
--  ``NoMoreExist`` ("Y" or "N") 파일을 파기예약되어 있다면 "Y"
--  ``LocalFileExist`` ("Y" or "N") 로컬에 파일이 존재하면 "Y" (200 OK가 아닌 파일들은 항상 "Y")
--  ``SmallFile`` ("Y" or "N") 파일을 작은파일로 판단한다면 "Y" (개발적인 이유)
--  ``State`` ("Not Init" or "Cached" or "Error") 파일 상태
--  ``Deleted`` ("Y" or "N") 삭제되었다면 "Y" (개발적인 이유)
--  ``AddedSize`` ("Y" or "N") 크기가 통계에 반영되었다면 "Y" (개발적인 이유)
--  ``TransferEncoding`` ("Y" or "N") Transfer-Encoding을 지원한다면 "Y"
--  ``Compression`` 압축방식
--  ``Purge`` ("Y" or "N") Purge됐다면 "Y"
--  ``Ignore-IMS`` ("Y" or "N") 갱신할 때 If-Modified-Since헤더를 보내지 않도록 설정되었다면 "Y"
--  ``Redirect-Location`` Location 헤더 값
--  ``Content-Disposition`` Content-Disposition 헤더 값
--  ``NoCache`` ("Y" or "N") 원본서버에서 no-cache응답을 줬다면 "Y"
+-  ``LastModifiedTime`` (Last Modified Time, Last Modified Time`` 現在時刻) ソースサーバーが送信Last Modified Time。ソースサーバーが、この値を送信していない場合、0に表示される。
+-  ``ExpireTime`` (Expire Time, Expire Time`` 現在時刻）ソースサーバーが送信したExpire Time。ソースサーバーが、この値を送信していない場合、0に表示される。
+-  ``CacheControl`` ("no-cache" or "not-specified" or (整数））元のサーバーが送信したCache-Contorl値
+-  ``ETag`` STONが生成したETag
+-  ``CustomTTL`` カスタムTTL。設定されていない場合0である。
+-  ``NoMoreExist`` ("Y" or "N") ファイルを破棄予約されている場合は "Y"
+-  ``LocalFileExist`` ("Y" or "N") ローカルにファイルが存在する場合、 "Y" (200 OK以外のファイルは、常に "Y")
+-  ``SmallFile`` ("Y" or "N") ファイルを小さなファイルに判断すれば、 "Y" (開発的な理由)
+-  ``State`` ("Not Init" or "Cached" or "Error") ファイルの状態
+-  ``Deleted`` ("Y" or "N") を削除された場合は "Y" (開発的な理由)
+-  ``AddedSize`` ("Y" or "N") のサイズは統計に反映されている場合は "Y" (開発的な理由)
+-  ``TransferEncoding`` ("Y" or "N") Transfer-Encodingをサポートする場合は "Y"
+-  ``Compression`` 圧縮方式
+-  ``Purge`` ("Y" or "N") Purgeたなら "Y"
+-  ``Ignore-IMS`` ("Y" or "N") 更新すると、If-Modified-Sinceヘッダを送信しないように設定された場合は "Y"
+-  ``Redirect-Location`` Locationヘッダの値
+-  ``Content-Disposition`` Content-Disposition ヘッダの値
+-  ``NoCache`` ("Y" or "N") 元のサーバーでno-cache応答を与えた場合、 "Y"
 
 
 
@@ -1311,8 +1279,7 @@ View 통계
 Log Trace
 ====================================
 
-기록되는 로그를 실시간으로 받아본다.
-Access, Origin, Monitoing로그는 가상호스트(vhost)를 지정해야 한다. ::
+記録されたログをリアルタイムで受けてみる。Access、Origin、Monitoingログは、仮想ホスト（vhost）を指定しなければならない。 ::
 
     http://127.0.0.1:10040/monitoring/logtrace/info
     http://127.0.0.1:10040/monitoring/logtrace/deny
